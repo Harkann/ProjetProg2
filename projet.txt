@@ -1,0 +1,38 @@
+- GUI :
+	- jeu
+		* pieces
+		* plateau
+	- new game
+		- PvP
+			* joueurs 
+				** temps
+				** pieces possédées
+				** 
+		- PvE
+			* ia
+				** "fork" de joueur
+				** code de gestion des deplacements en plus
+		- EvE
+			* 
+- Regles
+	- placement initial
+		* mise en place des pieces déterminé au début de la partie
+	- deroulement des tours
+		* variable qui conserve la "couleur" du tour en cours
+		* 
+	- déplacements et prises (sans roque, prise en passant et promotion)
+		* classe pour chaque type de pièce
+		* fonction qui en fonction de sa case de départ calcule les cases d'arrivée possibles
+			** gestion des autres pieces sur la trajectoire
+		* garder une grille contenant la position des pieces.
+		* 
+	- victoire par mat (sans pat, nul ou victoire au temps)
+		* classe roi, si mis en echec, vérifie ses cases de sortie.
+- IA
+	- primitive (mouvements aléatoires valides)
+
+
+
+PERSO :
+- Garder log des déplacements sous format habituel (PGN : https://fr.wikipedia.org/wiki/Portable_Game_Notation)
+ 
