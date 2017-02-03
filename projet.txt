@@ -38,3 +38,46 @@ PERSO :
 
 
 Notes sur scala : penser a install open-jdk-8 (le truc headless qu'ils installent a l'air de pas suffire ou alors a fait de la merde sur le pc de Garance)
+
+Classes :
+        -> Interface
+
+           - une méthode pour avoir l'action des différents types de joueurs
+
+    - zoli fenetre :3
+
+        -> Jeu
+            Attributs :
+
+    - l'interface
+
+           - les deux joueurs
+
+    Méthodes :
+
+    - jouer les tours et detecter les fins de partie (gestion des rêgles en général)
+
+    - mettre à jours l'interface
+
+    - lister les pièces d'un joueur
+
+        -> Piece
+
+    Attributs :
+
+    - le jeu (pour connaitre la position des autres pièces)
+
+    Méthodes : 
+
+    - Se déplacer
+
+    - Prendre
+
+
+        -> Joueur
+                Attributs :
+                        - l'interface
+                        - le jeu
+                Méthodes :
+                        - jouer
+         -> IA : juste un extend sur la classe Joueur ?
