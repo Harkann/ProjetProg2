@@ -1,4 +1,4 @@
-val swing = "org.scala.ang" % "scala-swing" % "2.10+"
+val swing = "org.scala-lang" % "scala-swing" % "2.10+"
 lazy val root = (project in file(".")).
 
 settings(
