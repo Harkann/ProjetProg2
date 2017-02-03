@@ -35,4 +35,6 @@
 
 PERSO :
 - Garder log des déplacements sous format habituel (PGN : https://fr.wikipedia.org/wiki/Portable_Game_Notation)
- 
+
+
+Notes sur scala : penser a install open-jdk-8 (le truc headless qu'ils installent a l'air de pas suffire ou alors a fait de la merde sur le pc de Garance)
