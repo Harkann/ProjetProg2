@@ -68,6 +68,7 @@ object Interface extends SimpleSwingApplication {
 
 
 
+
 	def top = new MainFrame {
 		title = "Chess"
 		contents = new GridPanel(8, 8) {
