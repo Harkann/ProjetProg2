@@ -43,7 +43,7 @@ object Interface extends SimpleSwingApplication {
 
 
 	def is_piece_on_case (i:Int,j:Int) = {
-		return Projet.partie.matrix_pieces(i)(j)
+		Projet.partie.matrix_pieces(i)(j)
 	}
 
 	for( i <- 7 to 0 by -1) {
@@ -68,7 +68,7 @@ object Interface extends SimpleSwingApplication {
 
 
 
-	def Plateau = new MainFrame {
+	def top = new MainFrame {
 		title = "Chess"
 		contents = new GridPanel(8, 8) {
 			for( i <- 7 to 0 by -1) {
