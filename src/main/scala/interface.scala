@@ -1,4 +1,4 @@
-import swing._
+/*import swing._
 import Array._
 
 
@@ -79,4 +79,5 @@ object Interface extends SimpleSwingApplication {
 			}
 		}
 	}
-}
+*/
+
