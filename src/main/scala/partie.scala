@@ -16,3 +16,4 @@ class Partie() {
 object Projet{
 	var partie= new Partie()
 }
+
