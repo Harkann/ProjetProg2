@@ -12,57 +12,72 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	// Couleur.2PremieresLettres.numéro
 	//var position:(Int,Int); //doublon avec la liste des pieces dans partie ?
 	//def move(position:(Int,Int)):Unit; //change la position de la piece couple (ligne,colonne)
-	//def take; -> inutile : un truc dans move gere la prise des pieces (cahnge le flag de la piece sur la case d'arivée)
+	//def take; -> inutile : un truc dans move gere la prise des pieces (change le flag de la piece sur la case d'arivée)
 	//def is_legal():List[(Int,Int)]; //renvoie liste des positions possibles pour le prochain coup
 	// doit verifier si en echec et si le move peut causer l'echec avant de renvoyer la liste
 }
 
 
 trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
-	def dpct_horiz(position:(Int,Int)) : List[(Int,Int)]={
-	var (i,j) = position 
-	var res : List[ (Int,Int) ] = List()
-	for( new_j <- (j+1) to 8) { res=res:+(i,new_j)} //est ce qu'on gere le fait de surveiller s'il n'y a pas de pieces ici ?????????????????????????????????????????????????????????????????
-	for( new_j <- 1 to (j-1)) { res=res:+(i,new_j)}
-	return res
-	}
 
-	def dpct_verti(position:(Int,Int)) : List[(Int,Int)]={
-	var (i,j) = position 
-	var res : List[ (Int,Int) ] = List()
-	for( new_i <- (i+1) to 8) { res=res:+(new_i,j)} 
-	for( new_i <- 1 to (i-1)) { res=res:+(new_i,j)}
-	return res
-	}
+	def dpct_horiz (position:(Int,Int)) : List[(Int,Int)]={ 
+		var (i,j) = position 
+		var res : List[ (Int,Int) ] = List()
+		var n = 1
+		while ((j+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i,j+n);n+=1}// là je suis stupide -> il y a une position possible de plus -> le fait de mager la piece
+		n=1
+		while ((j-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i,j-n);n+=1}//la aussi...
+		return res}
+
+
+	def dpct_verti (position:(Int,Int)) : List[(Int,Int)]={ 
+		var (i,j) = position 
+		var res : List[ (Int,Int) ] = List()
+		var n = 1
+		while ((i+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i+n,j);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+		n=1
+		while ((i-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i-n,j);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+		return res}
 }
 
-trait Diagonal_ {  //utiliser des traits pour factoriser le code.
-	def dpct_diag_R(position:(Int,Int)) : List[(Int,Int)]={
-	var (i,j) = position 
-	var res : List[ (Int,Int) ] = List()
-	if (i>=j) {
-	for( dpclt <- 1 to 8-i) { res=res:+(i+dpclt,j+dpclt)}
-	for( dpclt <- 1 to j-1) { res=res:+(i-dpclt,j-dpclt)}
-	}
-	else {
-	for( dpclt <- 1 to 8-j) { res=res:+(dpclt+i,j+dpclt)}
-	for( dpclt<- 1 to (i-1)) { res=res:+(i+dpclt,j+dpclt)}
-	}
-	return res
-	}
 
-	def dpct_diag_L(position:(Int,Int)) : List[(Int,Int)]={
+trait Diagonal {  //utiliser des traits pour factoriser le code.
+
+	def dpct_diag_R (position:(Int,Int)) : List[(Int,Int)]={ 
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
-	if (i+j<=9) {
-	for( dpclt <- 1 to j-1) { res=res:+(i+dpclt,j-dpclt)}
-	for( dpclt <- 1 to i-1) { res=res:+(i-dpclt,j+dpclt)}
-	}
-	else {
-	for( dpclt <- 1 to 8-i) { res=res:+(dpclt+i,j-dpclt)}    //je me méfie de ma programation des deplacements....
-	for( dpclt<- 1 to (8-j)) { res=res:+(i-dpclt,j+dpclt)}
-	}
-	return res
+	var n = 1
+	while ((i+n<=8) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j+n)=="0")) {res=res:+(i+n,j+n);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+	n=1
+	while ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)=="0")) {res=res:+(i-n,j-n);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+	return res}
+
+
+
+
+	def dpct_diag_L (position:(Int,Int)) : List[(Int,Int)]={ 
+	var (i,j) = position 
+	var res : List[ (Int,Int) ] = List()
+	var n = 1
+	while ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i+n,j-n);n+=1}// là je suis stupide -> il y a une position possible de plus -> le fait de mager la piece
+	n=1
+	while ((i-n>=1) && (j+n>=8) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i-n,j+n);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+	return res}
+}
+
+trait Jump{
+	def jump(position:(Int,Int)) : List[(Int,Int)]={
+		val movement_list : List[(Int,Int)] = List((1,2),(-1,2),(2,1),(2,-1),(-2,-1),(-2,1),(1,-2),(-1,-2))
+		var (i,j) = position 
+		var res : List[ (Int,Int) ] = List()
+		for( dplct <- movement_list) {
+			var (x,y) = dplct
+			if ( (i+x >=1) && (i+x <=9) && 
+				(j+y <=8) && (j+y >=1) &&
+				(Projet.partie.matrix_pieces(i+x)(j+y)=="0") ) //là à corrigé aussi, je m'en occupe ce soir
+			{ res=res:+(i+x,j+y)}
+		}
+		return res
 	}
 }
 
@@ -82,6 +97,7 @@ trait Id_creation {
 	}	
 }
 
+//ce soir coder le "en danger" et modifier "le problème reconnu plus haut"
 
 
 //Je mets tout mes commentaires qui sont valables pour toute pièce sur la reine uniquement
@@ -110,7 +126,8 @@ class King(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
 	val name="Ki"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
-	//def is_check; 
+	//def is_check;  -> idée de jobic -> un fonction determinant les pieces attaquables -> est ce que le roi est dedans? 
+	//ndt : savoir si un moove n'induit ne pas d'echec-> est t'il attaqué si oui on verifit plus
 
 	var (i,j) = position
 	Projet.partie.matrix_pieces(i)(j)=id
