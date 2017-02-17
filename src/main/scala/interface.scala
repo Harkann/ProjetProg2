@@ -26,47 +26,19 @@ object Interface extends SimpleSwingApplication {
 		}
 	}
 	def select_case(i:Int,j:Int) ={
-		if (Cells(i)(j).background == java.awt.Color.GREEN){
-			if((i+j)%2 == 0){
-				Cells(i)(j).background = java.awt.Color.BLACK
-			}
-			else{
-				Cells(i)(j).background = java.awt.Color.WHITE
-			}
-		}
-		else {
-			Cells(i)(j).background = java.awt.Color.GREEN
-		}
+		Cells(i)(j).background = java.awt.Color.GREEN
 	}
 	def select_case_move(i:Int,j:Int) ={
-		if (Cells(i)(j).background == java.awt.Color.RED){
-			if((i+j)%2 == 0){
-				Cells(i)(j).background = java.awt.Color.BLACK
-			}
-			else{
-				Cells(i)(j).background = java.awt.Color.WHITE
-			}
-		}
-		else {
-			Cells(i)(j).background = java.awt.Color.BLUE
-		}
+		Cells(i)(j).background = java.awt.Color.BLUE
 	}
 	def select_case_take(i:Int,j:Int) ={
-		if (Cells(i)(j).background == java.awt.Color.RED){
-			if((i+j)%2 == 0){
-				Cells(i)(j).background = java.awt.Color.BLACK
-			}
-			else{
-				Cells(i)(j).background = java.awt.Color.WHITE
-			}
-		}
-		else {
-			Cells(i)(j).background = java.awt.Color.RED
-		}
+		Cells(i)(j).background = java.awt.Color.RED
 	}
+
 	def id_piece_on_case (i:Int,j:Int):String = {
 		return Projet.partie.id_piece_on_case(i+1, j+1)
 	}
+
 	def color_from_id (id:String):Char = Projet.partie.color_from_id(id)
 	def type_from_id (id:String):String = Projet.partie.type_from_id(id)
 	def get_player() = Projet.partie.get_player()
@@ -94,20 +66,18 @@ object Interface extends SimpleSwingApplication {
 								select_case_take(i-1,j-1)
 							}
 						}
-						else {
-							//resetColors()
-						}
 					}	
 					else {
 						if (piece_id == id_piece_selected){
 							id_piece_selected = "0"
 							resetColors()
 						}
-						else {
+						else if (piece_id == "0" && moves.contents((i,j))) {
 
 						}			
 					}
 				}
+
 				if (piece_id !="0"){
 					icon = new ImageIcon( getClass.getResource(color_from_id(piece_id)+type_from_id(piece_id)+".PNG"))
 				}
