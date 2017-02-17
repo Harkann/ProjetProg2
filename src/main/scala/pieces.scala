@@ -11,6 +11,14 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	val id:String; // != "0"
 	def get_id() = id
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]);
+	def move(posi:(Int,Int))={
+		var (i,j)=position
+		position=posi
+		var (x,y)=posi
+		Projet.partie.matrix_pieces(x)(y)=get_id()
+		Projet.partie.matrix_pieces(i)(j)="0"
+		Projet.partie.next_turn()
+	}
 	// Couleur.2PremieresLettres.numéro
 	//var position:(Int,Int); //doublon avec la liste des pieces dans partie ?
 	//def move(position:(Int,Int)):Unit; //change la position de la piece couple (ligne,colonne)
@@ -118,7 +126,7 @@ trait Jump{
 	}
 }
 
-trait Peon_move{
+trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
@@ -176,7 +184,7 @@ trait Id_creation {
 //ce soir coder le "en danger" 
 /*
 trait In_danger{
-def in_danger(player: char): List[(Int,Int)]={
+def in_danger_of(player: Char): List[(Int,Int)]={
 	var res : List[ (Int,Int) ] = List()
 	val other=Projet.partie.other_player(player)
 	for( i <- 1 to 8) {
@@ -184,7 +192,7 @@ def in_danger(player: char): List[(Int,Int)]={
 			var piece_ij = Projet.partie.matrix_pieces(i)(j)
 			if (piece_ij(0)==player)
 			{
-				var (list_move,list_attack)=move(piece_ij)//not def yet!!!!!
+				var (list_move,list_attack)=move_piece(Projet.partie.get_piece(piece_ij))
 				res=res++list_attack
 			}
 		}
@@ -192,6 +200,16 @@ def in_danger(player: char): List[(Int,Int)]={
 	return list_attack
 }
 }
+*/
+
+/*
+def is_check(player : Char): Bool{
+	val other=Projet.partie.other_player(player)
+	var list_in_danger=in_danger_of(other)
+
+
+}
+
 */
 
 class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
