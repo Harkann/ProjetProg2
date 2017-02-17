@@ -4,6 +4,9 @@ import javax.swing.ImageIcon
 
 object Interface extends SimpleSwingApplication {
 	var id_piece_selected = "0"
+	var moves:List[(Int,Int)] = List()
+	var prises:List[(Int,Int)] = List()
+	var origin_pos = (0,0)
 	var Cells = ofDim[Button](8,8)
 	def initColors(i:Int,j:Int) = {
 		if((i+j)%2 == 0){
@@ -42,25 +45,50 @@ object Interface extends SimpleSwingApplication {
 	def color_from_id (id:String):Char = Projet.partie.color_from_id(id)
 	def type_from_id (id:String):String = Projet.partie.type_from_id(id)
 	def get_player() = Projet.partie.get_player()
-	def piece_move(id:String,position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+	def piece_allowed_move(id:String,position:(Int,Int)) : List[(Int,Int)] = {
 		var piece = Projet.partie.get_piece(id)	
-		return piece.move_piece(position)
+		var (move,i) = piece.move_piece(position)
+		return move
 	} 
+	def piece_allowed_take(id:String,position:(Int,Int)) : List[(Int,Int)] = {
+		var piece = Projet.partie.get_piece(id)	
+		var (i,take) = piece.move_piece(position)
+		return take
+	}
+	def piece_move(id:String,origin:(Int,Int),destination:(Int,Int)) ={
+		var piece = Projet.partie.get_piece(id)
+		piece.move(destination)
+		var (i,j) = origin
+		println("plop1")
+		Cells(i-1)(j-1).icon = null
+		var (i2,j2) = destination
+		println("plop2")
+		Cells(i2-1)(j2-1).icon = new ImageIcon( getClass.getResource(color_from_id(id)+type_from_id(id)+".PNG"))
+		println("plop3")
+
+	}
+
 
 	for( i <- 7 to 0 by -1) {
 		for( j <- 0 to 7) {
 			Cells(i)(j)= new Button {
 				var piece_id = id_piece_on_case(i,j)
+				
+				
 				action = Action("") {
 					piece_id = id_piece_on_case(i,j)
 					if (id_piece_selected == "0"){
 						if (piece_id != "0" && color_from_id(piece_id) == get_player() && piece_id != id_piece_selected){
 							id_piece_selected = piece_id
+							origin_pos = (i+1,j+1)
 							resetColors()
 							select_case(i,j)
-							var (moves, prises) = piece_move(piece_id,(i+1,j+1))
+							moves = piece_allowed_move(piece_id,(i+1,j+1))
+							prises = piece_allowed_take(piece_id,(i+1,j+1))
+							println("moves "+moves)
 							for( (i,j) <- moves) {
 								select_case_move(i-1,j-1)
+
 							}
 							for( (i,j) <- prises) {
 								select_case_take(i-1,j-1)
@@ -68,12 +96,16 @@ object Interface extends SimpleSwingApplication {
 						}
 					}	
 					else {
+						println("re moves "+moves)
 						if (piece_id == id_piece_selected){
 							id_piece_selected = "0"
 							resetColors()
 						}
-						else if (piece_id == "0" && moves.contents((i,j))) {
-
+						else if (piece_id == "0" && moves.contains((i+1,j+1))) {
+							println(moves)
+							piece_move(id_piece_selected,origin_pos,(i+1,j+1)) 
+							resetColors()
+							id_piece_selected = "0"
 						}			
 					}
 				}
