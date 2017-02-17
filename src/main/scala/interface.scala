@@ -1,6 +1,6 @@
 import swing._
 import Array._
-
+import javax.swing.ImageIcon
 
 object Interface extends SimpleSwingApplication {
 	var id_piece_selected = "0"
@@ -44,12 +44,11 @@ object Interface extends SimpleSwingApplication {
 	def color_from_id (id:String):Char = Projet.partie.color_from_id(id)
 	def type_from_id (id:String):String = Projet.partie.type_from_id(id)
 	def get_player() = Projet.partie.get_player()
-
 	for( i <- 7 to 0 by -1) {
 		for( j <- 0 to 7) {
 			Cells(i)(j)= new Button {
 				var piece_id = id_piece_on_case(i,j)
-				action = Action(piece_id) {
+				action = Action("") {
 					piece_id = id_piece_on_case(i,j)
 					if (id_piece_selected == "0"){
 						if (piece_id != "0" && color_from_id(piece_id) == get_player() && piece_id != id_piece_selected){
@@ -67,6 +66,9 @@ object Interface extends SimpleSwingApplication {
 							resetColors()
 						}			
 					}
+				}
+				if (piece_id !="0"){
+					icon = new ImageIcon( getClass.getResource(color_from_id(piece_id)+type_from_id(piece_id)+".PNG"))
 				}
 			}
 			initColors(i,j)
