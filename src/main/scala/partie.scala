@@ -11,7 +11,7 @@ class Partie() {
 
 	// contient l'id des pieces à leur position. vaut "0" si pas de piece a la position.
 	var player = 'W';
-
+	var liste_pieces :List[Piece] = List()
 	def other_player(player: Char):Char={
 	if (player=='B') {return 'W'}
 	else {return 'B'} 
@@ -36,43 +36,52 @@ class Partie() {
 	
 	def get_player() = player
 	
-		
+	def get_piece(id:String):Piece = {
+		var indice = -1
+		for( i <- 0 to liste_pieces.length-1) {
+			if (liste_pieces(i).get_id() == id){
+				indice = i
+			}			
+		}
+		return liste_pieces(indice)
+	}
+
 	def partie_init() ={
 		//definition des pieces blanches
-		new Peon('W',(2,1))
-		new Peon('W',(2,2))
-		new Peon('W',(2,3))
-		new Peon('W',(2,4))
-		new Peon('W',(2,5))
-		new Peon('W',(2,6))
-		new Peon('W',(2,7))
-		new Peon('W',(2,8))
-		new Tower('W',(1,1))
-		new Tower('W',(1,8))
-		new Knight('W',(1,2))
-		new Knight('W',(1,7))
-		new Bishop('W',(1,3))
-		new Bishop('W',(1,6))
-		new Queen('W',(1,4))
-		new King('W',(1,5))
+		liste_pieces:+new Peon('W',(2,1))
+		liste_pieces:+new Peon('W',(2,2))
+		liste_pieces:+new Peon('W',(2,3))
+		liste_pieces:+new Peon('W',(2,4))
+		liste_pieces:+new Peon('W',(2,5))
+		liste_pieces:+new Peon('W',(2,6))
+		liste_pieces:+new Peon('W',(2,7))
+		liste_pieces:+new Peon('W',(2,8))
+		liste_pieces:+new Tower('W',(1,1))
+		liste_pieces:+new Tower('W',(1,8))
+		liste_pieces:+new Knight('W',(1,2))
+		liste_pieces:+new Knight('W',(1,7))
+		liste_pieces:+new Bishop('W',(1,3))
+		liste_pieces:+new Bishop('W',(1,6))
+		liste_pieces:+new Queen('W',(1,4))
+		liste_pieces:+new King('W',(1,5))
 
 		//definition des pieces noires
-		new Peon('B',(7,1))
-		new Peon('B',(7,2))
-		new Peon('B',(7,3))
-		new Peon('B',(7,4))
-		new Peon('B',(7,5))
-		new Peon('B',(7,6))
-		new Peon('B',(7,7))
-		new Peon('B',(7,8))
-		new Tower('B',(8,1))
-		new Tower('B',(8,8))
-		new Knight('B',(8,2))
-		new Knight('B',(8,7))
-		new Bishop('B',(8,3))
-		new Bishop('B',(8,6))
-		new Queen('B',(8,4))
-		new King('B',(8,5))
+		liste_pieces:+new Peon('B',(7,1))
+		liste_pieces:+new Peon('B',(7,2))
+		liste_pieces:+new Peon('B',(7,3))
+		liste_pieces:+new Peon('B',(7,4))
+		liste_pieces:+new Peon('B',(7,5))
+		liste_pieces:+new Peon('B',(7,6))
+		liste_pieces:+new Peon('B',(7,7))
+		liste_pieces:+new Peon('B',(7,8))
+		liste_pieces:+new Tower('B',(8,1))
+		liste_pieces:+new Tower('B',(8,8))
+		liste_pieces:+new Knight('B',(8,2))
+		liste_pieces:+new Knight('B',(8,7))
+		liste_pieces:+new Bishop('B',(8,3))
+		liste_pieces:+new Bishop('B',(8,6))
+		liste_pieces:+new Queen('B',(8,4))
+		liste_pieces:+new King('B',(8,5))
 	}
 }
 object Projet{

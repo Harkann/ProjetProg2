@@ -9,6 +9,8 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	val name:String; 
 	var is_alive:Boolean;
 	val id:String; // != "0"
+	def get_id() = id
+	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]);
 	// Couleur.2PremieresLettres.numéro
 	//var position:(Int,Int); //doublon avec la liste des pieces dans partie ?
 	//def move(position:(Int,Int)):Unit; //change la position de la piece couple (ligne,colonne)
@@ -188,7 +190,11 @@ with Id_creation with Horizontal_Vertical{
 	val name="To"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
-
+	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		var (vert1,vert2)= dpct_verti(position)
+		var (hori1,hori2)= dpct_horiz(position)
+		return (vert1++hori1,vert2++hori2)
+	}
 	var (i,j) = position
 	Projet.partie.matrix_pieces(i)(j)=id
 }
@@ -198,7 +204,7 @@ with Id_creation with Jump{
 	val name="Kn"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
-
+	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = jump(position)
 	var (i,j) = position
 	Projet.partie.matrix_pieces(i)(j)=id
 }

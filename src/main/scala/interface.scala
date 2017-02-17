@@ -44,6 +44,18 @@ object Interface extends SimpleSwingApplication {
 	def color_from_id (id:String):Char = Projet.partie.color_from_id(id)
 	def type_from_id (id:String):String = Projet.partie.type_from_id(id)
 	def get_player() = Projet.partie.get_player()
+	def piece_move(id:String,position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		var piece = Projet.partie.get_piece(id)	
+		type_from_id(id) match {
+			//case "Ki" => return
+			//case "Qu" => return
+			//case "Pe" =>
+			case "Kn" => return piece.move_piece(position)
+			//case "Bi" =>
+			//case "To" =>
+		}
+	} 
+
 	for( i <- 7 to 0 by -1) {
 		for( j <- 0 to 7) {
 			Cells(i)(j)= new Button {
@@ -55,15 +67,18 @@ object Interface extends SimpleSwingApplication {
 							id_piece_selected = piece_id
 							resetColors()
 							select_case(i,j)
-												}
+							piece_move(piece_id,(i,j))				}
 						else {
-							resetColors()
+							//resetColors()
 						}
 					}	
 					else {
 						if (piece_id == id_piece_selected){
 							id_piece_selected = "0"
 							resetColors()
+						}
+						else {
+
 						}			
 					}
 				}
