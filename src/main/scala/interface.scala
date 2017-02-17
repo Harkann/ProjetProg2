@@ -38,6 +38,32 @@ object Interface extends SimpleSwingApplication {
 			Cells(i)(j).background = java.awt.Color.GREEN
 		}
 	}
+	def select_case_move(i:Int,j:Int) ={
+		if (Cells(i)(j).background == java.awt.Color.RED){
+			if((i+j)%2 == 0){
+				Cells(i)(j).background = java.awt.Color.BLACK
+			}
+			else{
+				Cells(i)(j).background = java.awt.Color.WHITE
+			}
+		}
+		else {
+			Cells(i)(j).background = java.awt.Color.BLUE
+		}
+	}
+	def select_case_take(i:Int,j:Int) ={
+		if (Cells(i)(j).background == java.awt.Color.RED){
+			if((i+j)%2 == 0){
+				Cells(i)(j).background = java.awt.Color.BLACK
+			}
+			else{
+				Cells(i)(j).background = java.awt.Color.WHITE
+			}
+		}
+		else {
+			Cells(i)(j).background = java.awt.Color.RED
+		}
+	}
 	def id_piece_on_case (i:Int,j:Int):String = {
 		return Projet.partie.id_piece_on_case(i+1, j+1)
 	}
@@ -46,14 +72,7 @@ object Interface extends SimpleSwingApplication {
 	def get_player() = Projet.partie.get_player()
 	def piece_move(id:String,position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var piece = Projet.partie.get_piece(id)	
-		type_from_id(id) match {
-			//case "Ki" => return
-			//case "Qu" => return
-			//case "Pe" =>
-			case "Kn" => return piece.move_piece(position)
-			//case "Bi" =>
-			//case "To" =>
-		}
+		return piece.move_piece(position)
 	} 
 
 	for( i <- 7 to 0 by -1) {
@@ -67,7 +86,14 @@ object Interface extends SimpleSwingApplication {
 							id_piece_selected = piece_id
 							resetColors()
 							select_case(i,j)
-							piece_move(piece_id,(i,j))				}
+							var (moves, prises) = piece_move(piece_id,(i+1,j+1))
+							for( (i,j) <- moves) {
+								select_case_move(i-1,j-1)
+							}
+							for( (i,j) <- prises) {
+								select_case_take(i-1,j-1)
+							}
+						}
 						else {
 							//resetColors()
 						}

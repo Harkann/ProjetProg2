@@ -105,9 +105,9 @@ trait Jump{
 		var res : List[ (Int,Int) ] = List()
 		for( dplct <- movement_list) {
 			var (x,y) = dplct
-
 			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
 			{
+
 				if (Projet.partie.matrix_pieces(i+x)(j+y)=="0")  
 					{res=res:+(i+x,j+y)}
 				if (Projet.partie.matrix_pieces(i+x)(j+y)(0)==Projet.partie.other_player(id(0)))
@@ -130,7 +130,7 @@ trait Peon_move{
 		if ((i+1<=8) && (j+1<=8) && (Projet.partie.matrix_pieces(i+1)(j+1))(0)==other)
 			{res=res:+(i+1,j+1);attack_list=attack_list:+(i+1,j+1)}
 		if ((i+1<=8) && (j-1>=1) && (Projet.partie.matrix_pieces(i+1)(j-1))(0)==other)
-			{res=res:+(i+1,j-1);attack_list=attack_list:+(i+1,j+1)}
+			{res=res:+(i+1,j-1);attack_list=attack_list:+(i+1,j-1)}
 		return (res,attack_list)
 	}
 }
@@ -268,6 +268,7 @@ with Id_creation with Diagonal{
 	val name="Bi"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
+	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (dL1,dL2)=dpct_diag_L(position)
 		var (dR1,dR2)=dpct_diag_R(position)
 		return (dL1++dR1,dL2++dR2)
