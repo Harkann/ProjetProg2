@@ -117,19 +117,26 @@ trait Jump{
 }
 
 trait Peon_move{
-	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]){
+	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
+		val other=Projet.partie.other_player(id(0))
 		var attack_list: List[ (Int,Int) ] = List()
-		if ((i+1<=n) && (Projet.partie.matrix_pieces(i+1)(j))=="0")
+		if ((i+1<=8) && (Projet.partie.matrix_pieces(i+1)(j))=="0")
 			{res=res:+(i+1,j)}
-		if ((i+1<=n) && (j+1<=n) && (Projet.partie.matrix_pieces(i+1)(j))(0)==id(0))
+		if ((i+1<=8) && (j+1<=8) && (Projet.partie.matrix_pieces(i+1)(j+1))(0)==other)
 			{res=res:+(i+1,j+1);attack_list=attack_list:+(i+1,j+1)}
+		if ((i+1<=8) && (j-1>=1) && (Projet.partie.matrix_pieces(i+1)(j-1))(0)==other)
+			{res=res:+(i+1,j-1);attack_list=attack_list:+(i+1,j+1)}
 		return (res,attack_list)
 	}
 }
-
+/*
+trait Kinf_move{
+	def dpct_king:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+}
+*/
 
 
 trait Id_creation {
