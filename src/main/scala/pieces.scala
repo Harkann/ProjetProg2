@@ -132,11 +132,29 @@ trait Peon_move{
 		return (res,attack_list)
 	}
 }
-/*
-trait Kinf_move{
-	def dpct_king:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+
+trait King_move{
+	def dpct_king(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+		val movement_list : List[(Int,Int)] = List((1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1))
+		var (i,j) = position 
+		var attack_list: List[ (Int,Int) ] = List()
+		val id= Projet.partie.matrix_pieces(i)(j)
+		var res : List[ (Int,Int) ] = List()
+		for( dplct <- movement_list) {
+			var (x,y) = dplct
+
+			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
+			{
+				if (Projet.partie.matrix_pieces(i+x)(j+y)=="0")  
+					{res=res:+(i+x,j+y)}
+				if (Projet.partie.matrix_pieces(i+x)(j+y)(0)==Projet.partie.other_player(id(0)))
+					{res=res:+(i+x,j+y);attack_list=attack_list:+(i+x,j+y)}
+			}
+		}
+		return (res,attack_list)
+	}
 }
-*/
+
 
 
 trait Id_creation {
@@ -165,7 +183,7 @@ def in_danger(player: char): List[(Int,Int)]={
 			if (piece_ij(0)==player)
 			{
 				var (list_move,list_attack)=move(piece_ij)//not def yet!!!!!
-				res=res+list_attack
+				res=res++list_attack
 			}
 		}
 	}
