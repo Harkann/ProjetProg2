@@ -163,23 +163,28 @@ trait Id_creation {
 	}	
 }
 
-//ce soir coder le "en danger" et modifier "le problème reconnu plus haut"
+//ce soir coder le "en danger" 
+
+/*def In_danger (position:(Int,Int)): List[(Int,Int)]={
+
+}*/
 
 
-//Je mets tout mes commentaires qui sont valables pour toute pièce sur la reine uniquement
 
-class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation { //si jamais on remet "position" et pas un autre nom soit "pos" position est considéré constante
+class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation { 
+	//si jamais on remet "position" et pas un autre nom soit "pos" position est considéré constante
 	val name = "Qu"
 	var is_alive= true
 	val id=color+name+id_create(color,name)
 
 	var (i,j) = position
-	// est ce qu'on devrait pas faire atention à ce que la position ne soit pas dejà prise?
+	//position normalement libre
 	Projet.partie.matrix_pieces(i)(j)=id
  
 }
 
-class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
+class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
+with Id_creation with Diagonal with Horizontal_Vertical{
 	val name="Pe"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
@@ -187,7 +192,8 @@ class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
 	Projet.partie.matrix_pieces(i)(j)=id 
 }
 
-class King(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
+class King(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
+with Id_creation {
 	val name="Ki"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
@@ -198,7 +204,8 @@ class King(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
 	Projet.partie.matrix_pieces(i)(j)=id
 }
 
-class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
+class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
+with Id_creation with Horizontal_Vertical{
 	val name="To"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
@@ -207,7 +214,8 @@ class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
 	Projet.partie.matrix_pieces(i)(j)=id
 }
 
-class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
+class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
+with Id_creation with Jump{
 	val name="Kn"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
@@ -216,7 +224,8 @@ class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation
 	Projet.partie.matrix_pieces(i)(j)=id
 }
 
-class Bishop(color:Char,position:(Int,Int)) extends Piece(color,position) with Id_creation{
+class Bishop(color:Char,position:(Int,Int)) extends Piece(color,position) 
+with Id_creation with Diagonal{
 	val name="Bi"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
