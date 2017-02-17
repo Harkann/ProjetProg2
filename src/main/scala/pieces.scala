@@ -22,11 +22,26 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 
 	def dpct_horiz (position:(Int,Int)) : List[(Int,Int)]={ 
 		var (i,j) = position 
+		val id = Projet.partie.matrix_pieces(i)(j)
 		var res : List[ (Int,Int) ] = List()
 		var n = 1
-		while ((j+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i,j+n);n+=1}// là je suis stupide -> il y a une position possible de plus -> le fait de mager la piece
+		while ((j+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i,j+n);n+=1}
+		if (j+n<=8) 
+		{ 
+			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i)(j+n)(0)=='W'))
+				{res=res:+(i,j+n)}
+			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i)(j+n)(0)=='B'))
+				{res=res:+(i,j+n)}
+		}
 		n=1
-		while ((j-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i,j-n);n+=1}//la aussi...
+		while ((j-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i,j-n);n+=1}
+		if (j-n>=1) 
+		{ 
+			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i)(j-n)(0)=='W'))
+				{res=res:+(i,j-n)}
+			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i)(j-n)(0)=='B'))
+				{res=res:+(i,j-n)}
+		}
 		return res}
 
 
@@ -34,9 +49,25 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 		var (i,j) = position 
 		var res : List[ (Int,Int) ] = List()
 		var n = 1
-		while ((i+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i+n,j);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+		val id= Projet.partie.matrix_pieces(i)(j)
+		while ((i+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i+n,j);n+=1}
+
+		if (i+n<=8) 
+		{ 
+			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i+n)(j)(0)=='W'))
+				{res=res:+(i,j+n)}
+			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i+n)(j)(0)=='B'))
+				{res=res:+(i,j+n)}
+		}
 		n=1
-		while ((i-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i-n,j);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+		while ((i-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i-n,j);n+=1}
+		if (i-n>=1) 
+		{ 
+			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i-n)(j)(0)=='W'))
+				{res=res:+(i-n,j)}
+			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i-n)(j)(0)=='B'))
+				{res=res:+(i-n,j)}
+		}
 		return res}
 }
 
@@ -47,9 +78,24 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
 	var n = 1
-	while ((i+n<=8) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j+n)=="0")) {res=res:+(i+n,j+n);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+	val id= Projet.partie.matrix_pieces(i)(j)
+	while ((i+n<=8) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j+n)=="0")) {res=res:+(i+n,j+n);n+=1}
+	if ((i+n<=8) && (j+n<=8))
+		{ 
+			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i+n)(j+n)(0)=='W'))
+				{res=res:+(i+n,j+n)}
+			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i+n)(j+n)(0)=='B'))
+				{res=res:+(i+n,j+n)}
+		}
 	n=1
-	while ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)=="0")) {res=res:+(i-n,j-n);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+	while ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)=="0")) {res=res:+(i-n,j-n);n+=1}
+	if ((i-n>=1) && (j-n>=1))
+		{ 
+			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i-n)(j-n)(0)=='W'))
+				{res=res:+(i-n,j-n)}
+			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i-n)(j-n)(0)=='B'))
+				{res=res:+(i-n,j-n)}
+		}
 	return res}
 
 
@@ -58,10 +104,25 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 	def dpct_diag_L (position:(Int,Int)) : List[(Int,Int)]={ 
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
-	var n = 1
-	while ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i+n,j-n);n+=1}// là je suis stupide -> il y a une position possible de plus -> le fait de mager la piece
+	var n=1
+	val id= Projet.partie.matrix_pieces(i)(j)
+	while ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i+n,j-n);n+=1}
+	if ((i+n<=8) && (j-n>=1))
+		{ 
+			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i+n)(j-n)(0)=='W'))
+				{res=res:+(i+n,j-n)}
+			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i+n)(j-n)(0)=='B'))
+				{res=res:+(i+n,j-n)}
+		}
 	n=1
-	while ((i-n>=1) && (j+n>=8) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i-n,j+n);n+=1}//là à corrigé aussi, je m'en occupe ce soir
+	while ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i-n,j+n);n+=1}
+	if ((i-n>=1) && (j+n<=8))
+		{ 
+			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i-n)(j+n)(0)=='W'))
+				{res=res:+(i-n,j+n)}
+			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i-n)(j+n)(0)=='B'))
+				{res=res:+(i-n,j+n)}
+		}
 	return res}
 }
 
@@ -69,13 +130,18 @@ trait Jump{
 	def jump(position:(Int,Int)) : List[(Int,Int)]={
 		val movement_list : List[(Int,Int)] = List((1,2),(-1,2),(2,1),(2,-1),(-2,-1),(-2,1),(1,-2),(-1,-2))
 		var (i,j) = position 
+		val id= Projet.partie.matrix_pieces(i)(j)
 		var res : List[ (Int,Int) ] = List()
 		for( dplct <- movement_list) {
 			var (x,y) = dplct
-			if ( (i+x >=1) && (i+x <=9) && 
-				(j+y <=8) && (j+y >=1) &&
-				(Projet.partie.matrix_pieces(i+x)(j+y)=="0") ) //là à corrigé aussi, je m'en occupe ce soir
-			{ res=res:+(i+x,j+y)}
+
+			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
+			{
+				if ((Projet.partie.matrix_pieces(i+x)(j+y)=="0") || 
+					((id(0)=='B') && (Projet.partie.matrix_pieces(i+x)(j+y)(0)=='W')) ||
+					((id(0)=='W') && (Projet.partie.matrix_pieces(i+x)(j+y)(0)=='B')) ) 
+				{res=res:+(i+x,j+y)}
+			}
 		}
 		return res
 	}
@@ -86,9 +152,9 @@ trait Jump{
 trait Id_creation {
 	def id_create(color:Char,name:String) : Int = {
 		var ind=0
-		for( i <- 0 to 7) {
-			for( j <- 0 to 7) {
-				val piece_ij = Projet.partie.matrix_pieces(i)(j)
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				var piece_ij = Projet.partie.matrix_pieces(i)(j)
 				if ( piece_ij(0)==color )
 				{ if (piece_ij.substring(1,3)==name) {ind+=1}} 
 			}
