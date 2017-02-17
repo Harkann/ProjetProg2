@@ -2,6 +2,13 @@ import Array._
 
 class Partie() {
 	var matrix_pieces = ofDim[String](9,9); //plus grande pour pas avoir à s'enmerder avec les indices.
+	for( i <- 1 to 8) {
+		for( j <- 1 to 8) {
+			matrix_pieces(i)(j) = "0"
+		}
+	}
+
+
 	// contient l'id des pieces à leur position. vaut "0" si pas de piece a la position.
 	var player = 'W';
 	var check = false; //gros 
@@ -9,7 +16,13 @@ class Partie() {
 	def next_turn() = {
 		if (player == 'W') {player = 'B'}
 		else {player = 'W'}
-
+	}
+	def id_piece_on_case (i:Int,j:Int):String = {
+		println(matrix_pieces(i)(j))
+		return matrix_pieces(i)(j)
+	}
+		
+	def partie_init() ={
 		//definition des pieces blanches
 		new Peon('W',(2,1))
 		new Peon('W',(2,2))
@@ -46,10 +59,9 @@ class Partie() {
 		new Queen('B',(8,4))
 		new King('B',(8,5))
 	}
-
 }
-
 object Projet{
 	var partie= new Partie()
+	partie.partie_init()
 }
 

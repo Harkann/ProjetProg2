@@ -188,7 +188,6 @@ with Id_creation with Diagonal with Horizontal_Vertical{
 	val name="Pe"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
-
 	var (i,j) = position
 	Projet.partie.matrix_pieces(i)(j)=id 
 }
