@@ -18,9 +18,18 @@ class Partie() {
 		else {player = 'W'}
 	}
 	def id_piece_on_case (i:Int,j:Int):String = {
-		println(matrix_pieces(i)(j))
 		return matrix_pieces(i)(j)
 	}
+	def color_from_id(id:String):Char = {
+		return id(0)
+	}
+	
+	def type_from_id(id:String):String = {
+		return id.substring(1,3)
+	}
+	
+	def get_player() = player
+	
 		
 	def partie_init() ={
 		//definition des pieces blanches
