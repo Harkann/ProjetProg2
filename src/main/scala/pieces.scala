@@ -17,6 +17,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		var (x,y)=posi
 		Projet.partie.matrix_pieces(x)(y)=get_id()
 		Projet.partie.matrix_pieces(i)(j)="0"
+		Projet.partie.next_turn()
 	}
 	// Couleur.2PremieresLettres.numéro
 	//var position:(Int,Int); //doublon avec la liste des pieces dans partie ?
