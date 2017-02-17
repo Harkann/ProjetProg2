@@ -118,6 +118,27 @@ trait Jump{
 	}
 }
 
+trait Peon_move{
+	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+		var (i,j) = position
+		var res : List[ (Int,Int) ] = List()
+		val id= Projet.partie.matrix_pieces(i)(j)
+		val other=Projet.partie.other_player(id(0))
+		var attack_list: List[ (Int,Int) ] = List()
+		if ((i+1<=8) && (Projet.partie.matrix_pieces(i+1)(j))=="0")
+			{res=res:+(i+1,j)}
+		if ((i+1<=8) && (j+1<=8) && (Projet.partie.matrix_pieces(i+1)(j+1))(0)==other)
+			{res=res:+(i+1,j+1);attack_list=attack_list:+(i+1,j+1)}
+		if ((i+1<=8) && (j-1>=1) && (Projet.partie.matrix_pieces(i+1)(j-1))(0)==other)
+			{res=res:+(i+1,j-1);attack_list=attack_list:+(i+1,j+1)}
+		return (res,attack_list)
+	}
+}
+/*
+trait Kinf_move{
+	def dpct_king:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+}
+*/
 
 
 trait Id_creation {
@@ -142,17 +163,21 @@ def in_danger(player: char): List[(Int,Int)]={
 	val other=Projet.partie.other_player(player)
 	for( i <- 1 to 8) {
 		for( j <- 1 to 8) {
-			//renvoyer dans les mouvement la liste des pieces misent en danger?
+			var piece_ij = Projet.partie.matrix_pieces(i)(j)
+			if (piece_ij(0)==player)
+			{
+				var (list_move,list_attack)=move(piece_ij)//not def yet!!!!!
+				res=res+list_attack
+			}
 		}
 	}
-
+	return list_attack
 }
-}*/
-
-
+}
+*/
 
 class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
-with Id_creation { 
+with Id_creation with Diagonal with Horizontal_Vertical{ 
 	//si jamais on remet "position" et pas un autre nom soit "pos" position est considéré constante
 	val name = "Qu"
 	var is_alive= true
@@ -165,7 +190,7 @@ with Id_creation {
 }
 
 class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
-with Id_creation with Diagonal with Horizontal_Vertical{
+with Id_creation with Peon_move{
 	val name="Pe"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
