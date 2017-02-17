@@ -226,7 +226,7 @@ with Id_creation with Peon_move{
 }
 
 class King(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
-with Id_creation {
+with Id_creation with King_move{
 	val name="Ki"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
