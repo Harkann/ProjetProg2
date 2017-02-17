@@ -203,6 +203,9 @@ class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
 	val name="To"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
+	
+	var (i,j) = position
+	Projet.partie.matrix_pieces(i)(j)=id
 }
 
 class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
