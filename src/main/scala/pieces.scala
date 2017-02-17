@@ -143,7 +143,8 @@ def in_danger(player: char): List[(Int,Int)]={
 
 
 
-class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation { 
+class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
+with Id_creation { 
 	//si jamais on remet "position" et pas un autre nom soit "pos" position est considéré constante
 	val name = "Qu"
 	var is_alive= true
