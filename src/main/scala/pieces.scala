@@ -268,7 +268,10 @@ with Id_creation with Diagonal{
 	val name="Bi"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
-
+		var (dL1,dL2)=dpct_diag_L(position)
+		var (dR1,dR2)=dpct_diag_R(position)
+		return (dL1++dR1,dL2++dR2)
+	}
 	var (i,j) = position
 	Projet.partie.matrix_pieces(i)(j)=id
 }
