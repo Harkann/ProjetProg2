@@ -11,6 +11,12 @@ class Partie() {
 
 	// contient l'id des pieces à leur position. vaut "0" si pas de piece a la position.
 	var player = 'W';
+
+	def other_player(player: Char):Char={
+	if (player=='B') {return 'W'}
+	else {return 'B'} 
+	//petit risque de probleme si char different de 'B' ou 'W'
+}
 	var check = false; //gros 
 	def is_check() = check;
 	def next_turn() = {
