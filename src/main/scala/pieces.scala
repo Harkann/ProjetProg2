@@ -86,9 +86,9 @@ trait Jump{
 trait Id_creation {
 	def id_create(color:Char,name:String) : Int = {
 		var ind=0
-		for( i <- 0 to 7) {
-			for( j <- 0 to 7) {
-				val piece_ij = Projet.partie.matrix_pieces(i)(j)
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				var piece_ij = Projet.partie.matrix_pieces(i)(j)
 				if ( piece_ij(0)==color )
 				{ if (piece_ij.substring(1,3)==name) {ind+=1}} 
 			}
@@ -117,7 +117,6 @@ class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
 	val name="Pe"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
-
 	var (i,j) = position
 	Projet.partie.matrix_pieces(i)(j)=id 
 }
@@ -137,6 +136,9 @@ class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{
 	val name="To"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
+
+	var (i,j) = position
+	Projet.partie.matrix_pieces(i)(j)=id
 }
 
 class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) with Id_creation{

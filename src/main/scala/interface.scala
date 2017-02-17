@@ -3,6 +3,7 @@ import Array._
 
 
 object Interface extends SimpleSwingApplication {
+	var isPieceSelected = false
 	var Cells = ofDim[Button](8,8)
 	def initColors(i:Int,j:Int) = {
 		if((i+j)%2 == 0){
@@ -42,22 +43,26 @@ object Interface extends SimpleSwingApplication {
 	}
 
 
-	def is_piece_on_case (i:Int,j:Int) = {
-		Projet.partie.matrix_pieces(i)(j)
+	def id_piece_on_case (i:Int,j:Int):String = {
+		return Projet.partie.id_piece_on_case(i+1, j+1)
 	}
 
 	for( i <- 7 to 0 by -1) {
 		for( j <- 0 to 7) {
 			Cells(i)(j)= new Button {
 				action = Action((i+1)+","+(j+1)) {
-					val piece_id = is_piece_on_case(i,j)
-					if (piece_id != "0"){
-						resetColors(i,j)
-						select_case(i,j)
+					var piece_id = id_piece_on_case(i,j)
+					if (isPieceSelected == false){
+						if (piece_id != "0"){
+							isPieceSelected = true
+							resetColors(i,j)
+							select_case(i,j)
+						
 
-					}
-					else {
-						resetColors(i,j)
+						}
+						else {
+							resetColors(i,j)
+						}
 					}
 				}
 			}
