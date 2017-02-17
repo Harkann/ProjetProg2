@@ -22,78 +22,83 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 
 trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 
-	def dpct_horiz (position:(Int,Int)) : List[(Int,Int)]={ 
+	def dpct_horiz (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={ 
 		var (i,j) = position 
 		val id = Projet.partie.matrix_pieces(i)(j)
 		var res : List[ (Int,Int) ] = List()
+		var attack_list: List[ (Int,Int) ] = List()
 		var n = 1
 		while ((j+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i,j+n);n+=1}
 		if ((j+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)(0)==Projet.partie.other_player(id(0))))
-				{res=res:+(i,j+n)}
+				{res=res:+(i,j+n);attack_list=attack_list:+(i,j+n)}
 		n=1
 		while ((j-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i,j-n);n+=1}
 		if ((j-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)(0)==Projet.partie.other_player(id(0))))
-				{res=res:+(i,j-n)}
-		return res}
+				{res=res:+(i,j-n);attack_list=attack_list:+(i,j-n)}
+		return (res,attack_list)}
 
 
-	def dpct_verti (position:(Int,Int)) : List[(Int,Int)]={ 
+	def dpct_verti (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={ 
 		var (i,j) = position 
 		var res : List[ (Int,Int) ] = List()
+		var attack_list: List[ (Int,Int) ] = List()
 		var n = 1
 		val id= Projet.partie.matrix_pieces(i)(j)
 		while ((i+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i+n,j);n+=1}
 
 		if ((i+n<=8) && (Projet.partie.matrix_pieces(i+n)(j)(0)==Projet.partie.other_player(id(0))))
-			{res=res:+(i,j+n)}
+			{res=res:+(i+n,j);attack_list=attack_list:+(i+n,j)}
 		n=1
 		while ((i-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i-n,j);n+=1}
 		if (i-n>=1 && (Projet.partie.matrix_pieces(i-n)(j)(0)==Projet.partie.other_player(id(0))))
-			{res=res:+(i-n,j)}
-		return res}
+			{res=res:+(i-n,j);attack_list=attack_list:+(i-n,j)}
+		return (res,attack_list)}
 }
 
 
 trait Diagonal {  //utiliser des traits pour factoriser le code.
 
-	def dpct_diag_R (position:(Int,Int)) : List[(Int,Int)]={ 
+	def dpct_diag_R (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={ 
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
+	var attack_list: List[ (Int,Int) ] = List()
 	var n = 1
 	val id= Projet.partie.matrix_pieces(i)(j)
 	while ((i+n<=8) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j+n)=="0")) {res=res:+(i+n,j+n);n+=1}
 	if ((i+n<=8) && (j+n<=8) && 
 		(Projet.partie.matrix_pieces(i+n)(j+n)(0)==Projet.partie.other_player(id(0))))
-		{res=res:+(i+n,j+n)}
+		{res=res:+(i+n,j+n);attack_list=attack_list:+(i+n,j+n)}
 	n=1
 	while ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)=="0")) {res=res:+(i-n,j-n);n+=1}
 	if ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)(0)==Projet.partie.other_player(id(0))))
-		{res=res:+(i-n,j-n)}
-	return res}
+		{res=res:+(i-n,j-n);attack_list=attack_list:+(i-n,j-n)}
+	return (res,attack_list)}
 
 
 
 
-	def dpct_diag_L (position:(Int,Int)) : List[(Int,Int)]={ 
+	def dpct_diag_L (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={ 
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
 	var n=1
+	var attack_list: List[ (Int,Int) ] = List()
 	val id= Projet.partie.matrix_pieces(i)(j)
 	while ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i+n,j-n);n+=1}
 	if ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)(0)==Projet.partie.other_player(id(0))))
-		{res=res:+(i+n,j-n)}
+		{res=res:+(i+n,j-n);attack_list=attack_list:+(i+n,j-n)}
 	n=1
 	while ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i-n,j+n);n+=1}
 	if ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i-n)(j+n)(0)==Projet.partie.other_player(id(0))))
-		{res=res:+(i-n,j+n)}
+		{res=res:+(i-n,j+n);attack_list=attack_list:+(i-n,j+n)}
 
-	return res }
+	return (res,attack_list) }
 }
 
 trait Jump{
-	def jump(position:(Int,Int)) : List[(Int,Int)]={
+	def jump(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
 		val movement_list : List[(Int,Int)] = List((1,2),(-1,2),(2,1),(2,-1),(-2,-1),(-2,1),(1,-2),(-1,-2))
 		var (i,j) = position 
+		var attack_list: List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
 		var res : List[ (Int,Int) ] = List()
 		for( dplct <- movement_list) {
@@ -101,12 +106,13 @@ trait Jump{
 
 			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
 			{
-				if ((Projet.partie.matrix_pieces(i+x)(j+y)=="0") || 
-					(Projet.partie.matrix_pieces(i+x)(j+y)(0)==Projet.partie.other_player(id(0))) ) 
-				{res=res:+(i+x,j+y)}
+				if (Projet.partie.matrix_pieces(i+x)(j+y)=="0")  
+					{res=res:+(i+x,j+y)}
+				if (Projet.partie.matrix_pieces(i+x)(j+y)(0)==Projet.partie.other_player(id(0)))
+					{res=res:+(i+x,j+y);attack_list=attack_list:+(i+x,j+y)}
 			}
 		}
-		return res
+		return (res,attack_list)
 	}
 }
 
