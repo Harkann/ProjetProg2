@@ -18,6 +18,8 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 }
 
 
+
+
 trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 
 	def dpct_horiz (position:(Int,Int)) : List[(Int,Int)]={ 
@@ -26,22 +28,12 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 		var res : List[ (Int,Int) ] = List()
 		var n = 1
 		while ((j+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i,j+n);n+=1}
-		if (j+n<=8) 
-		{ 
-			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i)(j+n)(0)=='W'))
+		if ((j+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)(0)==Projet.partie.other_player(id(0))))
 				{res=res:+(i,j+n)}
-			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i)(j+n)(0)=='B'))
-				{res=res:+(i,j+n)}
-		}
 		n=1
 		while ((j-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i,j-n);n+=1}
-		if (j-n>=1) 
-		{ 
-			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i)(j-n)(0)=='W'))
+		if ((j-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)(0)==Projet.partie.other_player(id(0))))
 				{res=res:+(i,j-n)}
-			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i)(j-n)(0)=='B'))
-				{res=res:+(i,j-n)}
-		}
 		return res}
 
 
@@ -52,22 +44,12 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 		val id= Projet.partie.matrix_pieces(i)(j)
 		while ((i+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i+n,j);n+=1}
 
-		if (i+n<=8) 
-		{ 
-			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i+n)(j)(0)=='W'))
-				{res=res:+(i,j+n)}
-			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i+n)(j)(0)=='B'))
-				{res=res:+(i,j+n)}
-		}
+		if ((i+n<=8) && (Projet.partie.matrix_pieces(i+n)(j)(0)==Projet.partie.other_player(id(0))))
+			{res=res:+(i,j+n)}
 		n=1
 		while ((i-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i-n,j);n+=1}
-		if (i-n>=1) 
-		{ 
-			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i-n)(j)(0)=='W'))
-				{res=res:+(i-n,j)}
-			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i-n)(j)(0)=='B'))
-				{res=res:+(i-n,j)}
-		}
+		if (i-n>=1 && (Projet.partie.matrix_pieces(i-n)(j)(0)==Projet.partie.other_player(id(0))))
+			{res=res:+(i-n,j)}
 		return res}
 }
 
@@ -80,22 +62,13 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 	var n = 1
 	val id= Projet.partie.matrix_pieces(i)(j)
 	while ((i+n<=8) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j+n)=="0")) {res=res:+(i+n,j+n);n+=1}
-	if ((i+n<=8) && (j+n<=8))
-		{ 
-			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i+n)(j+n)(0)=='W'))
-				{res=res:+(i+n,j+n)}
-			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i+n)(j+n)(0)=='B'))
-				{res=res:+(i+n,j+n)}
-		}
+	if ((i+n<=8) && (j+n<=8) && 
+		(Projet.partie.matrix_pieces(i+n)(j+n)(0)==Projet.partie.other_player(id(0))))
+		{res=res:+(i+n,j+n)}
 	n=1
 	while ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)=="0")) {res=res:+(i-n,j-n);n+=1}
-	if ((i-n>=1) && (j-n>=1))
-		{ 
-			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i-n)(j-n)(0)=='W'))
-				{res=res:+(i-n,j-n)}
-			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i-n)(j-n)(0)=='B'))
-				{res=res:+(i-n,j-n)}
-		}
+	if ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)(0)==Projet.partie.other_player(id(0))))
+		{res=res:+(i-n,j-n)}
 	return res}
 
 
@@ -107,23 +80,14 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 	var n=1
 	val id= Projet.partie.matrix_pieces(i)(j)
 	while ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i+n,j-n);n+=1}
-	if ((i+n<=8) && (j-n>=1))
-		{ 
-			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i+n)(j-n)(0)=='W'))
-				{res=res:+(i+n,j-n)}
-			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i+n)(j-n)(0)=='B'))
-				{res=res:+(i+n,j-n)}
-		}
+	if ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)(0)==Projet.partie.other_player(id(0))))
+		{res=res:+(i+n,j-n)}
 	n=1
 	while ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i-n,j+n);n+=1}
-	if ((i-n>=1) && (j+n<=8))
-		{ 
-			if ((id(0)=='B') && (Projet.partie.matrix_pieces(i-n)(j+n)(0)=='W'))
-				{res=res:+(i-n,j+n)}
-			if ((id(0)=='W') && (Projet.partie.matrix_pieces(i-n)(j+n)(0)=='B'))
-				{res=res:+(i-n,j+n)}
-		}
-	return res}
+	if ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i-n)(j+n)(0)==Projet.partie.other_player(id(0))))
+		{res=res:+(i-n,j+n)}
+
+	return res }
 }
 
 trait Jump{
@@ -138,8 +102,7 @@ trait Jump{
 			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
 			{
 				if ((Projet.partie.matrix_pieces(i+x)(j+y)=="0") || 
-					((id(0)=='B') && (Projet.partie.matrix_pieces(i+x)(j+y)(0)=='W')) ||
-					((id(0)=='W') && (Projet.partie.matrix_pieces(i+x)(j+y)(0)=='B')) ) 
+					(Projet.partie.matrix_pieces(i+x)(j+y)(0)==Projet.partie.other_player(id(0))) ) 
 				{res=res:+(i+x,j+y)}
 			}
 		}
@@ -164,9 +127,18 @@ trait Id_creation {
 }
 
 //ce soir coder le "en danger" 
+/*
+trait In_danger{
+def in_danger(player: char): List[(Int,Int)]={
+	var res : List[ (Int,Int) ] = List()
+	val other=Projet.partie.other_player(player)
+	for( i <- 1 to 8) {
+		for( j <- 1 to 8) {
+			//renvoyer dans les mouvement la liste des pieces misent en danger?
+		}
+	}
 
-/*def In_danger (position:(Int,Int)): List[(Int,Int)]={
-
+}
 }*/
 
 
