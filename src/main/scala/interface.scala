@@ -80,11 +80,13 @@ object Interface extends SimpleSwingApplication {
 
 		
 	}
-
+	def perdu(player:Char) = {
+		Projet.partie.stop()
+		box.contents+= new Label (player+" a perdu")
+	}
 	val back_menu = new Button{
 		action = Action("Back to main menu"){
 			Projet.partie.stop()
-			//Thread.sleep(2000)
 			set_menu()
 		}
 
