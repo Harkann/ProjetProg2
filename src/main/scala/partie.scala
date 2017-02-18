@@ -115,6 +115,22 @@ class Partie() {
 		return false
 
 	}
+
+	def is_mat(player: Char) : Boolean = {
+		val id_king=player+"Ki"+0
+		val king=get_piece(id_king)
+		var position=(1,1)
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				var id_piece_ij=matrix_pieces(i)(j)
+				if(id_king==id_piece_ij) {position=(i,j)}
+			}
+		}
+		var (moves,attacks) =king.move_piece_check(position)
+		if (moves==List()) {return true}
+		else {return false}
+
+	}
 	
 	def partie_two_players() = {
 		nb_ia = 0
