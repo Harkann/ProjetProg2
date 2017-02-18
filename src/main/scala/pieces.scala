@@ -74,7 +74,8 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		}
 		else {
 			var (moves,attacks) = move_piece(position)
-			if (Projet.partie.in_danger_of(other).contains(position)){
+			if ((Projet.partie.in_danger_of(other).contains(position))||
+				Projet.partie.is_check(id(0))){
 				for (mv <-moves) {
 					var (x,y)= mv
 					var save = Projet.partie.matrix_pieces(x)(y)
