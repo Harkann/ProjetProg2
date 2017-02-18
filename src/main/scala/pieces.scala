@@ -127,12 +127,15 @@ trait Jump{
 }
 
 trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
-	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
-		val other=Projet.partie.other_player(id(0))
+		//val peon=Projet.partie.get_piece(id)
+		val other='B'
 		var attack_list: List[ (Int,Int) ] = List()
+		/*if ((peon.nb_turn=0) && (i+2<=8) && (Projet.partie.matrix_pieces(i+2)(j))=="0")
+			{res=res:+(i+1,j)}*/
 		if ((i+1<=8) && (Projet.partie.matrix_pieces(i+1)(j))=="0")
 			{res=res:+(i+1,j)}
 		if ((i+1<=8) && (j+1<=8) && (Projet.partie.matrix_pieces(i+1)(j+1))(0)==other)
@@ -141,6 +144,27 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 			{res=res:+(i+1,j-1);attack_list=attack_list:+(i+1,j-1)}
 		return (res,attack_list)
 	}
+	def dpct_peon_black(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+		var (i,j) = position
+		var res : List[ (Int,Int) ] = List()
+		val id= Projet.partie.matrix_pieces(i)(j)
+		val other='W'
+		var attack_list: List[ (Int,Int) ] = List()
+		if ((i-1>=1) && (Projet.partie.matrix_pieces(i-1)(j))=="0")
+			{res=res:+(i-1,j)}
+		if ((i-1>=1) && (j+1<=8) && (Projet.partie.matrix_pieces(i+1)(j+1))(0)==other)
+			{res=res:+(i-1,j+1);attack_list=attack_list:+(i-1,j+1)}
+		if ((i-1>=1) && (j-1>=1) && (Projet.partie.matrix_pieces(i-1)(j-1))(0)==other)
+			{res=res:+(i-1,j-1);attack_list=attack_list:+(i-1,j-1)}
+		return (res,attack_list)
+	}
+	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+		var (i,j) = position
+		val id= Projet.partie.matrix_pieces(i)(j)
+		if (id(0)=='B') {return dpct_peon_black(position)}
+		else {return dpct_peon_white(position)}
+	}
+
 }
 
 trait King_move{
@@ -236,11 +260,13 @@ with Id_creation with Peon_move{
 	val name="Pe"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
+	var nb_turn = 0
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		return dpct_peon(position)
 	}
 	var (i,j) = position
 	Projet.partie.matrix_pieces(i)(j)=id 
+
 }
 
 class King(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
