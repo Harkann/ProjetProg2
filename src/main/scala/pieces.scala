@@ -12,6 +12,15 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	def get_id() = id
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]);
 	var nb_turn = 0
+	def delete(posi:(Int,Int))={
+		var(i,j)=position
+		var (x,y)=posi
+		var id_piece_deleted=Projet.partie.matrix_pieces(x)(y)
+		var piece_deleted=Projet.partie.get_piece(id_piece_deleted)
+		piece_deleted.is_alive=false
+		move(posi)
+
+	}
 	def move(posi:(Int,Int))={
 		var (i,j)=position
 		position=posi
