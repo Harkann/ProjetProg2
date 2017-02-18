@@ -1,13 +1,16 @@
 import swing._
 import Array._
 import javax.swing.ImageIcon
-
+import java.awt.Color
 object Interface extends SimpleSwingApplication {
 	var id_piece_selected = "0"
 	var moves:List[(Int,Int)] = List()
 	var prises:List[(Int,Int)] = List()
 	var origin_pos = (0,0)
 	var Cells = ofDim[Button](8,8)
+	val myGreen = new Color (48, 163, 115)
+	val myBlue = new Color (0, 3, 112)
+	val myRed = new Color (112, 0, 0)
 	def initColors(i:Int,j:Int) = {
 		if((i+j)%2 == 0){
 			Cells(i)(j).background = java.awt.Color.BLACK
@@ -29,13 +32,14 @@ object Interface extends SimpleSwingApplication {
 		}
 	}
 	def select_case(i:Int,j:Int) ={
-		Cells(i)(j).background = java.awt.Color.GREEN
+
+		Cells(i)(j).background = myGreen
 	}
 	def select_case_move(i:Int,j:Int) ={
-		Cells(i)(j).background = java.awt.Color.BLUE
+		Cells(i)(j).background = myBlue
 	}
 	def select_case_take(i:Int,j:Int) ={
-		Cells(i)(j).background = java.awt.Color.RED
+		Cells(i)(j).background = myRed
 	}
 
 	def id_piece_on_case (i:Int,j:Int):String = {
