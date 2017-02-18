@@ -1,7 +1,7 @@
 import Array._
 
 class Partie(){
-	var matrix_pieces = ofDim[String](9,9); //plus grande pour pas avoir à s'enmerder avec les indices.
+	var matrix_pieces = ofDim[String](9,9); //plus grande pour pas avoir à s'embeter avec les indices.
 	for( i <- 1 to 8) {
 		for( j <- 1 to 8) {
 			matrix_pieces(i)(j) = "0"
@@ -86,7 +86,7 @@ class Partie(){
 				{
 					var piece_ij=get_piece(id_piece_ij)
 
-					var (list_move,list_attack)= piece_ij.move_piece((i,j))
+					var (list_move,list_attack)= piece_ij.move_piece_check((i,j))//ici_pour l'IA
 					for( move <- list_move++list_attack) {
 						all_moves=all_moves:+((i,j),move)
 					}
@@ -102,11 +102,13 @@ class Partie(){
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
 				var id_piece_ij = matrix_pieces(i)(j)
+				if (id_piece_ij!="0"){
 				var piece_ij=get_piece(id_piece_ij)
 				if (id_piece_ij(0)==player)
 				{
 					var (list_move,list_attack)= piece_ij.move_piece((i,j))
 					res=res++list_attack
+				}
 				}
 			}
 		}

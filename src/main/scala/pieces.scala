@@ -54,7 +54,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 				else {
 					Projet.partie.matrix_pieces(x)(y)=save
 					Projet.partie.matrix_pieces(i)(j)=id
-					res_moves:+mv}
+					res_moves=res_moves:+mv}
 			}
 			for (at <-attacks) {
 				var (x,y)= at
@@ -69,7 +69,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 				else {
 					Projet.partie.matrix_pieces(x)(y)=save
 					Projet.partie.matrix_pieces(i)(j)=id
-					res_attacks:+at}
+					res_attacks=res_attacks:+at}
 			}
 		}
 		else {
@@ -82,13 +82,15 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 					Projet.partie.matrix_pieces(i)(j)="0"
 
 					if (Projet.partie.is_check(id(0))) {
+						println("est toujours en échec")
 						Projet.partie.matrix_pieces(x)(y)=save
 						Projet.partie.matrix_pieces(i)(j)=id
 					}
 					else {
+						println("n'est plus en echec")
 						Projet.partie.matrix_pieces(x)(y)=save
 						Projet.partie.matrix_pieces(i)(j)=id
-						res_moves:+mv}
+						res_moves=res_moves:+mv}
 				}
 				for (at <-attacks) {
 					var (x,y)= at
@@ -103,14 +105,13 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 					else {
 						Projet.partie.matrix_pieces(x)(y)=save
 						Projet.partie.matrix_pieces(i)(j)=id
-						res_attacks:+at}
+						res_attacks=res_attacks:+at}
 				}
 			}
 			else {
 				res_moves=moves
 				res_attacks=attacks
 			}
-
 		}
 		return (res_moves,res_attacks)
 	}

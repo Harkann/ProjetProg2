@@ -51,12 +51,12 @@ object Interface extends SimpleSwingApplication {
 	def get_player() = Projet.partie.get_player()
 	def piece_allowed_move(id:String,position:(Int,Int)) : List[(Int,Int)] = {
 		var piece = Projet.partie.get_piece(id)	
-		var (move,i) = piece.move_piece(position)
+		var (move,i) = piece.move_piece_check(position)//ici
 		return move
 	} 
 	def piece_allowed_take(id:String,position:(Int,Int)) : List[(Int,Int)] = {
 		var piece = Projet.partie.get_piece(id)	
-		var (i,take) = piece.move_piece(position)
+		var (i,take) = piece.move_piece_check(position)//ici
 		return take
 	}
 	def piece_move(id:String,origin:(Int,Int),destination:(Int,Int)):Unit ={
