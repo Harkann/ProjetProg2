@@ -26,6 +26,7 @@ class Partie(){
 	var check = false; //gros et inutile
 	def is_check() = check;
 	def next_turn():Unit = {
+
 		if (is_running){
 			if (nb_ia == 0){
 				if (player == 'W') {player = 'B'}
