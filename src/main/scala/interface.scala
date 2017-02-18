@@ -76,18 +76,24 @@ object Interface extends SimpleSwingApplication {
 	
 
 	var game_one_player = new Button{
-		
+		action = Action("Player vs. IA") {
+			spawn_game()
+		}
 	}
 	val game_two_players = new Button{
-		action = Action("Player vs. Playe") {
+		action = Action("Player vs. Player") {
 			spawn_game()
 		}
 	}
 	var game_two_ia = new Button{
-
+		action = Action("IA vs. IA") {
+			spawn_game()
+		}
 	}
 	val box = new BoxPanel(Orientation.Vertical) {
 		contents+= game_two_players
+		contents+= game_one_player
+		contents+= game_two_ia
 	}
 
 	def top = new MainFrame {
@@ -147,6 +153,8 @@ object Interface extends SimpleSwingApplication {
 
 		}
 		box.contents -= game_two_players
+		box.contents -= game_two_ia
+		box.contents -= game_one_player
 		box.contents += new GridPanel(8, 8) {
 			for( i <- 7 to 0 by -1) {
 				for( j <- 0 to 7) {
