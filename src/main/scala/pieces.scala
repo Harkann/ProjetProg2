@@ -54,12 +54,12 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 		var attack_list: List[ (Int,Int) ] = List()
 		var n = 1
 		val id= Projet.partie.matrix_pieces(i)(j)
-		while ((i+n<=8) && (Projet.partie.matrix_pieces(i)(j+n)=="0")) {res=res:+(i+n,j);n+=1}
+		while ((i+n<=8) && (Projet.partie.matrix_pieces(i+n)(j)=="0")) {res=res:+(i+n,j);n+=1}
 
 		if ((i+n<=8) && (Projet.partie.matrix_pieces(i+n)(j)(0)==Projet.partie.other_player(id(0))))
 			{res=res:+(i+n,j);attack_list=attack_list:+(i+n,j)}
 		n=1
-		while ((i-n>=1) && (Projet.partie.matrix_pieces(i)(j-n)=="0")) {res=res:+(i-n,j);n+=1}
+		while ((i-n>=1) && (Projet.partie.matrix_pieces(i-n)(j)=="0")) {res=res:+(i-n,j);n+=1}
 		if (i-n>=1 && (Projet.partie.matrix_pieces(i-n)(j)(0)==Projet.partie.other_player(id(0))))
 			{res=res:+(i-n,j);attack_list=attack_list:+(i-n,j)}
 		return (res,attack_list)}
@@ -97,7 +97,7 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 	if ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)(0)==Projet.partie.other_player(id(0))))
 		{res=res:+(i+n,j-n);attack_list=attack_list:+(i+n,j-n)}
 	n=1
-	while ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i-n,j+n);n+=1}
+	while ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i-n)(j+n)=="0")) {res=res:+(i-n,j+n);n+=1}
 	if ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i-n)(j+n)(0)==Projet.partie.other_player(id(0))))
 		{res=res:+(i-n,j+n);attack_list=attack_list:+(i-n,j+n)}
 
