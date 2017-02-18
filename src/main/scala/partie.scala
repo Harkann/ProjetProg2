@@ -11,18 +11,34 @@ class Partie() {
 
 	// contient l'id des pieces à leur position. vaut "0" si pas de piece a la position.
 	var player = 'W';
+	var nb_ia = 0
+	var color_ia = 'B';
 	var liste_pieces :List[Piece] = List()
-	def other_player(player: Char):Char={
-	if (player=='B') {return 'W'}
-	else {return 'B'} 
-	//petit risque de probleme si char different de 'B' ou 'W'
-}
+	def other_player(player: Char):Char = {
+		if (player=='B') {return 'W'}
+		else {return 'B'} 
+		//petit risque de probleme si char different de 'B' ou 'W'
+	}
 	var check = false; //gros 
 	def is_check() = check;
 	def next_turn() = {
-		if (player == 'W') {player = 'B'}
-		else {player = 'W'}
+		if (nb_ia == 0){
+			if (player == 'W') {player = 'B'}
+			else {player = 'W'}
+		}
+		else if (nb_ia == 1){
+			if (player == color_ia){
+				if (player == 'W') {player = 'B'}
+				else {player = 'W'}
+			}
+			else {
+				play_ia(color_ia)
+				if (player == 'W') {player = 'B'}
+				else {player = 'W'}
+			}
+		}
 	}
+
 	def id_piece_on_case (i:Int,j:Int):String = {
 		return matrix_pieces(i)(j)
 	}
@@ -70,7 +86,7 @@ class Partie() {
 		return all_moves
 	}
 
-	def in_danger_of(player: Char): List[(Int,Int)]={
+	def in_danger_of(player: Char): List[(Int,Int)] = {
 		var res : List[ (Int,Int) ] = List()
 		val other=other_player(player)
 		for( i <- 1 to 8) {
@@ -87,15 +103,43 @@ class Partie() {
 		return res
 	}
 
-	def is_check(player : Char) : Boolean={
+	def is_check(player : Char) : Boolean = {
 		val other=other_player(player)
 		var list_in_danger=in_danger_of(other)
 		if (list_in_danger.contains(player+"Ki0"))
-			{return true}
+		{return true}
 		else {return false}
 
 	}
+	
+	def partie_two_players() = {
+		nb_ia = 0
+	}
 
+	def partie_one_ia(color:Char) ={
+		nb_ia = 1
+		color_ia = color
+	}
+
+	def partie_two_ia() = {
+		nb_ia = 2
+	}
+
+	def play_ia(color:Char) = {
+		var moves_ia = allowed_moves(color)
+		//random number 
+		var (origin,destination) = allowed_moves(random)
+		var (oi,oj) = origin
+		var (di,dj) = destination
+		var id_piece_selected = id_piece_on_case(oi,oj)
+		var id_destination = id_piece_on_case(di,dj)
+		if (id_destination == "0"){
+			Interface.piece_move(id_piece_selected,(oi+1,oj+1),(di+1,dj+1))
+		}
+		else{
+			Interface.piece_take(id_piece_selected,(oi+1,oj+1),(di+1,dj+1))
+		}
+	}
 	def partie_init() ={
 
 		//definition des pieces blanches

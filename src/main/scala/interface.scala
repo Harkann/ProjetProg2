@@ -87,24 +87,36 @@ object Interface extends SimpleSwingApplication {
 
 	
 
-	var game_one_player = new Button{
-		action = Action("Player vs. IA") {
+	var game_one_player_white = new Button{
+		action = Action("Player White vs. IA Black") {
+			Projet.partie.partie_one_ia('B')
 			spawn_game()
 		}
 	}
+
+	var game_one_player_black = new Button{
+		action = Action("Player Black vs. IA White") {
+			Projet.partie.partie_one_ia('W')
+			spawn_game()
+		}
+	}
+
 	val game_two_players = new Button{
+		Projet.partie.partie_two_players()
 		action = Action("Player vs. Player") {
 			spawn_game()
 		}
 	}
 	var game_two_ia = new Button{
 		action = Action("IA vs. IA") {
+			Projet.partie.partie_two_ia()
 			spawn_game()
 		}
 	}
 	val box = new BoxPanel(Orientation.Vertical) {
 		contents+= game_two_players
-		contents+= game_one_player
+		contents+= game_one_player_black
+		contents+= game_one_player_white
 		contents+= game_two_ia
 	}
 
@@ -172,7 +184,8 @@ object Interface extends SimpleSwingApplication {
 		}
 		box.contents -= game_two_players
 		box.contents -= game_two_ia
-		box.contents -= game_one_player
+		box.contents -= game_one_player_white
+		box.contents -= game_one_player_black
 		box.contents += new GridPanel(8, 8) {
 			for( i <- 7 to 0 by -1) {
 				for( j <- 0 to 7) {

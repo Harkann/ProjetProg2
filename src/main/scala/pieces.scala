@@ -12,7 +12,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	def get_id() = id
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]);
 	var nb_turn = 0
-	def delete(posi:(Int,Int))={
+	def delete(posi:(Int,Int)) = {
 		var(i,j)=position
 		var (x,y)=posi
 		var id_piece_deleted=Projet.partie.matrix_pieces(x)(y)
@@ -21,7 +21,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		move(posi)
 
 	}
-	def move(posi:(Int,Int))={
+	def move(posi:(Int,Int)) = {
 		var (i,j)=position
 		position=posi
 		var (x,y)=posi
@@ -43,7 +43,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 
 trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 
-	def dpct_horiz (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={ 
+	def dpct_horiz (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { 
 		var (i,j) = position 
 		val id = Projet.partie.matrix_pieces(i)(j)
 		var res : List[ (Int,Int) ] = List()
@@ -59,7 +59,7 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 		return (res,attack_list)}
 
 
-	def dpct_verti (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={ 
+	def dpct_verti (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { 
 		var (i,j) = position 
 		var res : List[ (Int,Int) ] = List()
 		var attack_list: List[ (Int,Int) ] = List()
@@ -79,7 +79,7 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 
 trait Diagonal {  //utiliser des traits pour factoriser le code.
 
-	def dpct_diag_R (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={ 
+	def dpct_diag_R (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { 
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
 	var attack_list: List[ (Int,Int) ] = List()
@@ -98,7 +98,7 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 
 
 
-	def dpct_diag_L (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={ 
+	def dpct_diag_L (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { 
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
 	var n=1
@@ -116,7 +116,7 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 }
 
 trait Jump{
-	def jump(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+	def jump(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		val movement_list : List[(Int,Int)] = List((1,2),(-1,2),(2,1),(2,-1),(-2,-1),(-2,1),(1,-2),(-1,-2))
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
@@ -138,7 +138,7 @@ trait Jump{
 }
 
 trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
-	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
@@ -155,7 +155,7 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 			{res=res:+(i+1,j-1);attack_list=attack_list:+(i+1,j-1)}
 		return (res,attack_list)
 	}
-	def dpct_peon_black(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+	def dpct_peon_black(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
@@ -182,7 +182,7 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 }
 
 trait King_move{
-	def dpct_king(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+	def dpct_king(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		val movement_list : List[(Int,Int)] = List((1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1))
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
