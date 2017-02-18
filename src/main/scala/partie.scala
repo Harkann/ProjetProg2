@@ -1,6 +1,6 @@
 import Array._
 
-class Partie() {
+class Partie(){
 	var matrix_pieces = ofDim[String](9,9); //plus grande pour pas avoir à s'enmerder avec les indices.
 	for( i <- 1 to 8) {
 		for( j <- 1 to 8) {
@@ -14,6 +14,13 @@ class Partie() {
 	var nb_ia = 0
 	var color_ia = 'B';
 	var liste_pieces :List[Piece] = List()
+
+	var delai_ia = 100
+
+	def set_delay_ia(value:Int) = {
+		delai_ia = value
+	}
+
 	def other_player(player: Char):Char = {
 		if (player=='B') {return 'W'}
 		else {return 'B'} 
@@ -32,7 +39,15 @@ class Partie() {
 				else {player = 'W'}
 			}
 			else {
-				play_ia(color_ia)
+				new Thread(new IA(color_ia)).start
+			}
+		}
+		else if (nb_ia == 2){
+			if (player == 'W'){
+				new Thread(new IA('W')).start
+			}
+			else {
+				new Thread(new IA('B')).start
 			}
 		}
 	}
@@ -43,41 +58,37 @@ class Partie() {
 	def color_from_id(id:String):Char = {
 		return id(0)
 	}
-	
+
 	def type_from_id(id:String):String = {
 		return id.substring(1,3)
 	}
-	
+
 	def get_player() = player
-	
+
 	def get_piece(id:String):Piece = {
 		var indice = -1
 		for( i <- 0 to liste_pieces.length-1) {
 			if (liste_pieces(i).get_id() == id){
 				indice = i
-				println(indice)
 			}			
 		}
-		println(indice)
 		return liste_pieces(indice)
 
 	}
 
 	def allowed_moves(player:Char): List[((Int,Int),(Int,Int))] = {
-		println("allowed_moves")
 		var all_moves : List[ ((Int,Int),(Int,Int)) ] = List()
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
 				var id_piece_ij = matrix_pieces(i)(j)
-				
+
 				if (id_piece_ij(0)==player)
 				{
 					var piece_ij=get_piece(id_piece_ij)
-					
+
 					var (list_move,list_attack)= piece_ij.move_piece((i,j))
 					for( move <- list_move++list_attack) {
 						all_moves=all_moves:+((i,j),move)
-						println("id piece "+id_piece_ij+"origin"+(i,j)+"moves"+(list_move++list_attack))
 					}
 				}
 			}
@@ -109,12 +120,13 @@ class Partie() {
 			var (i,j)=pos
 			var id_piece=matrix_pieces(i)(j)
 			if (id_piece.substring(0,3)==player+"Ki"){
-				return true}
+				return true
 			}
-			return false
-
 		}
+		return false
+
 	}
+
 
 	def is_mat(player: Char) : Boolean = {
 		val id_king=player+"Ki"+0
@@ -144,32 +156,33 @@ class Partie() {
 	def partie_two_ia() = {
 		nb_ia = 2
 	}
-
-	def play_ia(color:Char) = {
-		var moves_ia = allowed_moves(color)
-		println(moves_ia)
-		var random_move = scala.util.Random
-		var random_moveInt = random_move.nextInt(moves_ia.length-1)
-		var (origin,destination) = moves_ia(random_moveInt)
-		var (oi,oj) = origin
-		var (di,dj) = destination
-		var id_piece_selected = id_piece_on_case(oi,oj)
-		var id_destination = id_piece_on_case(di,dj)
-		if (id_destination == "0"){
-			Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
+	class IA(color:Char) extends Runnable{
+		override def run = {
+			var moves_ia = allowed_moves(color)
+			Thread.sleep(delai_ia)
+			var random_move = scala.util.Random
+			var random_moveInt = random_move.nextInt(moves_ia.length-1)
+			var (origin,destination) = moves_ia(random_moveInt)
+			var (oi,oj) = origin
+			var (di,dj) = destination
+			var id_piece_selected = id_piece_on_case(oi,oj)
+			var id_destination = id_piece_on_case(di,dj)
+			if (id_destination == "0"){
+				Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
+			}
+			else{
+				Interface.piece_take(id_piece_selected,(oi,oj),(di,dj))
+			}
+			if (player == 'W') {player = 'B'}
+			else {player = 'W'}
+			
+			Projet.partie.next_turn()
 		}
-		else{
-			Interface.piece_take(id_piece_selected,(oi,oj),(di,dj))
-		}
-		if (player == 'W') {player = 'B'}
-		else {player = 'W'}
-		Projet.partie.next_turn()
 	}
-
 	def start() = {
-		if (color_ia == 'W')
-		play_ia('W')
-		Projet.partie.next_turn()
+		if (color_ia == 'W' || nb_ia == 2){
+			new Thread(new IA('W')).start
+		}
 	}
 
 	def partie_init() ={
@@ -209,11 +222,12 @@ class Partie() {
 		liste_pieces= liste_pieces:+new Bishop('B',(8,6))
 		liste_pieces= liste_pieces:+new Queen('B',(8,4))
 		liste_pieces= liste_pieces:+new King('B',(8,5))
-		println("lenght "+liste_pieces.length)
-		println("init done")
+		println("Initialisation terminée")
 	}
+	
 }
 object Projet{
+
 	var partie= new Partie()
 }
 

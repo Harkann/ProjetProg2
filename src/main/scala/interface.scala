@@ -63,25 +63,21 @@ object Interface extends SimpleSwingApplication {
 		var piece = Projet.partie.get_piece(id)
 		piece.move(destination)
 		var (i,j) = origin
-		println("plop1")
 		Cells(i-1)(j-1).icon = null
 		var (i2,j2) = destination
-		println("plop2")
 		Cells(i2-1)(j2-1).icon = new ImageIcon( getClass.getResource(color_from_id(id)+type_from_id(id)+".PNG"))
-		println("plop3")
+
 
 	}
 	def piece_take(id:String,origin:(Int,Int),destination:(Int,Int)):Unit ={
 		var piece = Projet.partie.get_piece(id)
 		piece.delete(destination)
 		var (i,j) = origin
-		println("plop1")
 		Cells(i-1)(j-1).icon = null
 		var (i2,j2) = destination
-		println("plop2")
 		Cells(i2-1)(j2-1).icon = new ImageIcon( getClass.getResource(color_from_id(id)+type_from_id(id)+".PNG"))
-		println("plop3")
 
+		
 	}
 
 
