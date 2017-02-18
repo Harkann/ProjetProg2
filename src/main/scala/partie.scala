@@ -95,6 +95,5 @@ class Partie() {
 }
 object Projet{
 	var partie= new Partie()
-	partie.partie_init()
 }
 

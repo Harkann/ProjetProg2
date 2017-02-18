@@ -73,67 +73,88 @@ object Interface extends SimpleSwingApplication {
 	}
 
 
-	for( i <- 7 to 0 by -1) {
-		for( j <- 0 to 7) {
-			Cells(i)(j)= new Button {
-				var piece_id = id_piece_on_case(i,j)
-				
-				
-				action = Action("") {
-					piece_id = id_piece_on_case(i,j)
-					if (id_piece_selected == "0"){
-						if (piece_id != "0" && color_from_id(piece_id) == get_player() && piece_id != id_piece_selected){
-							id_piece_selected = piece_id
-							origin_pos = (i+1,j+1)
-							resetColors()
-							select_case(i,j)
-							moves = piece_allowed_move(piece_id,(i+1,j+1))
-							prises = piece_allowed_take(piece_id,(i+1,j+1))
-							println("moves "+moves)
-							for( (i,j) <- moves) {
-								select_case_move(i-1,j-1)
+	
 
-							}
-							for( (i,j) <- prises) {
-								select_case_take(i-1,j-1)
-							}
-						}
-					}	
-					else {
-						println("re moves "+moves)
-						if (piece_id == id_piece_selected){
-							id_piece_selected = "0"
-							resetColors()
-						}
-						else if (piece_id == "0" && moves.contains((i+1,j+1))) {
-							println(moves)
-							piece_move(id_piece_selected,origin_pos,(i+1,j+1)) 
-							resetColors()
-							id_piece_selected = "0"
-						}			
-					}
-				}
-
-				if (piece_id !="0"){
-					icon = new ImageIcon( getClass.getResource(color_from_id(piece_id)+type_from_id(piece_id)+".PNG"))
-				}
-			}
-			initColors(i,j)
-		}		
+	var game_one_player = new Button{
 		
 	}
+	val game_two_players = new Button{
+		action = Action("Player vs. Playe") {
+			spawn_game()
+		}
+	}
+	var game_two_ia = new Button{
 
-
-
+	}
+	val box = new BoxPanel(Orientation.Vertical) {
+		contents+= game_two_players
+	}
 
 	def top = new MainFrame {
 		title = "Chess"
-		contents = new GridPanel(8, 8) {
+		contents = box
+		
+	}
+	def spawn_game():Unit = {
+		Projet.partie.partie_init()
+		for( i <- 7 to 0 by -1) {
+			for( j <- 0 to 7) {
+				Cells(i)(j)= new Button {
+					var piece_id = id_piece_on_case(i,j)
+
+
+					action = Action("") {
+						piece_id = id_piece_on_case(i,j)
+						if (id_piece_selected == "0"){
+							if (piece_id != "0" && color_from_id(piece_id) == get_player() && piece_id != id_piece_selected){
+								id_piece_selected = piece_id
+								origin_pos = (i+1,j+1)
+								resetColors()
+								select_case(i,j)
+								moves = piece_allowed_move(piece_id,(i+1,j+1))
+								prises = piece_allowed_take(piece_id,(i+1,j+1))
+								println("moves "+moves)
+								for( (i,j) <- moves) {
+									select_case_move(i-1,j-1)
+
+								}
+								for( (i,j) <- prises) {
+									select_case_take(i-1,j-1)
+								}
+							}
+						}	
+						else {
+							println("re moves "+moves)
+							if (piece_id == id_piece_selected){
+								id_piece_selected = "0"
+								resetColors()
+							}
+							else if (piece_id == "0" && moves.contains((i+1,j+1))) {
+								println(moves)
+								piece_move(id_piece_selected,origin_pos,(i+1,j+1)) 
+								resetColors()
+								id_piece_selected = "0"
+							}			
+						}
+					}
+
+					if (piece_id !="0"){
+						icon = new ImageIcon( getClass.getResource(color_from_id(piece_id)+type_from_id(piece_id)+".PNG"))
+					}
+				}
+				initColors(i,j)
+			}		
+
+		}
+		box.contents -= game_two_players
+		box.contents += new GridPanel(8, 8) {
 			for( i <- 7 to 0 by -1) {
 				for( j <- 0 to 7) {
 					contents += (Cells(i)(j))
 				}
 			}
 		}
+		box.revalidate()
+		box.repaint()
 	}
 }
