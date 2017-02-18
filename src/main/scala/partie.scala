@@ -92,6 +92,9 @@ class Partie(){
 				}
 			}
 		}
+		if (all_moves == List()){
+			Interface.pat()
+		}
 		return all_moves
 	}
 

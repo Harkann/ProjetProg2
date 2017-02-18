@@ -84,6 +84,11 @@ object Interface extends SimpleSwingApplication {
 		Projet.partie.stop()
 		box.contents+= new Label (player+" a perdu")
 	}
+
+	def pat() = {
+		Projet.partie.stop()
+		box.contents+= new Label ("pat")
+	}
 	val back_menu = new Button{
 		action = Action("Back to main menu"){
 			Projet.partie.stop()
