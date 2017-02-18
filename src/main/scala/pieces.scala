@@ -11,6 +11,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	val id:String; // != "0"
 	def get_id() = id
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]);
+	
 	var nb_turn = 0
 	def delete(posi:(Int,Int))={
 		var(i,j)=position
@@ -29,6 +30,89 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		Projet.partie.matrix_pieces(i)(j)="0"
 		Projet.partie.next_turn()
 		nb_turn+=1
+	}
+
+
+	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])= {
+		var (i,j)=position
+		var id=Projet.partie.matrix_pieces(i)(j)
+		var res_moves : List[ (Int,Int) ] = List()
+		var	res_attacks : List[ (Int,Int) ] = List()
+		val other=Projet.partie.other_player(id(0))
+		if (id.substring(1,3)=="Ki") {
+			var (moves,attacks) = move_piece(position)
+			for (mv <-moves) {
+				var (x,y)= mv
+				var save = Projet.partie.matrix_pieces(x)(y)
+				Projet.partie.matrix_pieces(x)(y)=id
+				Projet.partie.matrix_pieces(i)(j)="0"
+
+				if (Projet.partie.is_check(id(0))) {
+					Projet.partie.matrix_pieces(x)(y)=save
+					Projet.partie.matrix_pieces(i)(j)=id
+				}
+				else {
+					Projet.partie.matrix_pieces(x)(y)=save
+					Projet.partie.matrix_pieces(i)(j)=id
+					res_moves:+mv}
+			}
+			for (at <-attacks) {
+				var (x,y)= at
+				var save = Projet.partie.matrix_pieces(x)(y)
+				Projet.partie.matrix_pieces(x)(y)=id
+				Projet.partie.matrix_pieces(i)(j)="0"
+
+				if (Projet.partie.is_check(id(0))) {
+					Projet.partie.matrix_pieces(x)(y)=save
+					Projet.partie.matrix_pieces(i)(j)=id
+				}
+				else {
+					Projet.partie.matrix_pieces(x)(y)=save
+					Projet.partie.matrix_pieces(i)(j)=id
+					res_attacks:+at}
+			}
+		}
+		else {
+			var (moves,attacks) = move_piece(position)
+			if (Projet.partie.in_danger_of(other).contains(position)){
+				for (mv <-moves) {
+					var (x,y)= mv
+					var save = Projet.partie.matrix_pieces(x)(y)
+					Projet.partie.matrix_pieces(x)(y)=id
+					Projet.partie.matrix_pieces(i)(j)="0"
+
+					if (Projet.partie.is_check(id(0))) {
+						Projet.partie.matrix_pieces(x)(y)=save
+						Projet.partie.matrix_pieces(i)(j)=id
+					}
+					else {
+						Projet.partie.matrix_pieces(x)(y)=save
+						Projet.partie.matrix_pieces(i)(j)=id
+						res_moves:+mv}
+				}
+				for (at <-attacks) {
+					var (x,y)= at
+					var save = Projet.partie.matrix_pieces(x)(y)
+					Projet.partie.matrix_pieces(x)(y)=id
+					Projet.partie.matrix_pieces(i)(j)="0"
+
+					if (Projet.partie.is_check(id(0))) {
+						Projet.partie.matrix_pieces(x)(y)=save
+						Projet.partie.matrix_pieces(i)(j)=id
+					}
+					else {
+						Projet.partie.matrix_pieces(x)(y)=save
+						Projet.partie.matrix_pieces(i)(j)=id
+						res_attacks:+at}
+				}
+			}
+			else {
+				res_moves=moves
+				res_attacks=attacks
+			}
+
+		}
+		return (res_moves,res_attacks)
 	}
 	// Couleur.2PremieresLettres.numéro
 	//var position:(Int,Int); //doublon avec la liste des pieces dans partie ?

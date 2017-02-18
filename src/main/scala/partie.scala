@@ -69,12 +69,16 @@ class Partie() {
 		return res
 	}
 
-	def is_check(player : Char) : Boolean={
+	def is_check(player : Char) : Boolean= {
 		val other=other_player(player)
 		var list_in_danger=in_danger_of(other)
-		if (list_in_danger.contains(player+"Ki0"))
-			{return true}
-		else {return false}
+		for (pos <-list_in_danger){
+			var (i,j)=pos
+			var id_piece=matrix_pieces(i)(j)
+			if (id_piece.substring(0,3)==player+"Ki"){
+				return true}
+		}
+		return false
 
 	}
 
