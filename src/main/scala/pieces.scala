@@ -166,7 +166,7 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 		{res=res:+(i-2,j)}
 		if ((i-1>=1) && (Projet.partie.matrix_pieces(i-1)(j))=="0")
 			{res=res:+(i-1,j)}
-		if ((i-1>=1) && (j+1<=8) && (Projet.partie.matrix_pieces(i+1)(j+1))(0)==other)
+		if ((i-1>=1) && (j+1<=8) && (Projet.partie.matrix_pieces(i-1)(j+1))(0)==other)
 			{res=res:+(i-1,j+1);attack_list=attack_list:+(i-1,j+1)}
 		if ((i-1>=1) && (j-1>=1) && (Projet.partie.matrix_pieces(i-1)(j-1))(0)==other)
 			{res=res:+(i-1,j-1);attack_list=attack_list:+(i-1,j-1)}
@@ -219,7 +219,6 @@ trait Id_creation {
 	}	
 }
 
-//ce soir coder le "en danger" 
 /*
 trait In_danger{
 def in_danger_of(player: Char): List[(Int,Int)]={
@@ -244,7 +243,7 @@ def in_danger_of(player: Char): List[(Int,Int)]={
 def is_check(player : Char): Bool{
 	val other=Projet.partie.other_player(player)
 	var list_in_danger=in_danger_of(other)
-
+	if (list_in_danger.)
 
 }
 
