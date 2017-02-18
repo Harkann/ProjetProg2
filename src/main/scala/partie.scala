@@ -77,7 +77,7 @@ class Partie() {
 					var (list_move,list_attack)= piece_ij.move_piece((i,j))
 					for( move <- list_move++list_attack) {
 						all_moves=all_moves:+((i,j),move)
-					println("id piece "+id_piece_ij+"origin"+(i,j)+"moves"+(list_move++list_attack))
+						println("id piece "+id_piece_ij+"origin"+(i,j)+"moves"+(list_move++list_attack))
 					}
 				}
 			}
@@ -114,89 +114,106 @@ class Partie() {
 			return false
 
 		}
-
-		def partie_two_players() = {
-			nb_ia = 0
-		}
-
-		def partie_one_ia(color:Char) ={
-			nb_ia = 1
-			color_ia = color
-		}
-
-		def partie_two_ia() = {
-			nb_ia = 2
-		}
-
-		def play_ia(color:Char) = {
-			var moves_ia = allowed_moves(color)
-			println(moves_ia)
-			var random_move = scala.util.Random
-			var random_moveInt = random_move.nextInt(moves_ia.length-1)
-			var (origin,destination) = moves_ia(random_moveInt)
-			var (oi,oj) = origin
-			var (di,dj) = destination
-			var id_piece_selected = id_piece_on_case(oi,oj)
-			var id_destination = id_piece_on_case(di,dj)
-			if (id_destination == "0"){
-				Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
-			}
-			else{
-				Interface.piece_take(id_piece_selected,(oi,oj),(di,dj))
-			}
-			if (player == 'W') {player = 'B'}
-			else {player = 'W'}
-			Projet.partie.next_turn()
-		}
-
-		def start() = {
-			if (color_ia == 'W')
-			play_ia('W')
-			Projet.partie.next_turn()
-		}
-
-		def partie_init() ={
-
-			//definition des pieces blanches
-			liste_pieces= liste_pieces:+new Peon('W',(2,1))
-			liste_pieces= liste_pieces:+new Peon('W',(2,2))
-			liste_pieces= liste_pieces:+new Peon('W',(2,3))
-			liste_pieces= liste_pieces:+new Peon('W',(2,4))
-			liste_pieces= liste_pieces:+new Peon('W',(2,5))
-			liste_pieces= liste_pieces:+new Peon('W',(2,6))
-			liste_pieces= liste_pieces:+new Peon('W',(2,7))
-			liste_pieces= liste_pieces:+new Peon('W',(2,8))
-			liste_pieces= liste_pieces:+new Tower('W',(1,1))
-			liste_pieces= liste_pieces:+new Tower('W',(1,8))
-			liste_pieces= liste_pieces:+new Knight('W',(1,2))
-			liste_pieces= liste_pieces:+new Knight('W',(1,7))
-			liste_pieces= liste_pieces:+new Bishop('W',(1,3))
-			liste_pieces= liste_pieces:+new Bishop('W',(1,6))
-			liste_pieces= liste_pieces:+new Queen('W',(1,4))
-			liste_pieces= liste_pieces:+new King('W',(1,5))
-
-			//definition des pieces noires
-			liste_pieces= liste_pieces:+new Peon('B',(7,1))
-			liste_pieces= liste_pieces:+new Peon('B',(7,2))
-			liste_pieces= liste_pieces:+new Peon('B',(7,3))
-			liste_pieces= liste_pieces:+new Peon('B',(7,4))
-			liste_pieces= liste_pieces:+new Peon('B',(7,5))
-			liste_pieces= liste_pieces:+new Peon('B',(7,6))
-			liste_pieces= liste_pieces:+new Peon('B',(7,7))
-			liste_pieces= liste_pieces:+new Peon('B',(7,8))
-			liste_pieces= liste_pieces:+new Tower('B',(8,1))
-			liste_pieces= liste_pieces:+new Tower('B',(8,8))
-			liste_pieces= liste_pieces:+new Knight('B',(8,2))
-			liste_pieces= liste_pieces:+new Knight('B',(8,7))
-			liste_pieces= liste_pieces:+new Bishop('B',(8,3))
-			liste_pieces= liste_pieces:+new Bishop('B',(8,6))
-			liste_pieces= liste_pieces:+new Queen('B',(8,4))
-			liste_pieces= liste_pieces:+new King('B',(8,5))
-			println("lenght "+liste_pieces.length)
-			println("init done")
-		}
 	}
-	object Projet{
-		var partie= new Partie()
+
+	def is_mat(player: Char) : Boolean = {
+		val id_king=player+"Ki"+0
+		val king=get_piece(id_king)
+		var position=(1,1)
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				var id_piece_ij=matrix_pieces(i)(j)
+				if(id_king==id_piece_ij) {position=(i,j)}
+			}
+		}
+		var (moves,attacks) =king.move_piece_check(position)
+		if (moves==List()) {return true}
+		else {return false}
+
 	}
+
+	def partie_two_players() = {
+		nb_ia = 0
+	}
+
+	def partie_one_ia(color:Char) ={
+		nb_ia = 1
+		color_ia = color
+	}
+
+	def partie_two_ia() = {
+		nb_ia = 2
+	}
+
+	def play_ia(color:Char) = {
+		var moves_ia = allowed_moves(color)
+		println(moves_ia)
+		var random_move = scala.util.Random
+		var random_moveInt = random_move.nextInt(moves_ia.length-1)
+		var (origin,destination) = moves_ia(random_moveInt)
+		var (oi,oj) = origin
+		var (di,dj) = destination
+		var id_piece_selected = id_piece_on_case(oi,oj)
+		var id_destination = id_piece_on_case(di,dj)
+		if (id_destination == "0"){
+			Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
+		}
+		else{
+			Interface.piece_take(id_piece_selected,(oi,oj),(di,dj))
+		}
+		if (player == 'W') {player = 'B'}
+		else {player = 'W'}
+		Projet.partie.next_turn()
+	}
+
+	def start() = {
+		if (color_ia == 'W')
+		play_ia('W')
+		Projet.partie.next_turn()
+	}
+
+	def partie_init() ={
+
+		//definition des pieces blanches
+		liste_pieces= liste_pieces:+new Peon('W',(2,1))
+		liste_pieces= liste_pieces:+new Peon('W',(2,2))
+		liste_pieces= liste_pieces:+new Peon('W',(2,3))
+		liste_pieces= liste_pieces:+new Peon('W',(2,4))
+		liste_pieces= liste_pieces:+new Peon('W',(2,5))
+		liste_pieces= liste_pieces:+new Peon('W',(2,6))
+		liste_pieces= liste_pieces:+new Peon('W',(2,7))
+		liste_pieces= liste_pieces:+new Peon('W',(2,8))
+		liste_pieces= liste_pieces:+new Tower('W',(1,1))
+		liste_pieces= liste_pieces:+new Tower('W',(1,8))
+		liste_pieces= liste_pieces:+new Knight('W',(1,2))
+		liste_pieces= liste_pieces:+new Knight('W',(1,7))
+		liste_pieces= liste_pieces:+new Bishop('W',(1,3))
+		liste_pieces= liste_pieces:+new Bishop('W',(1,6))
+		liste_pieces= liste_pieces:+new Queen('W',(1,4))
+		liste_pieces= liste_pieces:+new King('W',(1,5))
+
+		//definition des pieces noires
+		liste_pieces= liste_pieces:+new Peon('B',(7,1))
+		liste_pieces= liste_pieces:+new Peon('B',(7,2))
+		liste_pieces= liste_pieces:+new Peon('B',(7,3))
+		liste_pieces= liste_pieces:+new Peon('B',(7,4))
+		liste_pieces= liste_pieces:+new Peon('B',(7,5))
+		liste_pieces= liste_pieces:+new Peon('B',(7,6))
+		liste_pieces= liste_pieces:+new Peon('B',(7,7))
+		liste_pieces= liste_pieces:+new Peon('B',(7,8))
+		liste_pieces= liste_pieces:+new Tower('B',(8,1))
+		liste_pieces= liste_pieces:+new Tower('B',(8,8))
+		liste_pieces= liste_pieces:+new Knight('B',(8,2))
+		liste_pieces= liste_pieces:+new Knight('B',(8,7))
+		liste_pieces= liste_pieces:+new Bishop('B',(8,3))
+		liste_pieces= liste_pieces:+new Bishop('B',(8,6))
+		liste_pieces= liste_pieces:+new Queen('B',(8,4))
+		liste_pieces= liste_pieces:+new King('B',(8,5))
+		println("lenght "+liste_pieces.length)
+		println("init done")
+	}
+}
+object Projet{
+	var partie= new Partie()
+}
 
