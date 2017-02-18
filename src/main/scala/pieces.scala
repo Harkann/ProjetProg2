@@ -219,35 +219,8 @@ trait Id_creation {
 	}	
 }
 
-/*
-trait In_danger{
-def in_danger_of(player: Char): List[(Int,Int)]={
-	var res : List[ (Int,Int) ] = List()
-	val other=Projet.partie.other_player(player)
-	for( i <- 1 to 8) {
-		for( j <- 1 to 8) {
-			var piece_ij = Projet.partie.matrix_pieces(i)(j)
-			if (piece_ij(0)==player)
-			{
-				var (list_move,list_attack)=move_piece(Projet.partie.get_piece(piece_ij))
-				res=res++list_attack
-			}
-		}
-	}
-	return list_attack
-}
-}
-*/
 
-/*
-def is_check(player : Char): Bool{
-	val other=Projet.partie.other_player(player)
-	var list_in_danger=in_danger_of(other)
-	if (list_in_danger.)
 
-}
-
-*/
 
 class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
 with Id_creation with Diagonal with Horizontal_Vertical{ 

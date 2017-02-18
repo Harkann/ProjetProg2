@@ -52,6 +52,32 @@ class Partie() {
 
 	}
 
+	def in_danger_of(player: Char): List[(Int,Int)]={
+		var res : List[ (Int,Int) ] = List()
+		val other=other_player(player)
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				var id_piece_ij = matrix_pieces(i)(j)
+				var piece_ij=get_piece(id_piece_ij)
+				if (id_piece_ij(0)==player)
+				{
+					var (list_move,list_attack)= piece_ij.move_piece((i,j))
+					res=res++list_attack
+				}
+			}
+		}
+		return res
+	}
+
+	def is_check(player : Char) : Boolean={
+		val other=other_player(player)
+		var list_in_danger=in_danger_of(other)
+		if (list_in_danger.contains(player+"Ki0"))
+			{return true}
+		else {return false}
+
+	}
+
 	def partie_init() ={
 
 		//definition des pieces blanches
