@@ -11,6 +11,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	val id:String; // != "0"
 	def get_id() = id
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]);
+	var nb_turn = 0
 	def move(posi:(Int,Int))={
 		var (i,j)=position
 		position=posi
@@ -18,6 +19,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		Projet.partie.matrix_pieces(x)(y)=get_id()
 		Projet.partie.matrix_pieces(i)(j)="0"
 		Projet.partie.next_turn()
+		nb_turn+=1
 	}
 	// Couleur.2PremieresLettres.numéro
 	//var position:(Int,Int); //doublon avec la liste des pieces dans partie ?
@@ -131,11 +133,11 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
-		//val peon=Projet.partie.get_piece(id)
+		val peon=Projet.partie.get_piece(id)
 		val other='B'
 		var attack_list: List[ (Int,Int) ] = List()
-		/*if ((peon.nb_turn=0) && (i+2<=8) && (Projet.partie.matrix_pieces(i+2)(j))=="0")
-			{res=res:+(i+1,j)}*/
+		if ((peon.nb_turn==0) && (i+2<=8) && (Projet.partie.matrix_pieces(i+2)(j))=="0")
+			{res=res:+(i+2,j)}
 		if ((i+1<=8) && (Projet.partie.matrix_pieces(i+1)(j))=="0")
 			{res=res:+(i+1,j)}
 		if ((i+1<=8) && (j+1<=8) && (Projet.partie.matrix_pieces(i+1)(j+1))(0)==other)
@@ -148,8 +150,11 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
+		val peon=Projet.partie.get_piece(id)
 		val other='W'
 		var attack_list: List[ (Int,Int) ] = List()
+		if ((peon.nb_turn==0) && (i-2<=8) && (Projet.partie.matrix_pieces(i-2)(j))=="0")
+		{res=res:+(i-2,j)}
 		if ((i-1>=1) && (Projet.partie.matrix_pieces(i-1)(j))=="0")
 			{res=res:+(i-1,j)}
 		if ((i-1>=1) && (j+1<=8) && (Projet.partie.matrix_pieces(i+1)(j+1))(0)==other)
@@ -260,7 +265,6 @@ with Id_creation with Peon_move{
 	val name="Pe"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
-	var nb_turn = 0
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		return dpct_peon(position)
 	}
