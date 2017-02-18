@@ -2,6 +2,7 @@ import swing._
 import Array._
 import javax.swing.ImageIcon
 import java.awt.Color
+
 object Interface extends SimpleSwingApplication {
 	var id_piece_selected = "0"
 	var moves:List[(Int,Int)] = List()
@@ -80,17 +81,23 @@ object Interface extends SimpleSwingApplication {
 		
 	}
 
+	val back_menu = new Button{
+		action = Action("Back to main menu"){
+			Projet.partie.stop()
+			//Thread.sleep(2000)
+			set_menu()
+		}
 
-	
+	}
 
-	var game_one_player_white = new Button{
+	val game_one_player_white = new Button{
 		action = Action("Player White vs. IA Black") {
 			Projet.partie.partie_one_ia('B')
 			spawn_game()
 		}
 	}
 
-	var game_one_player_black = new Button{
+	val game_one_player_black = new Button{
 		action = Action("Player Black vs. IA White") {
 			Projet.partie.partie_one_ia('W')
 			spawn_game()
@@ -103,22 +110,31 @@ object Interface extends SimpleSwingApplication {
 			spawn_game()
 		}
 	}
-	var game_two_ia = new Button{
+	val game_two_ia = new Button{
 		action = Action("IA vs. IA") {
 			Projet.partie.partie_two_ia()
 			spawn_game()
 		}
 	}
+
 	val box = new BoxPanel(Orientation.Vertical) {
-		contents+= game_two_players
-		contents+= game_one_player_black
-		contents+= game_one_player_white
-		contents+= game_two_ia
+
+	}
+
+	def set_menu() = {
+		box.contents.clear()
+		box.contents+= game_two_players
+		box.contents+= game_one_player_black
+		box.contents+= game_one_player_white
+		box.contents+= game_two_ia
+		box.revalidate()
+		box.repaint()
 	}
 
 	def top = new MainFrame {
 		title = "Chess"
 		contents = box
+		set_menu()
 		
 	}
 	def spawn_game():Unit = {
@@ -127,8 +143,6 @@ object Interface extends SimpleSwingApplication {
 			for( j <- 0 to 7) {
 				Cells(i)(j)= new Button {
 					var piece_id = id_piece_on_case(i,j)
-
-
 					action = Action("") {
 						piece_id = id_piece_on_case(i,j)
 						if (id_piece_selected == "0"){
@@ -139,7 +153,6 @@ object Interface extends SimpleSwingApplication {
 								select_case(i,j)
 								moves = piece_allowed_move(piece_id,(i+1,j+1))
 								prises = piece_allowed_take(piece_id,(i+1,j+1))
-								println("moves "+moves)
 								for( (i,j) <- moves) {
 									select_case_move(i-1,j-1)
 
@@ -150,20 +163,17 @@ object Interface extends SimpleSwingApplication {
 							}
 						}	
 						else {
-							println("re moves "+moves)
 							if (piece_id == id_piece_selected){
 								id_piece_selected = "0"
 								resetColors()
 							}
 							else if (piece_id == "0" && moves.contains((i+1,j+1))) {
-								println(moves)
 								piece_move(id_piece_selected,origin_pos,(i+1,j+1)) 
 								resetColors()
 								id_piece_selected = "0"
 								Projet.partie.next_turn()
 							}
 							else if (piece_id != "0" && prises.contains((i+1,j+1))) {
-								println(moves)
 								piece_take(id_piece_selected,origin_pos,(i+1,j+1)) 
 								resetColors()
 								id_piece_selected = "0"
@@ -191,6 +201,7 @@ object Interface extends SimpleSwingApplication {
 				}
 			}
 		}
+		box.contents+= back_menu
 		box.revalidate()
 		box.repaint()
 		Projet.partie.start()

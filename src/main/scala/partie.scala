@@ -1,22 +1,19 @@
 import Array._
 
 class Partie(){
-	var matrix_pieces = ofDim[String](9,9); //plus grande pour pas avoir à s'embeter avec les indices.
-	for( i <- 1 to 8) {
-		for( j <- 1 to 8) {
-			matrix_pieces(i)(j) = "0"
-		}
-	}
-
+	var matrix_pieces = ofDim[String](9,9); //plus grande pour pas avoir à s'enmerder avec les indices.
+	
 
 	// contient l'id des pieces à leur position. vaut "0" si pas de piece a la position.
 	var player = 'W';
 	var nb_ia = 0
 	var color_ia = 'B';
 	var liste_pieces :List[Piece] = List()
-
+	var is_running = true
 	var delai_ia = 100
-
+	def stop() ={
+		is_running = false
+	}
 	def set_delay_ia(value:Int) = {
 		delai_ia = value
 	}
@@ -26,28 +23,30 @@ class Partie(){
 		else {return 'B'} 
 		//petit risque de probleme si char different de 'B' ou 'W'
 	}
-	var check = false; //gros 
+	var check = false; //gros et inutile
 	def is_check() = check;
 	def next_turn():Unit = {
-		if (nb_ia == 0){
-			if (player == 'W') {player = 'B'}
-			else {player = 'W'}
-		}
-		else if (nb_ia == 1){
-			if (player == color_ia){
+		if (is_running){
+			if (nb_ia == 0){
 				if (player == 'W') {player = 'B'}
 				else {player = 'W'}
 			}
-			else {
-				new Thread(new IA(color_ia)).start
+			else if (nb_ia == 1){
+				if (player == color_ia){
+					if (player == 'W') {player = 'B'}
+					else {player = 'W'}
+				}
+				else {
+					new Thread(new IA(color_ia)).start
+				}
 			}
-		}
-		else if (nb_ia == 2){
-			if (player == 'W'){
-				new Thread(new IA('W')).start
-			}
-			else {
-				new Thread(new IA('B')).start
+			else if (nb_ia == 2){
+				if (player == 'W'){
+					new Thread(new IA('W')).start
+				}
+				else {
+					new Thread(new IA('B')).start
+				}
 			}
 		}
 	}
@@ -188,7 +187,13 @@ class Partie(){
 	}
 
 	def partie_init() ={
-
+		is_running = true
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				matrix_pieces(i)(j) = "0"
+			}
+		}
+		player = 'W'
 		//definition des pieces blanches
 		liste_pieces= liste_pieces:+new Peon('W',(2,1))
 		liste_pieces= liste_pieces:+new Peon('W',(2,2))
