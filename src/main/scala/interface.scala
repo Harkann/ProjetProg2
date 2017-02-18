@@ -164,12 +164,14 @@ object Interface extends SimpleSwingApplication {
 								piece_move(id_piece_selected,origin_pos,(i+1,j+1)) 
 								resetColors()
 								id_piece_selected = "0"
+								Projet.partie.next_turn()
 							}
 							else if (piece_id != "0" && prises.contains((i+1,j+1))) {
 								println(moves)
 								piece_take(id_piece_selected,origin_pos,(i+1,j+1)) 
 								resetColors()
 								id_piece_selected = "0"
+								Projet.partie.next_turn()
 							}			
 						}
 					}
@@ -195,5 +197,6 @@ object Interface extends SimpleSwingApplication {
 		}
 		box.revalidate()
 		box.repaint()
+		Projet.partie.start()
 	}
 }
