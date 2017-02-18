@@ -71,6 +71,18 @@ object Interface extends SimpleSwingApplication {
 		println("plop3")
 
 	}
+	def piece_take(id:String,origin:(Int,Int),destination:(Int,Int)) ={
+		var piece = Projet.partie.get_piece(id)
+		piece.delete(destination)
+		var (i,j) = origin
+		println("plop1")
+		Cells(i-1)(j-1).icon = null
+		var (i2,j2) = destination
+		println("plop2")
+		Cells(i2-1)(j2-1).icon = new ImageIcon( getClass.getResource(color_from_id(id)+type_from_id(id)+".PNG"))
+		println("plop3")
+
+	}
 
 
 	
@@ -138,6 +150,12 @@ object Interface extends SimpleSwingApplication {
 							else if (piece_id == "0" && moves.contains((i+1,j+1))) {
 								println(moves)
 								piece_move(id_piece_selected,origin_pos,(i+1,j+1)) 
+								resetColors()
+								id_piece_selected = "0"
+							}
+							else if (piece_id != "0" && prises.contains((i+1,j+1))) {
+								println(moves)
+								piece_take(id_piece_selected,origin_pos,(i+1,j+1)) 
 								resetColors()
 								id_piece_selected = "0"
 							}			
