@@ -59,7 +59,7 @@ object Interface extends SimpleSwingApplication {
 		var (i,take) = piece.move_piece(position)
 		return take
 	}
-	def piece_move(id:String,origin:(Int,Int),destination:(Int,Int)) ={
+	def piece_move(id:String,origin:(Int,Int),destination:(Int,Int)):Unit ={
 		var piece = Projet.partie.get_piece(id)
 		piece.move(destination)
 		var (i,j) = origin
@@ -71,7 +71,7 @@ object Interface extends SimpleSwingApplication {
 		println("plop3")
 
 	}
-	def piece_take(id:String,origin:(Int,Int),destination:(Int,Int)) ={
+	def piece_take(id:String,origin:(Int,Int),destination:(Int,Int)):Unit ={
 		var piece = Projet.partie.get_piece(id)
 		piece.delete(destination)
 		var (i,j) = origin

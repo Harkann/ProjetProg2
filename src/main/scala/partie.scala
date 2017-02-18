@@ -131,17 +131,18 @@ class Partie() {
 
 	def play_ia(color:Char) = {
 		var moves_ia = allowed_moves(color)
-		//random number 
-		var (origin,destination) = allowed_moves(random)
+		var random_move = scala.util.Random
+		var random_moveInt = random_move.nextInt(moves_ia.length-1)
+		var (origin,destination) = moves_ia(random_moveInt)
 		var (oi,oj) = origin
 		var (di,dj) = destination
 		var id_piece_selected = id_piece_on_case(oi,oj)
 		var id_destination = id_piece_on_case(di,dj)
 		if (id_destination == "0"){
-			Interface.piece_move(id_piece_selected,(oi+1,oj+1),(di+1,dj+1))
+			Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
 		}
 		else{
-			Interface.piece_take(id_piece_selected,(oi+1,oj+1),(di+1,dj+1))
+			Interface.piece_take(id_piece_selected,(oi,oj),(di,dj))
 		}
 	}
 	def partie_init() ={
