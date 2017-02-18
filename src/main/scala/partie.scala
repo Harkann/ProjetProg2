@@ -26,7 +26,7 @@ class Partie(){
 	var check = false; //gros et inutile
 	def is_check() = check;
 	def next_turn():Unit = {
-
+		is_mat(other_player(player))
 		if (is_running){
 			if (nb_ia == 0){
 				if (player == 'W') {player = 'B'}
@@ -130,7 +130,7 @@ class Partie(){
 	}
 
 
-	def is_mat(player: Char) : Boolean = {
+	def is_mat(player: Char) : Unit = {
 		val id_king=player+"Ki"+0
 		val king=get_piece(id_king)
 		var position=(1,1)
@@ -141,8 +141,7 @@ class Partie(){
 			}
 		}
 		var (moves,attacks) =king.move_piece_check(position)
-		if (moves==List()) {return true}
-		else {return false}
+		if ((is_check(player))&& (allowed_moves(player)==List())) {Interface.perdu(player)}
 
 	}
 
