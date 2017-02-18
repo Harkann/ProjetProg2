@@ -52,6 +52,24 @@ class Partie() {
 
 	}
 
+	def allowed_moves(player:Char): List[((Int,Int),(Int,Int))] = {
+		var all_moves : List[ ((Int,Int),(Int,Int)) ] = List()
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				var id_piece_ij = matrix_pieces(i)(j)
+				var piece_ij=get_piece(id_piece_ij)
+				if (id_piece_ij(0)==player)
+				{
+					var (list_move,list_attack)= piece_ij.move_piece((i,j))
+					for( move <- list_move++list_attack) {
+						all_moves=all_moves:+((i,j),move)
+					}
+				}
+			}
+		}
+		return all_moves
+	}
+
 	def in_danger_of(player: Char): List[(Int,Int)]={
 		var res : List[ (Int,Int) ] = List()
 		val other=other_player(player)
