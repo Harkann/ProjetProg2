@@ -85,12 +85,10 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 					Projet.partie.matrix_pieces(i)(j)="0"
 
 					if (Projet.partie.is_check(id(0))) {
-						println(position+" est toujours en échec")
 						Projet.partie.matrix_pieces(x)(y)=save
 						Projet.partie.matrix_pieces(i)(j)=id
 					}
 					else {
-						println(position+" n'est plus en echec")
 						Projet.partie.matrix_pieces(x)(y)=save
 						Projet.partie.matrix_pieces(i)(j)=id
 						res_moves=res_moves:+mv}

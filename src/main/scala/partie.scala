@@ -92,7 +92,6 @@ class Partie(){
 				}
 			}
 		}
-		println(all_moves)
 		return all_moves
 	}
 	def is_pat(player:Char) = {
@@ -168,11 +167,9 @@ class Partie(){
 	class IA(color:Char) extends Runnable{
 		override def run = {
 			nb_tours=nb_tours+1
-			println("tour "+nb_tours)
 			var moves_ia = allowed_moves(color)
 			Thread.sleep(delai_ia)
 			var random_move = scala.util.Random
-			println("len "+moves_ia.length)
 			var random_moveInt = random_move.nextInt(moves_ia.length)
 			var (origin,destination) = moves_ia(random_moveInt)
 			var (oi,oj) = origin
@@ -193,7 +190,6 @@ class Partie(){
 	}
 	def start() = {
 		if (color_ia == 'W'|| nb_ia == 2){
-			println("start plop")
 			if (nb_ia == 1){player = 'B'}
 			new Thread(new IA('W')).start
 		}
