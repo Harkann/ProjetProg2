@@ -127,10 +127,17 @@ object Interface extends SimpleSwingApplication {
 
 	}
 
+	val quit_program = new Button{
+		action = Action("Quitter le programme"){
+			top.closeOperation()
+		}
+
+	}
+
 	val box = new BoxPanel(Orientation.Vertical) 
-	val grid_menu = new GridPanel(4,1)
+	val grid_menu = new GridPanel(5,1)
 	val grid_game = new GridPanel(8,8)
-	def set_menu() = {
+	def set_menu():Unit = {
 		grid_game.contents.clear()
 		box.contents.clear()
 		box.contents += grid_menu
@@ -138,6 +145,7 @@ object Interface extends SimpleSwingApplication {
 		grid_menu.contents+= game_one_player_black
 		grid_menu.contents+= game_one_player_white
 		grid_menu.contents+= game_two_ia
+		grid_menu.contents+= quit_program
 		box.revalidate()
 		box.repaint()
 	}
@@ -148,6 +156,7 @@ object Interface extends SimpleSwingApplication {
 		set_menu()
 		
 	}
+
 	def spawn_game():Unit = {
 		Projet.partie.partie_init()
 		for( i <- 7 to 0 by -1) {
@@ -208,7 +217,10 @@ object Interface extends SimpleSwingApplication {
 				grid_game.contents += (Cells(i)(j))
 			}
 		}
-		box.contents+= back_menu
+		box.contents+= new GridPanel(1,2){
+			contents+= back_menu
+			contents+= quit_program
+		}
 		box.revalidate()
 		box.repaint()
 		Projet.partie.start()
