@@ -10,7 +10,7 @@ class Partie(){
 	var color_ia = 'B';
 	var liste_pieces :List[Piece] = List()
 	var is_running = true
-	var delai_ia = 100
+	var delai_ia = 1000
 	def stop() ={
 		is_running = false
 	}
@@ -23,10 +23,11 @@ class Partie(){
 		else {return 'B'} 
 		//petit risque de probleme si char different de 'B' ou 'W'
 	}
-	var check = false; //gros et inutile
-	def is_check() = check;
 	def next_turn():Unit = {
+		is_mat(player)
 		is_mat(other_player(player))
+		is_pat(player)
+		is_pat(other_player(player))
 		if (is_running){
 			if (nb_ia == 0){
 				if (player == 'W') {player = 'B'}
@@ -87,16 +88,19 @@ class Partie(){
 					var piece_ij=get_piece(id_piece_ij)
 
 					var (list_move,list_attack)= piece_ij.move_piece_check((i,j))//ici_pour l'IA
-					for( move <- list_move++list_attack) {
+					for( move <- list_move) {
 						all_moves=all_moves:+((i,j),move)
 					}
 				}
 			}
 		}
-		if (all_moves == List()){
+		println(all_moves)
+		return all_moves
+	}
+	def is_pat(player:Char) = {
+		if (allowed_moves(player) == List()){
 			Interface.pat()
 		}
-		return all_moves
 	}
 
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -162,13 +166,16 @@ class Partie(){
 		nb_ia = 2
 		color_ia = '0'
 	}
-
+	var nb_tours = 0
 	class IA(color:Char) extends Runnable{
 		override def run = {
+			nb_tours=nb_tours+1
+			println("tour "+nb_tours)
 			var moves_ia = allowed_moves(color)
 			Thread.sleep(delai_ia)
 			var random_move = scala.util.Random
-			var random_moveInt = random_move.nextInt(moves_ia.length-1)
+			println("len "+moves_ia.length)
+			var random_moveInt = random_move.nextInt(moves_ia.length)
 			var (origin,destination) = moves_ia(random_moveInt)
 			var (oi,oj) = origin
 			var (di,dj) = destination
@@ -189,6 +196,7 @@ class Partie(){
 	def start() = {
 		if (color_ia == 'W'|| nb_ia == 2){
 			println("start plop")
+			if (nb_ia == 1){player = 'B'}
 			new Thread(new IA('W')).start
 		}
 	}
@@ -201,6 +209,7 @@ class Partie(){
 			}
 		}
 		player = 'W'
+		nb_tours = 0
 		//nb_ia = 0
 		//definition des pieces blanches
 		liste_pieces= liste_pieces:+new Peon('W',(2,1))
