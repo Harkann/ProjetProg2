@@ -150,6 +150,7 @@ class Partie(){
 
 	def partie_two_players() = {
 		nb_ia = 0
+		color_ia = '0'
 	}
 
 	def partie_one_ia(color:Char) ={
@@ -159,7 +160,9 @@ class Partie(){
 
 	def partie_two_ia() = {
 		nb_ia = 2
+		color_ia = '0'
 	}
+
 	class IA(color:Char) extends Runnable{
 		override def run = {
 			var moves_ia = allowed_moves(color)
@@ -184,7 +187,8 @@ class Partie(){
 		}
 	}
 	def start() = {
-		if (color_ia == 'W' || nb_ia == 2){
+		if (color_ia == 'W'|| nb_ia == 2){
+			println("start plop")
 			new Thread(new IA('W')).start
 		}
 	}
@@ -197,6 +201,7 @@ class Partie(){
 			}
 		}
 		player = 'W'
+		//nb_ia = 0
 		//definition des pieces blanches
 		liste_pieces= liste_pieces:+new Peon('W',(2,1))
 		liste_pieces= liste_pieces:+new Peon('W',(2,2))

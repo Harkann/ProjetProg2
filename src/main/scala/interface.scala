@@ -82,11 +82,13 @@ object Interface extends SimpleSwingApplication {
 	}
 	def perdu(player:Char) = {
 		Projet.partie.stop()
+		println("perdu")
 		box.contents+= new Label (player+" a perdu")
 	}
 
 	def pat() = {
 		Projet.partie.stop()
+		println("pat")
 		box.contents+= new Label ("pat")
 	}
 	val back_menu = new Button{
@@ -112,8 +114,8 @@ object Interface extends SimpleSwingApplication {
 	}
 
 	val game_two_players = new Button{
-		Projet.partie.partie_two_players()
 		action = Action("Player vs. Player") {
+			Projet.partie.partie_two_players()
 			spawn_game()
 		}
 	}
@@ -122,18 +124,20 @@ object Interface extends SimpleSwingApplication {
 			Projet.partie.partie_two_ia()
 			spawn_game()
 		}
-	}
-
-	val box = new BoxPanel(Orientation.Vertical) {
 
 	}
 
+	val box = new BoxPanel(Orientation.Vertical) 
+	val grid_menu = new GridPanel(4,1)
+	val grid_game = new GridPanel(8,8)
 	def set_menu() = {
+		grid_game.contents.clear()
 		box.contents.clear()
-		box.contents+= game_two_players
-		box.contents+= game_one_player_black
-		box.contents+= game_one_player_white
-		box.contents+= game_two_ia
+		box.contents += grid_menu
+		grid_menu.contents+= game_two_players
+		grid_menu.contents+= game_one_player_black
+		grid_menu.contents+= game_one_player_white
+		grid_menu.contents+= game_two_ia
 		box.revalidate()
 		box.repaint()
 	}
@@ -197,15 +201,11 @@ object Interface extends SimpleSwingApplication {
 			}		
 
 		}
-		box.contents -= game_two_players
-		box.contents -= game_two_ia
-		box.contents -= game_one_player_white
-		box.contents -= game_one_player_black
-		box.contents += new GridPanel(8, 8) {
-			for( i <- 7 to 0 by -1) {
-				for( j <- 0 to 7) {
-					contents += (Cells(i)(j))
-				}
+		box.contents.clear()
+		box.contents +=grid_game
+		for( i <- 7 to 0 by -1) {
+			for( j <- 0 to 7) {
+				grid_game.contents += (Cells(i)(j))
 			}
 		}
 		box.contents+= back_menu
