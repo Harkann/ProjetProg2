@@ -24,10 +24,8 @@ class Partie(){
 		//petit risque de probleme si char different de 'B' ou 'W'
 	}
 	def next_turn():Unit = {
-		is_mat(player)
-		is_mat(other_player(player))
-		is_pat(player)
-		is_pat(other_player(player))
+		if (is_running){is_mat(other_player(player))}
+		if (is_running){is_pat(other_player(player))}
 		if (is_running){
 			if (nb_ia == 0){
 				if (player == 'W') {player = 'B'}
