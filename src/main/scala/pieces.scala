@@ -33,9 +33,11 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	}
 
 
-	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])= {
+	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j)=position
 		var id=Projet.partie.matrix_pieces(i)(j)
+		var piece=Projet.partie.get_piece(id)
+		if (!(piece.is_alive)) {return (List(),List())}
 		var res_moves : List[ (Int,Int) ] = List()
 		var	res_attacks : List[ (Int,Int) ] = List()
 		val other=Projet.partie.other_player(id(0))
