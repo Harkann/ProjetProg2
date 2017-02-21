@@ -5,24 +5,27 @@
 //color de type char car la comparaison string char est fausse
 
 abstract class Piece(color:Char,var position : (Int,Int)) {
-	//val color:Char; // 'B' ou 'W'
-	val name:String; 
+	// val color:Char; 
+	// 'B' ou 'W'
+	val name:String; //nom de la pièce
 	var is_alive:Boolean;
 	val id:String; // != "0"
-	def get_id() = id
+	def get_id() = id //id qui permettra d'identifier la pièce
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]);
+	//liste les places pouvant être prises par la piece en la position donnée sans tenir compte d'une possible mise en échec.
 	
 	var nb_turn = 0
-	def delete(posi:(Int,Int)) = {
+
+	def delete(posi:(Int,Int)) = { //prise d'une piece
 		var(i,j)=position
 		var (x,y)=posi
 		var id_piece_deleted=Projet.partie.matrix_pieces(x)(y)
 		var piece_deleted=Projet.partie.get_piece(id_piece_deleted)
 		piece_deleted.is_alive=false
 		move(posi)
-
 	}
-	def move(posi:(Int,Int)) = {
+
+	def move(posi:(Int,Int)) = {//déplacement d'une piece
 		var (i,j)=position
 		position=posi
 		var (x,y)=posi
@@ -34,6 +37,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 
 
 	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		// renvoi la liste des places pouvant être prise par la piece en tenant compte de la mise en échec
 		var (i,j)=position
 		var id=Projet.partie.matrix_pieces(i)(j)
 		var piece=Projet.partie.get_piece(id)
@@ -116,18 +120,12 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		}
 		return (res_moves,res_attacks)
 	}
-	// Couleur.2PremieresLettres.numéro
-	//var position:(Int,Int); //doublon avec la liste des pieces dans partie ?
-	//def move(position:(Int,Int)):Unit; //change la position de la piece couple (ligne,colonne)
-	//def take; -> inutile : un truc dans move gere la prise des pieces (change le flag de la piece sur la case d'arivée)
-	//def is_legal():List[(Int,Int)]; //renvoie liste des positions possibles pour le prochain coup
-	// doit verifier si en echec et si le move peut causer l'echec avant de renvoyer la liste
 }
 
 
 
 
-trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
+trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code : deplacement des tours et des reines
 
 	def dpct_horiz (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { 
 		var (i,j) = position 
@@ -163,9 +161,9 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code.
 }
 
 
-trait Diagonal {  //utiliser des traits pour factoriser le code.
+trait Diagonal {  //utiliser des traits pour factoriser le code. déplacement des fous et des reines
 
-	def dpct_diag_R (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { 
+	def dpct_diag_R (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { //diagonale allant vers la droite
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
 	var attack_list: List[ (Int,Int) ] = List()
@@ -173,10 +171,10 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 	val id= Projet.partie.matrix_pieces(i)(j)
 	while ((i+n<=8) && (j+n<=8) && (Projet.partie.matrix_pieces(i+n)(j+n)=="0")) {res=res:+(i+n,j+n);n+=1}
 	if ((i+n<=8) && (j+n<=8) && 
-		(Projet.partie.matrix_pieces(i+n)(j+n)(0)==Projet.partie.other_player(id(0))))
+		(Projet.partie.matrix_pieces(i+n)(j+n)(0)==Projet.partie.other_player(id(0)))) //avance
 		{res=res:+(i+n,j+n);attack_list=attack_list:+(i+n,j+n)}
 	n=1
-	while ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)=="0")) {res=res:+(i-n,j-n);n+=1}
+	while ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)=="0")) {res=res:+(i-n,j-n);n+=1} //recule
 	if ((i-n>=1) && (j-n>=1) && (Projet.partie.matrix_pieces(i-n)(j-n)(0)==Projet.partie.other_player(id(0))))
 		{res=res:+(i-n,j-n);attack_list=attack_list:+(i-n,j-n)}
 	return (res,attack_list)}
@@ -184,26 +182,27 @@ trait Diagonal {  //utiliser des traits pour factoriser le code.
 
 
 
-	def dpct_diag_L (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { 
+	def dpct_diag_L (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { //diagonale allant vers la gauche
 	var (i,j) = position 
 	var res : List[ (Int,Int) ] = List()
 	var n=1
 	var attack_list: List[ (Int,Int) ] = List()
 	val id= Projet.partie.matrix_pieces(i)(j)
-	while ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i+n,j-n);n+=1}
+	while ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)=="0")) {res=res:+(i+n,j-n);n+=1} //avance
 	if ((i+n<=8) && (j-n>=1) && (Projet.partie.matrix_pieces(i+n)(j-n)(0)==Projet.partie.other_player(id(0))))
 		{res=res:+(i+n,j-n);attack_list=attack_list:+(i+n,j-n)}
 	n=1
-	while ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i-n)(j+n)=="0")) {res=res:+(i-n,j+n);n+=1}
+	while ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i-n)(j+n)=="0")) {res=res:+(i-n,j+n);n+=1} //recule
 	if ((i-n>=1) && (j+n<=8) && (Projet.partie.matrix_pieces(i-n)(j+n)(0)==Projet.partie.other_player(id(0))))
 		{res=res:+(i-n,j+n);attack_list=attack_list:+(i-n,j+n)}
 
 	return (res,attack_list) }
 }
 
-trait Jump{
+trait Jump{ //déplacement des cavaliers
 	def jump(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
-		val movement_list : List[(Int,Int)] = List((1,2),(-1,2),(2,1),(2,-1),(-2,-1),(-2,1),(1,-2),(-1,-2))
+		val movement_list : List[(Int,Int)] = List((1,2),(-1,2),(2,1),(2,-1),(-2,-1),(-2,1),(1,-2),(-1,-2)) 
+		//listes des déplacements possibles
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
@@ -223,8 +222,8 @@ trait Jump{
 	}
 }
 
-trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
-	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+trait Peon_move{
+	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {//pion blanc avance vers le haut
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
@@ -241,7 +240,7 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 			{res=res:+(i+1,j-1);attack_list=attack_list:+(i+1,j-1)}
 		return (res,attack_list)
 	}
-	def dpct_peon_black(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+	def dpct_peon_black(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {//pion noir avance vers le bas
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
@@ -258,7 +257,7 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 			{res=res:+(i-1,j-1);attack_list=attack_list:+(i-1,j-1)}
 		return (res,attack_list)
 	}
-	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
+	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={//fonction globale
 		var (i,j) = position
 		val id= Projet.partie.matrix_pieces(i)(j)
 		if (id(0)=='B') {return dpct_peon_black(position)}
@@ -268,7 +267,7 @@ trait Peon_move{//ici pb deplacement pion noir en arriere !!!!!!
 }
 
 trait King_move{
-	def dpct_king(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+	def dpct_king(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { //déplacemnt du roi
 		val movement_list : List[(Int,Int)] = List((1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1))
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
@@ -292,7 +291,7 @@ trait King_move{
 
 
 trait Id_creation {
-	def id_create(color:Char,name:String) : Int = {
+	def id_create(color:Char,name:String) : Int = { //crée un Id
 		var ind=0
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
@@ -345,8 +344,6 @@ with Id_creation with King_move{
 	val name="Ki"
 	var is_alive=true
 	val id=color+name+id_create(color,name)
-	//def is_check;  -> idée de jobic -> un fonction determinant les pieces attaquables -> est ce que le roi est dedans? 
-	//ndt : savoir si un moove n'induit ne pas d'echec-> est t'il attaqué si oui on verifit plus
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		return dpct_king(position)
 	}
