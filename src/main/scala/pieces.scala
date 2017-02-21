@@ -3,31 +3,41 @@
 
 
 //color de type char car la comparaison string char est fausse
-
+/**Superclasse abstraite contenant toutes les pièces,
+color : 'W' ou 'B'*/
 abstract class Piece(color:Char,var position : (Int,Int)) {
-	// val color:Char; 
-	// 'B' ou 'W'
-	val name:String; //nom de la pièce
+	/**nom de la pièce*/
+	val name:String; 
+	/**statut en vie ou non de la pièce*/
 	var is_alive:Boolean;
-	val id:String; // != "0"
-	def get_id() = id //id qui permettra d'identifier la pièce
+	/**id de la pièce, l'id "0" désigne une case vide*/
+	val id:String;
+	/**renvoie l'id*/
+	def get_id() = id
+	/**renvoie la liste les positions atteignables par la pièces depuis "position" sans tenir compte du risque d'échec*/
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]);
-	//liste les places pouvant être prises par la piece en la position donnée sans tenir compte d'une possible mise en échec.
-	
-	var nb_turn = 0
 
-	def delete(posi:(Int,Int)) = { //prise d'une piece
+	/**nombre de déplacements de la pièce*/
+	var nb_turn = 0
+	/**prend la pièce à la position posi*/
+	def delete(posi:(Int,Int)) = {
+		/**coordonnées de la pièce*/
 		var(i,j)=position
+		/**coordonnées de la pièce prise*/
 		var (x,y)=posi
+		/**id de la pièce prise*/
 		var id_piece_deleted=Projet.partie.matrix_pieces(x)(y)
+		/**pièce supprimée*/
 		var piece_deleted=Projet.partie.get_piece(id_piece_deleted)
 		piece_deleted.is_alive=false
 		move(posi)
 	}
-
-	def move(posi:(Int,Int)) = {//déplacement d'une piece
+	/**déplace la pièce vers "posi"*/
+	def move(posi:(Int,Int)) = {
+		/**coordonnées actuelles de la pièce*/
 		var (i,j)=position
 		position=posi
+		/**coordonnées de la destination*/
 		var (x,y)=posi
 		Projet.partie.matrix_pieces(x)(y)=get_id()
 		Projet.partie.matrix_pieces(i)(j)="0"
@@ -35,15 +45,20 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		nb_turn+=1
 	}
 
-
+	/**renvoie la liste des cases atteignables par la pièce située en "position" en tenant compte de la mise en échec*/
 	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
-		// renvoi la liste des places pouvant être prise par la piece en tenant compte de la mise en échec
+		/**coordonnée de la pièce*/
 		var (i,j)=position
+		/** id de la pièce sur la case*/
 		var id=Projet.partie.matrix_pieces(i)(j)
+		/**pièce sur la case*/
 		var piece=Projet.partie.get_piece(id)
 		if (!(piece.is_alive)) {return (List(),List())}
+		/**déplacements possibles (avec ou sans prise)*/
 		var res_moves : List[ (Int,Int) ] = List()
+		/**prises possibles*/
 		var	res_attacks : List[ (Int,Int) ] = List()
+		/**autre joueur*/
 		val other=Projet.partie.other_player(id(0))
 		if (id.substring(1,3)=="Ki") {
 			var (moves,attacks) = move_piece(position)
@@ -124,8 +139,8 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 
 
 
-
-trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code : deplacement des tours et des reines
+/**déplacement horizontal et vertical (tours et reines)*/
+trait Horizontal_Vertical {
 
 	def dpct_horiz (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { 
 		var (i,j) = position 
@@ -160,8 +175,8 @@ trait Horizontal_Vertical {  //utiliser des traits pour factoriser le code : dep
 		return (res,attack_list)}
 }
 
-
-trait Diagonal {  //utiliser des traits pour factoriser le code. déplacement des fous et des reines
+/**déplacement diagonal (fous)*/
+trait Diagonal {
 
 	def dpct_diag_R (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { //diagonale allant vers la droite
 	var (i,j) = position 
@@ -198,11 +213,11 @@ trait Diagonal {  //utiliser des traits pour factoriser le code. déplacement de
 
 	return (res,attack_list) }
 }
-
-trait Jump{ //déplacement des cavaliers
+/**déplacement des cavaliers*/
+trait Jump{
 	def jump(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		/**liste des déplacements possibles relatifs à la position initiale*/
 		val movement_list : List[(Int,Int)] = List((1,2),(-1,2),(2,1),(2,-1),(-2,-1),(-2,1),(1,-2),(-1,-2)) 
-		//listes des déplacements possibles
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
@@ -221,9 +236,10 @@ trait Jump{ //déplacement des cavaliers
 		return (res,attack_list)
 	}
 }
-
+/**déplacement des pions*/
 trait Peon_move{
-	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {//pion blanc avance vers le haut
+	/**déplacement du pion blanc, avance vers le haut*/
+	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
@@ -240,7 +256,8 @@ trait Peon_move{
 			{res=res:+(i+1,j-1);attack_list=attack_list:+(i+1,j-1)}
 		return (res,attack_list)
 	}
-	def dpct_peon_black(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {//pion noir avance vers le bas
+	/**déplacement du pion blanc, avance vers le bas*/
+	def dpct_peon_black(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position
 		var res : List[ (Int,Int) ] = List()
 		val id= Projet.partie.matrix_pieces(i)(j)
@@ -257,7 +274,8 @@ trait Peon_move{
 			{res=res:+(i-1,j-1);attack_list=attack_list:+(i-1,j-1)}
 		return (res,attack_list)
 	}
-	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={//fonction globale
+	/**déplacement global*/
+	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
 		var (i,j) = position
 		val id= Projet.partie.matrix_pieces(i)(j)
 		if (id(0)=='B') {return dpct_peon_black(position)}
@@ -265,7 +283,7 @@ trait Peon_move{
 	}
 
 }
-
+/**déplacement du roi*/
 trait King_move{
 	def dpct_king(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { //déplacemnt du roi
 		val movement_list : List[(Int,Int)] = List((1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1))
@@ -291,7 +309,8 @@ trait King_move{
 
 
 trait Id_creation {
-	def id_create(color:Char,name:String) : Int = { //crée un Id
+	/**crée un Id*/
+	def id_create(color:Char,name:String) : Int = {
 		var ind=0
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
