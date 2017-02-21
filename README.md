@@ -15,9 +15,11 @@ La gestion des déplacements a été faite à l'aide de traits un par type de d�
 - move_peon pour les pions
 - move_king pour le roi
 
-Pour les IA, on avait besoin de la liste des deplacements disponibles celà ce fait en deux temps:
+Pour les IA, on avait besoin de la liste des déplacements disponibles cela ce fait en deux temps:
 On créée une liste des déplacements possibles sans faire attention à la gestion de la mise en échec.
 On examine chaque déplacement pour voir s'il met ou laisse le roi en échec.
+
+
 
 #PAD crans
 

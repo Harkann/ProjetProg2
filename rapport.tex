@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\title{Projet Programmation 2}
+\date{}
+\author{Garance GOURDEL, Michaël PAULON}
+\begin{document}
+\maketitle
+\section{Introduction}
+L'objectif du projet était de réaliser un jeu d'échec en programmation orientée objet dans le langage Scala. \\
+Notre projet est divisé comme suit : \\
+ - partie.scala \\
+ - interface.scala \\
+ - pieces.scala \\
+
+\section{partie.scala}
+Gère le fonctionnement de la partie et l'ia\\
+Le plateau a été représenté par une matrice contenant l'identité des pièces. \\
+Le tour de l'IA se déroule dans un nouveau thread pour permettre de rajouter du délai entre ses actions sans impacter le reste du jeu.
+
+
+
+\section{interface.scala}
+Gère l'interface \\
+Le joueur n'est pas un objet à part entière, mais ses actions sont entièrement codées par les boutons.\\
+
+\section{pieces.scala}
+\subsection{Déplacements des pièces}
+Pour factoriser le code, les déplacement sont codés sous forme de traits : \\
+ - horizontaux et verticaux pour la tour et la reine \\
+ - diagonaux pour le fou et la reine \\
+ - jump pour les cavaliers \\
+ - move\_peon pour les pions \\
+ - move\_king pour le roi \\
+
+\subsection{Identification des pièces}
+L'identité d'une pièce est crée ainsi : \\ 
+ - un caractère pour la couleur de la pièce, \\
+ - deux caractères pour le nom de la pièce \\
+ - un chiffre pour le numéro de la pièce \\
+Ainsi le quatrième pion noir a pour id : "BPe3" \\
+
+\section{Répartition du travail}
+interface.scala : Michaël \\
+pieces.scala : Garance \\
+partie.scala : \\
+ - vérification de la mise en échec et du mat : Garance \\
+ - IA et mouvements autorisés : Michaël \\
+ \end{document}
