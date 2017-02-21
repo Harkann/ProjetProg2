@@ -1,40 +1,46 @@
 import Array._
 
 class Partie(){
-	var matrix_pieces = ofDim[String](9,9); //plus grande pour pas avoir à s'enmerder avec les indices.
-	
-
-	// contient l'id des pieces à leur position. vaut "0" si pas de piece a la position.
+	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
+	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
+	var matrix_pieces = ofDim[String](9,9); 
+	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
+	/**nombre d'ia, 0, 1 ou 2*/
 	var nb_ia = 0
+	/**couleur de l'ia, 'B','W' ou '0'*/
 	var color_ia = 'B';
+	/**liste des pièces en vie*/
 	var liste_pieces :List[Piece] = List()
+	/**la partie est en cours ou non */
 	var is_running = true
+	/**délai en ms avant le déplacement des pièces de l'ia*/
 	var delai_ia = 1000
+	/**renvoie si la partie est finie*/
 	def stop() ={
 		is_running = false
 	}
+	/**sera utilisée pour définir la vitesse du jeu de l'IA*/
 	def set_delay_ia(value:Int) = {
 		delai_ia = value
 	}
-
+	/**renvoie la couleur du joueur opposé a "player"*/
 	def other_player(player: Char):Char = {
 		if (player=='B') {return 'W'}
 		else {return 'B'} 
-		//petit risque de probleme si char different de 'B' ou 'W'
+		//petit risque de problème si char différent de 'B' ou 'W'
 	}
+	/**lance le tour suivant*/
 	def next_turn():Unit = {
 		if (is_running){is_mat(other_player(player))}
 		if (is_running){is_pat(other_player(player))}
 		if (is_running){
 			if (nb_ia == 0){
-				if (player == 'W') {player = 'B'}
-				else {player = 'W'}
+				player = other_player(player)
 			}
 			else if (nb_ia == 1){
 				if (player == color_ia){
-					if (player == 'W') {player = 'B'}
-					else {player = 'W'}
+					player = other_player(player)
 				}
 				else {
 					new Thread(new IA(color_ia)).start
@@ -50,21 +56,23 @@ class Partie(){
 			}
 		}
 	}
-
+	/**renvoie l'id de la pièce a la position (i,j)*/
 	def id_piece_on_case (i:Int,j:Int):String = {
 		return matrix_pieces(i)(j)
 	}
+	/**renvoie la couleur de la pièce ayant l'id "id"*/
 	def color_from_id(id:String):Char = {
 		return id(0)
 	}
-
+	/**renvoie le type de la pièce ayant l'id "id"*/
 	def type_from_id(id:String):String = {
 		return id.substring(1,3)
 	}
-
+	/**renvoie le joueur courant*/
 	def get_player() = player
-
+	/**renvoie la pièce ayant l'id "id"*/
 	def get_piece(id:String):Piece = {
+		/**position de la pièce dans la liste, vaut -1 pour planter si la pièce existe pas*/
 		var indice = -1
 		for( i <- 0 to liste_pieces.length-1) {
 			if (liste_pieces(i).get_id() == id){
@@ -74,18 +82,22 @@ class Partie(){
 		return liste_pieces(indice)
 
 	}
-
+	/**renvoie la liste des mouvements possibles pour le joueur "player"
+	(utilisée par l'ia)*/
 	def allowed_moves(player:Char): List[((Int,Int),(Int,Int))] = {
+		/**liste des mouvements possibles*/
 		var all_moves : List[ ((Int,Int),(Int,Int)) ] = List()
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
+				/**id de la pièce sur la case (i,j)*/
 				var id_piece_ij = matrix_pieces(i)(j)
 
 				if (id_piece_ij(0)==player)
 				{
+					/**pièce sur la case (i,j)*/
 					var piece_ij=get_piece(id_piece_ij)
-
-					var (list_move,list_attack)= piece_ij.move_piece_check((i,j))//ici_pour l'IA
+					/**liste des mouvements possibles de la pièce courante*/
+					var (list_move,list_attack)= piece_ij.move_piece_check((i,j))
 					for( move <- list_move) {
 						all_moves=all_moves:+((i,j),move)
 					}
@@ -94,14 +106,17 @@ class Partie(){
 		}
 		return all_moves
 	}
+	/**teste si le joueur "player" est pat et affiche pat*/
 	def is_pat(player:Char) = {
 		if (allowed_moves(player) == List()){
 			Interface.pat()
 		}
 	}
-
+	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
+		/**liste des pièces attaquées*/
 		var res : List[ (Int,Int) ] = List()
+		/**autre joueur*/
 		val other=other_player(player)
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
@@ -118,9 +133,11 @@ class Partie(){
 		}
 		return res
 	}
-
+	/**renvoie si le joueur "player" est en échec*/
 	def is_check(player : Char) : Boolean = {
+		/**autre joueur*/
 		val other=other_player(player)
+		/**liste des pièces attaquées*/
 		var list_in_danger=in_danger_of(other)
 		for (pos <-list_in_danger){
 			var (i,j)=pos
@@ -133,48 +150,63 @@ class Partie(){
 
 	}
 
-
+	/**renvoie si le joueur "player" est mat*/
 	def is_mat(player: Char) : Unit = {
+		/**id du roi*/
 		val id_king=player+"Ki"+0
+		/**pièce roi*/
 		val king=get_piece(id_king)
+		/**position du roi*/
 		var position=(1,1)
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
+				/**id de la pièce sur la case (i,j)*/
 				var id_piece_ij=matrix_pieces(i)(j)
 				if(id_king==id_piece_ij) {position=(i,j)}
 			}
 		}
+		/***/
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {Interface.perdu(player)}
 
 	}
-
+	/**défini les paramètres de la partie pour deux joueurs*/
 	def partie_two_players() = {
 		nb_ia = 0
 		color_ia = '0'
 	}
-
+	/**défini les paramètres de la partie pour un joueur et une ia de couleur "color"*/
 	def partie_one_ia(color:Char) ={
 		nb_ia = 1
 		color_ia = color
 	}
-
+	/**défini les paramètres de la partie pour deux joueurs*/
 	def partie_two_ia() = {
 		nb_ia = 2
 		color_ia = '0'
 	}
+	/**compte le nombre de tours*/
 	var nb_tours = 0
+	/**permet de lancer l'ia sous forme de thread*/
 	class IA(color:Char) extends Runnable{
+		/**lance le thread du tour de l'ia*/
 		override def run = {
 			nb_tours=nb_tours+1
 			var moves_ia = allowed_moves(color)
 			Thread.sleep(delai_ia)
+			/**objet random*/
 			var random_move = scala.util.Random
+			/**entier random permettant de choisir un mouvement*/
 			var random_moveInt = random_move.nextInt(moves_ia.length)
+			/**origine et destination de la pièce*/
 			var (origin,destination) = moves_ia(random_moveInt)
+			/**coordonnées de l'origine*/
 			var (oi,oj) = origin
+			/**coordonnées de la destination*/
 			var (di,dj) = destination
+			/**id de la pièce de départ*/
 			var id_piece_selected = id_piece_on_case(oi,oj)
+			/**id de la pièce sur la case de destination*/
 			var id_destination = id_piece_on_case(di,dj)
 			if (id_destination == "0"){
 				Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
@@ -188,13 +220,14 @@ class Partie(){
 			Projet.partie.next_turn()
 		}
 	}
+	/**démarre la partie*/
 	def start() = {
 		if (color_ia == 'W'|| nb_ia == 2){
 			if (nb_ia == 1){player = 'B'}
 			new Thread(new IA('W')).start
 		}
 	}
-
+	/**initialise la partie*/
 	def partie_init() ={
 		is_running = true
 		for( i <- 1 to 8) {
@@ -204,8 +237,6 @@ class Partie(){
 		}
 		player = 'W'
 		nb_tours = 0
-		//nb_ia = 0
-		//definition des pieces blanches
 		liste_pieces= liste_pieces:+new Peon('W',(2,1))
 		liste_pieces= liste_pieces:+new Peon('W',(2,2))
 		liste_pieces= liste_pieces:+new Peon('W',(2,3))
@@ -245,7 +276,7 @@ class Partie(){
 	
 }
 object Projet{
-
+	/**stocke tous les paramètres de la partie*/
 	var partie= new Partie()
 }
 
