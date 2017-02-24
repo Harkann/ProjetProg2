@@ -15,7 +15,8 @@ class Partie(){
 	/**la partie est en cours ou non */
 	var is_running = true
 	/**délai en ms avant le déplacement des pièces de l'ia*/
-	var delai_ia = 100
+	var delai_ia = 10
+
 	/**renvoie si la partie est finie*/
 	def stop() ={
 		is_running = false
@@ -32,6 +33,7 @@ class Partie(){
 	}
 	/**lance le tour suivant*/
 	def next_turn():Unit = {
+		if (is_running){is_mat(player)}
 		if (is_running){is_mat(other_player(player))}
 		if (is_running){is_pat(other_player(player))}
 		if (is_running){
