@@ -15,7 +15,7 @@ class Partie(){
 	/**la partie est en cours ou non */
 	var is_running = true
 	/**délai en ms avant le déplacement des pièces de l'ia*/
-	var delai_ia = 1000
+	var delai_ia = 100
 	/**renvoie si la partie est finie*/
 	def stop() ={
 		is_running = false
