@@ -198,41 +198,43 @@ object Interface extends SimpleSwingApplication {
 					/**récupère l'id de la pièce sur la case*/
 					var piece_id = id_piece_on_case(i,j)
 					action = Action("") {
-						piece_id = id_piece_on_case(i,j)
-						if (id_piece_selected == "0"){
-							if (piece_id != "0" && color_from_id(piece_id) == get_player() && piece_id != id_piece_selected){
-								id_piece_selected = piece_id
-								origin_pos = (i+1,j+1)
-								resetColors()
-								select_case(i,j)
-								moves = piece_allowed_move(piece_id,(i+1,j+1))
-								prises = piece_allowed_take(piece_id,(i+1,j+1))
-								for( (i,j) <- moves) {
-									select_case_move(i-1,j-1)
+						if (Projet.partie.is_running){
+							piece_id = id_piece_on_case(i,j)
+							if (id_piece_selected == "0"){
+								if (piece_id != "0" && color_from_id(piece_id) == get_player() && piece_id != id_piece_selected){
+									id_piece_selected = piece_id
+									origin_pos = (i+1,j+1)
+									resetColors()
+									select_case(i,j)
+									moves = piece_allowed_move(piece_id,(i+1,j+1))
+									prises = piece_allowed_take(piece_id,(i+1,j+1))
+									for( (i,j) <- moves) {
+										select_case_move(i-1,j-1)
 
+									}
+									for( (i,j) <- prises) {
+										select_case_take(i-1,j-1)
+									}
 								}
-								for( (i,j) <- prises) {
-									select_case_take(i-1,j-1)
+							}	
+							else {
+								if (piece_id == id_piece_selected){
+									id_piece_selected = "0"
+									resetColors()
 								}
+								else if (piece_id == "0" && moves.contains((i+1,j+1))) {
+									piece_move(id_piece_selected,origin_pos,(i+1,j+1)) 
+									resetColors()
+									id_piece_selected = "0"
+									Projet.partie.next_turn()
+								}
+								else if (piece_id != "0" && prises.contains((i+1,j+1))) {
+									piece_take(id_piece_selected,origin_pos,(i+1,j+1)) 
+									resetColors()
+									id_piece_selected = "0"
+									Projet.partie.next_turn()
+								}			
 							}
-						}	
-						else {
-							if (piece_id == id_piece_selected){
-								id_piece_selected = "0"
-								resetColors()
-							}
-							else if (piece_id == "0" && moves.contains((i+1,j+1))) {
-								piece_move(id_piece_selected,origin_pos,(i+1,j+1)) 
-								resetColors()
-								id_piece_selected = "0"
-								Projet.partie.next_turn()
-							}
-							else if (piece_id != "0" && prises.contains((i+1,j+1))) {
-								piece_take(id_piece_selected,origin_pos,(i+1,j+1)) 
-								resetColors()
-								id_piece_selected = "0"
-								Projet.partie.next_turn()
-							}			
 						}
 					}
 
@@ -241,6 +243,7 @@ object Interface extends SimpleSwingApplication {
 					}
 				}
 				initColors(i,j)
+
 			}		
 
 		}
