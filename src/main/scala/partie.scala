@@ -3,15 +3,13 @@ import Array._
 class Partie(){
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
-	var matrix_pieces = ofDim[String](9,9); 
+	var matrix = ofDim[Piece](9,9); 
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/
 	var nb_ia = 0
 	/**couleur de l'ia, 'B','W' ou '0'*/
 	var color_ia = 'B';
-	/**liste des pièces en vie*/
-	var liste_pieces :List[Piece] = List()
 	/**la partie est en cours ou non */
 	var is_running = true
 	/**délai en ms avant le déplacement des pièces de l'ia*/
@@ -60,7 +58,8 @@ class Partie(){
 	}
 	/**renvoie l'id de la pièce a la position (i,j)*/
 	def id_piece_on_case (i:Int,j:Int):String = {
-		return matrix_pieces(i)(j)
+		var piece_ij=matrix(i)(j)
+		return piece_ij.id
 	}
 	/**renvoie la couleur de la pièce ayant l'id "id"*/
 	def color_from_id(id:String):Char = {
@@ -91,13 +90,13 @@ class Partie(){
 		var all_moves : List[ ((Int,Int),(Int,Int)) ] = List()
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
+				/**pièce sur la case (i,j)*/
+				var piece_ij=matrix(i)(j)
 				/**id de la pièce sur la case (i,j)*/
-				var id_piece_ij = matrix_pieces(i)(j)
+				var id_piece_ij = piece_ij.id
 
 				if (id_piece_ij(0)==player)
 				{
-					/**pièce sur la case (i,j)*/
-					var piece_ij=get_piece(id_piece_ij)
 					/**liste des mouvements possibles de la pièce courante*/
 					var (list_move,list_attack)= piece_ij.move_piece_check((i,j))
 					for( move <- list_move) {
@@ -122,9 +121,9 @@ class Partie(){
 		val other=other_player(player)
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
-				var id_piece_ij = matrix_pieces(i)(j)
+				var piece_ij=matrix(i)(j)
+				var id_piece_ij = piece_ij.id
 				if (id_piece_ij!="0"){
-				var piece_ij=get_piece(id_piece_ij)
 				if (id_piece_ij(0)==player)
 				{
 					var (list_move,list_attack)= piece_ij.move_piece((i,j))
@@ -143,7 +142,8 @@ class Partie(){
 		var list_in_danger=in_danger_of(other)
 		for (pos <-list_in_danger){
 			var (i,j)=pos
-			var id_piece=matrix_pieces(i)(j)
+			var piece= matrix(i)(j)
+			var id_piece=piece.id
 			if (id_piece.substring(0,3)==player+"Ki"){
 				return true
 			}
@@ -162,8 +162,9 @@ class Partie(){
 		var position=(1,1)
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
+				var piece_ij=matrix(i)(j)
 				/**id de la pièce sur la case (i,j)*/
-				var id_piece_ij=matrix_pieces(i)(j)
+				var id_piece_ij = piece_ij.id
 				if(id_king==id_piece_ij) {position=(i,j)}
 			}
 		}
@@ -189,7 +190,68 @@ class Partie(){
 	}
 	/**compte le nombre de tours*/
 	var nb_tours = 0
-	/**permet de lancer l'ia sous forme de thread*/
+	
+	/**démarre la partie*/
+	def start() = {
+		if (color_ia == 'W'|| nb_ia == 2){
+			if (nb_ia == 1){player = 'B'}
+			new Thread(new IA('W')).start
+		}
+	}
+	/**initialise la partie*/
+	def partie_init() = {
+		is_running = true
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				matrix(i)(j) = Null
+			}
+		}
+		player = 'W'
+		nb_tours = 0
+		matrix(2,1) = new Peon('W',(2,1))
+		matrix(2,2) = new Peon('W',(2,2))
+		matrix(2,3) = new Peon('W',(2,3))
+		matrix(2,4) = new Peon('W',(2,4))
+		matrix(2,5) = new Peon('W',(2,5))
+		matrix(2,6) = new Peon('W',(2,6))
+		matrix(2,7) = new Peon('W',(2,7))
+		matrix(2,8) = new Peon('W',(2,8))
+		matrix(1,1) = new Tower('W',(1,1))
+		matrix(1,8) = new Tower('W',(1,8))
+		matrix(1,2) = new Knight('W',(1,2))
+		matrix(1,7) = new Knight('W',(1,7))
+		matrix(1,3) = new Bishop('W',(1,3))
+		matrix(1,6) = new Bishop('W',(1,6))
+		matrix(1,4) = new Queen('W',(1,4))
+		matrix(1,5) = new King('W',(1,5))
+
+		//definition des pieces noires
+		matrix(7,1) = new Peon('B',(7,1))
+		matrix(7,2) = new Peon('B',(7,2))
+		matrix(7,3) = new Peon('B',(7,3))
+		matrix(7,4) = new Peon('B',(7,4))
+		matrix(7,5) = new Peon('B',(7,5))
+		matrix(7,6) = new Peon('B',(7,6))
+		matrix(7,7) = new Peon('B',(7,7))
+		matrix(7,8) = new Peon('B',(7,8))
+		matrix(8,1) = new Tower('B',(8,1))
+		matrix(8,8) = new Tower('B',(8,8))
+		matrix(8,2) = new Knight('B',(8,2))
+		matrix(8,7) = new Knight('B',(8,7))
+		matrix(8,3) = new Bishop('B',(8,3))
+		matrix(8,6) = new Bishop('B',(8,6))
+		matrix(8,4) = new Queen('B',(8,4))
+		matrix(8,5) = new King('B',(8,5))
+		println("Initialisation terminée")
+	}
+	
+}
+object Projet{
+	/**stocke tous les paramètres de la partie*/
+	var partie= new Partie()
+}
+
+/**permet de lancer l'ia sous forme de thread*/
 	class IA(color:Char) extends Runnable{
 		/**lance le thread du tour de l'ia*/
 		override def run = {
@@ -222,63 +284,3 @@ class Partie(){
 			Projet.partie.next_turn()
 		}
 	}
-	/**démarre la partie*/
-	def start() = {
-		if (color_ia == 'W'|| nb_ia == 2){
-			if (nb_ia == 1){player = 'B'}
-			new Thread(new IA('W')).start
-		}
-	}
-	/**initialise la partie*/
-	def partie_init() ={
-		is_running = true
-		for( i <- 1 to 8) {
-			for( j <- 1 to 8) {
-				matrix_pieces(i)(j) = "0"
-			}
-		}
-		player = 'W'
-		nb_tours = 0
-		liste_pieces= liste_pieces:+new Peon('W',(2,1))
-		liste_pieces= liste_pieces:+new Peon('W',(2,2))
-		liste_pieces= liste_pieces:+new Peon('W',(2,3))
-		liste_pieces= liste_pieces:+new Peon('W',(2,4))
-		liste_pieces= liste_pieces:+new Peon('W',(2,5))
-		liste_pieces= liste_pieces:+new Peon('W',(2,6))
-		liste_pieces= liste_pieces:+new Peon('W',(2,7))
-		liste_pieces= liste_pieces:+new Peon('W',(2,8))
-		liste_pieces= liste_pieces:+new Tower('W',(1,1))
-		liste_pieces= liste_pieces:+new Tower('W',(1,8))
-		liste_pieces= liste_pieces:+new Knight('W',(1,2))
-		liste_pieces= liste_pieces:+new Knight('W',(1,7))
-		liste_pieces= liste_pieces:+new Bishop('W',(1,3))
-		liste_pieces= liste_pieces:+new Bishop('W',(1,6))
-		liste_pieces= liste_pieces:+new Queen('W',(1,4))
-		liste_pieces= liste_pieces:+new King('W',(1,5))
-
-		//definition des pieces noires
-		liste_pieces= liste_pieces:+new Peon('B',(7,1))
-		liste_pieces= liste_pieces:+new Peon('B',(7,2))
-		liste_pieces= liste_pieces:+new Peon('B',(7,3))
-		liste_pieces= liste_pieces:+new Peon('B',(7,4))
-		liste_pieces= liste_pieces:+new Peon('B',(7,5))
-		liste_pieces= liste_pieces:+new Peon('B',(7,6))
-		liste_pieces= liste_pieces:+new Peon('B',(7,7))
-		liste_pieces= liste_pieces:+new Peon('B',(7,8))
-		liste_pieces= liste_pieces:+new Tower('B',(8,1))
-		liste_pieces= liste_pieces:+new Tower('B',(8,8))
-		liste_pieces= liste_pieces:+new Knight('B',(8,2))
-		liste_pieces= liste_pieces:+new Knight('B',(8,7))
-		liste_pieces= liste_pieces:+new Bishop('B',(8,3))
-		liste_pieces= liste_pieces:+new Bishop('B',(8,6))
-		liste_pieces= liste_pieces:+new Queen('B',(8,4))
-		liste_pieces= liste_pieces:+new King('B',(8,5))
-		println("Initialisation terminée")
-	}
-	
-}
-object Projet{
-	/**stocke tous les paramètres de la partie*/
-	var partie= new Partie()
-}
-
