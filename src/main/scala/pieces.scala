@@ -176,6 +176,32 @@ trait Horizontal_Vertical {
 }
 
 /**déplacement diagonal (fous)*/
+ def dpct_direction (position:(Int,Int),deplacement:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) ={
+	var (i,j) = position
+	var (a,b) = deplacement
+	var res : List[ (Int,Int) ] = List()
+	var attack_list: List[ (Int,Int) ] = List()
+	val id= Projet.partie.matrix_pieces(i)(j)
+
+	while 
+		((1<=i) && (i<=8) &&
+		(1<=j) && (j<=8) &&
+		(Projet.partie.matrix_pieces(i)(j)="0")) 
+
+	{
+		res=res:+(i,j)
+		i=i+a
+		j=j+b
+
+	}
+
+	if ((1<=i) && (i<=8) && 
+		(1<=j) && (j<=8) && 
+		(Projet.partie.matrix_pieces(i)(j)(0)==Projet.partie.other_player(id(0)))) 
+		{res=res:+(i,j);attack_list=attack_list:+(i,j)}
+
+	return (res,attack_list)} 
+
 trait Diagonal {
 
 	def dpct_diag_R (position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { //diagonale allant vers la droite
