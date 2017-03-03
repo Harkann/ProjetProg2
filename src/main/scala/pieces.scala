@@ -1,6 +1,6 @@
 //pas besoin d'inclure les trucs même depuis des fichiers différents.
 
-
+//MATRIX_PIECE A SUPPRIMER ET REECRIRE DE CE FICHIER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 //color de type char car la comparaison string char est fausse
 /**Superclasse abstraite contenant toutes les pièces,
@@ -45,6 +45,46 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		nb_turn+=1
 	}
 
+	def matrix(position:(Int,Int)) : String = {
+		var (i,j) = position
+		return Projet.partie.matrix_pieces(i)(j)
+	}
+/*
+	def full_verif(position:(Int,Int)) = {
+		var (moves,attacks) = move_piece(position)
+			for (mv <-moves) {
+				var id=matrix(position)
+				var (x,y)= mv
+				var save = matrix(mv)
+				matrix(mv) = id
+				matrix(position)="0"
+
+				if (Projet.partie.is_check(id(0))) {
+					matrix(position)=save
+					Projet.partie.matrix_pieces(i)(j)=id
+				}
+				else {
+					Projet.partie.matrix_pieces(x)(y)=save
+					Projet.partie.matrix_pieces(i)(j)=id
+					res_moves=res_moves:+mv}
+			}
+			for (at <-attacks) {
+				var (x,y)= at
+				var save = Projet.partie.matrix_pieces(x)(y)
+				Projet.partie.matrix_pieces(x)(y)=id
+				Projet.partie.matrix_pieces(i)(j)="0"
+
+				if (Projet.partie.is_check(id(0))) {
+					Projet.partie.matrix_pieces(x)(y)=save
+					Projet.partie.matrix_pieces(i)(j)=id
+				}
+				else {
+					Projet.partie.matrix_pieces(x)(y)=save
+					Projet.partie.matrix_pieces(i)(j)=id
+					res_attacks=res_attacks:+at}
+			}
+	}
+*/
 	/**renvoie la liste des cases atteignables par la pièce située en "position" en tenant compte de la mise en échec*/
 	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		/**coordonnée de la pièce*/
