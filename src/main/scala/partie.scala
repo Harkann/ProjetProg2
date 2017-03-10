@@ -15,6 +15,7 @@ class Partie(){
 	/**délai en ms avant le déplacement des pièces de l'ia*/
 	var delai_ia = 10
 
+	var is_interface= true
 	/**renvoie si la partie est finie*/
 	def stop() ={
 		is_running = false
@@ -108,9 +109,10 @@ class Partie(){
 		return all_moves
 	}
 	/**teste si le joueur "player" est pat et affiche pat*/
-	def is_pat(player:Char) = {
+	def is_pat(player:Char) = { 
 		if (allowed_moves(player) == List()){
-			Interface.pat()
+			Projet.partie.stop()
+			Interface.RootWindow.interface_partie.pat()
 		}
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
@@ -124,11 +126,11 @@ class Partie(){
 				var piece_ij=matrix(i)(j)
 				var id_piece_ij = piece_ij.id
 				if (id_piece_ij!="0"){
-				if (id_piece_ij(0)==player)
-				{
-					var (list_move,list_attack)= piece_ij.move_piece((i,j))
-					res=res++list_attack
-				}
+					if (id_piece_ij(0)==player)
+					{
+						var (list_move,list_attack)= piece_ij.move_piece((i,j))
+						res=res++list_attack
+					}
 				}
 			}
 		}
@@ -170,7 +172,9 @@ class Partie(){
 		}
 		/***/
 		var (moves,attacks) =king.move_piece_check(position)
-		if ((is_check(player))&& (allowed_moves(player)==List())) {Interface.perdu(player)}
+		if ((is_check(player))&& (allowed_moves(player)==List())) {
+			Interface.RootWindow.interface_partie.perdu(player)
+		}
 
 	}
 	/**défini les paramètres de la partie pour deux joueurs*/
@@ -246,41 +250,45 @@ class Partie(){
 	}
 	
 }
+
+abstract class Joueur(color:Char) {
+
+}
+/**permet de lancer l'ia sous forme de thread*/
+class IA(color:Char) extends Joueur with Runnable{
+	/**lance le thread du tour de l'ia*/
+	override def run = {
+		nb_tours=nb_tours+1
+		var moves_ia = allowed_moves(color)
+		Thread.sleep(delai_ia)
+		/**objet random*/
+		var random_move = scala.util.Random
+		/**entier random permettant de choisir un mouvement*/
+		var random_moveInt = random_move.nextInt(moves_ia.length)
+		/**origine et destination de la pièce*/
+		var (origin,destination) = moves_ia(random_moveInt)
+		/**coordonnées de l'origine*/
+		var (oi,oj) = origin
+		/**coordonnées de la destination*/
+		var (di,dj) = destination
+		/**id de la pièce de départ*/
+		var id_piece_selected = id_piece_on_case(oi,oj)
+		/**id de la pièce sur la case de destination*/
+		var id_destination = id_piece_on_case(di,dj)
+		if (id_destination == "0"){
+			//Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
+		}
+		else{
+			//Interface.piece_take(id_piece_selected,(oi,oj),(di,dj))
+		}
+		if (player == 'W') {player = 'B'}
+		else {player = 'W'}
+
+		Projet.partie.next_turn()
+	}
+}
+
 object Projet{
 	/**stocke tous les paramètres de la partie*/
 	var partie= new Partie()
 }
-
-/**permet de lancer l'ia sous forme de thread*/
-	class IA(color:Char) extends Runnable{
-		/**lance le thread du tour de l'ia*/
-		override def run = {
-			nb_tours=nb_tours+1
-			var moves_ia = allowed_moves(color)
-			Thread.sleep(delai_ia)
-			/**objet random*/
-			var random_move = scala.util.Random
-			/**entier random permettant de choisir un mouvement*/
-			var random_moveInt = random_move.nextInt(moves_ia.length)
-			/**origine et destination de la pièce*/
-			var (origin,destination) = moves_ia(random_moveInt)
-			/**coordonnées de l'origine*/
-			var (oi,oj) = origin
-			/**coordonnées de la destination*/
-			var (di,dj) = destination
-			/**id de la pièce de départ*/
-			var id_piece_selected = id_piece_on_case(oi,oj)
-			/**id de la pièce sur la case de destination*/
-			var id_destination = id_piece_on_case(di,dj)
-			if (id_destination == "0"){
-				Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
-			}
-			else{
-				Interface.piece_take(id_piece_selected,(oi,oj),(di,dj))
-			}
-			if (player == 'W') {player = 'B'}
-			else {player = 'W'}
-			
-			Projet.partie.next_turn()
-		}
-	}
