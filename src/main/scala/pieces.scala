@@ -1,5 +1,4 @@
-//pas besoin d'inclure les trucs même depuis des fichiers différents.
-
+import javax.swing.ImageIcon
 //MATRIX_PIECE A SUPPRIMER ET REECRIRE DE CE FICHIER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 //color de type char car la comparaison string char est fausse
@@ -13,6 +12,7 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 	var is_alive:Boolean;
 	/**id de la pièce, l'id "0" désigne une case vide*/
 	val id:String;
+	val image:ImageIcon; 
 	/**renvoie l'id*/
 	def get_id() = id
 	/**renvoie la liste les positions atteignables par la pièces depuis "position" sans tenir compte du risque d'échec*/
@@ -325,6 +325,7 @@ class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos)
 with Id_creation with Diagonal with Horizontal_Vertical{ 
 	//si jamais on remet "position" et pas un autre nom soit "pos" position est considéré constante
 	val name = "Qu"
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive= true
 	val id=color+name+id_create(color,name)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -341,6 +342,7 @@ with Id_creation with Diagonal with Horizontal_Vertical{
 class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
 with Id_creation with Peon_move{
 	val name="Pe"
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
 	val id=color+name+id_create(color,name)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -354,6 +356,7 @@ with Id_creation with Peon_move{
 class King(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
 with Id_creation with King_move{
 	val name="Ki"
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
 	val id=color+name+id_create(color,name)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -366,6 +369,7 @@ with Id_creation with King_move{
 class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
 with Id_creation with Horizontal_Vertical{
 	val name="To"
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
 	val id=color+name+id_create(color,name)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -378,6 +382,7 @@ with Id_creation with Horizontal_Vertical{
 class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
 with Id_creation with Jump{
 	val name="Kn"
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
 	val id=color+name+id_create(color,name)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = jump(position)
@@ -388,6 +393,7 @@ with Id_creation with Jump{
 class Bishop(color:Char,position:(Int,Int)) extends Piece(color,position) 
 with Id_creation with Diagonal{
 	val name="Bi"
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
 	val id=color+name+id_create(color,name)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {

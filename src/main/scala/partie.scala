@@ -39,7 +39,7 @@ class Partie(){
 			if (nb_ia == 0){
 				player = other_player(player)
 			}
-			else if (nb_ia == 1){
+			/*else if (nb_ia == 1){
 				if (player == color_ia){
 					player = other_player(player)
 				}
@@ -54,7 +54,7 @@ class Partie(){
 				else {
 					new Thread(new IA('B')).start
 				}
-			}
+			}*/
 		}
 	}
 	/**renvoie l'id de la pièce a la position (i,j)*/
@@ -200,10 +200,10 @@ class Partie(){
 	
 	/**démarre la partie*/
 	def start() = {
-		if (color_ia == 'W'|| nb_ia == 2){
+		/*if (color_ia == 'W'|| nb_ia == 2){
 			if (nb_ia == 1){player = 'B'}
 			new Thread(new IA('W')).start
-		}
+		}*/
 	}
 	/**initialise la partie*/
 	def partie_init() = {
