@@ -307,7 +307,7 @@ trait Id_creation {
 			for( j <- 1 to 8) {
 				var piece_ij = Projet.partie.matrix(i)(j)
 				if ((piece_ij != null) && (piece_ij.color ==color) )
-				{ if (piece_ij.substring(1,3)==name) {ind+=1}} 
+				{ if (piece_ij.id.substring(1,3)==name) {ind+=1}} 
 			}
 		}
 		return ind
