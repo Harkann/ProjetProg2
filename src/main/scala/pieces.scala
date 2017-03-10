@@ -142,12 +142,14 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 			i=i+a
 			j=j+b
 		}
-		val piece_met = Projet.partie.matrix(i)(j)
 		if 	// à t'on croisé une pièce si oui, peut on la prendre?
 			((1<=i) && (i<=8) && 
-			(1<=j) && (j<=8) && 
-			(piece.color != piece_met.color)) 
-			{res=res:+(i,j);attack_list=attack_list:+(i,j)}
+			(1<=j) && (j<=8) ){
+				val piece_met = Projet.partie.matrix(i)(j)
+				if (piece.color != piece_met.color){
+					res=res:+(i,j);attack_list=attack_list:+(i,j)
+				}
+			}
 		return (res,attack_list)
 
 	} 
@@ -229,13 +231,15 @@ trait Passing_take{
 	}
 }
 
-/*
+
 trait Roque{
-	def roque(position:(Int,Int),movement_list:List[(Int,Int)]): (List[(Int,Int)],List[(Int,Int)]) = {
-		if 
+	def roque(king_position:(Int,Int)): (List[(Int,Int)],List[(Int,Int)]) = {
+		var (i,j) = king_position
+		var king = Projet.partie.matrix(i)(j)
+
 	}
 }
-*/
+
 
 
 
