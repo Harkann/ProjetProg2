@@ -119,6 +119,11 @@ object Interface extends SimpleSwingApplication{
 			is_button_clicked = true
 		}
 
+		def get_image(){
+			piece = Projet.partie.matrix(i)(j)
+			if (piece != null){icon = piece.image}
+		}
+
 		def unclic(){
 			button_clicked_i = 0
 			button_clicked_j = 0
@@ -151,8 +156,9 @@ object Interface extends SimpleSwingApplication{
 			else if (couleur == "blue"){ background = myBlue }
 		}
 		init_colors()
-
+		get_image()
 		action = Action(""){
+			get_image()
 			if (Projet.partie.is_running && Projet.partie.is_interface){
 				if (is_clicked){
 					unclic()
@@ -175,28 +181,40 @@ object Interface extends SimpleSwingApplication{
 				else {
 					//il se passe rien
 				}
+				
 			}
+			get_image()
 		}
 
 	}
 	/**Grille de taille i,j contenant les différentes cases*/
 	class Echiquier(i:Int,j:Int,window:MainWindow) extends GridPanel(i,j){
 		
-		var Cells = ofDim[Case](8,8)
+		var Cells = ofDim[Case](9,9)
 		for (i <- 8 to 1 by -1){
 			for( j <- 1 to 8){
 				Cells(i)(j) = new Case(i,j)
 				Cells(i)(j).init_colors()
+				Cells(i)(j).get_image()
+				this.contents+=Cells(i)(j)
 			}
 		}
 
 		def reset_colors()  = {
-			for( i <- 9 to 1 by -1) {
+			for( i <- 8 to 1 by -1) {
 				for( j <- 1 to 8) {
 					Cells(i)(j).init_colors()
 				}
 			}
 		}
+		def set_images() ={
+			for( i <- 8 to 1 by -1) {
+				for( j <- 1 to 8) {
+					Cells(i)(j).get_image()
+				}
+			}
+		}
+
 
 	}
 	/**Ecran de jeu contenant l'échiquier de taille i,j*/
@@ -224,6 +242,8 @@ object Interface extends SimpleSwingApplication{
 
 		def spawn_game():Unit = {
 			Projet.partie.start()
+			Projet.partie.partie_init()
+			plateau.set_images()
 			window.contents = this
 			this.contents+=plateau
 			this.contents+= new GridPanel(1,2){
