@@ -163,7 +163,7 @@ class Partie(){
 		val id_king=player+"Ki"+0
 		/**position du roi*/
 		var position=(1,1)
-		var king = null 
+		var king = matrix(1)(1)
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
 				var piece_ij=matrix(i)(j)
@@ -258,6 +258,7 @@ object Projet{
 	var partie= new Partie()
 }
 
+/*
 /**permet de lancer l'ia sous forme de thread*/
 	class IA(color:Char) extends Runnable{
 		/**lance le thread du tour de l'ia*/
@@ -291,3 +292,4 @@ object Projet{
 			Projet.partie.next_turn()
 		}
 	}
+*/
