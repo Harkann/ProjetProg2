@@ -125,8 +125,8 @@ class Partie(){
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
 				var piece_ij=matrix(i)(j)
-				var id_piece_ij = piece_ij.id
-				if (id_piece_ij!="0"){
+				if (piece_ij != null ){
+					var id_piece_ij = piece_ij.id
 					if (id_piece_ij(0)==player)
 					{
 						var (list_move,list_attack)= piece_ij.move_piece((i,j))
