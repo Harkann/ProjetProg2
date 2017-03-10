@@ -66,6 +66,11 @@ class Partie(){
 	def color_from_id(id:String):Char = {
 		return id(0)
 	}
+	def get_color(i:Int,j:Int):Char = {
+		var piece_ij=matrix(i)(j)
+		if (piece_ij != null){return piece_ij.color}
+		else {return '0'}
+	}
 	/**renvoie le type de la pièce ayant l'id "id"*/
 	def type_from_id(id:String):String = {
 		return id.substring(1,3)
@@ -74,19 +79,10 @@ class Partie(){
 	def get_player() = player
 	/**renvoie la pièce ayant l'id "id"*/
 
-
-	/*
-	def get_piece(id:String):Piece = {
+	def get_piece(i:Int,j:Int):Piece = {
 		/**position de la pièce dans la liste, vaut -1 pour planter si la pièce existe pas*/
-		var indice = -1
-		for( i <- 0 to liste_pieces.length-1) {
-			if (liste_pieces(i).get_id() == id){
-				indice = i
-			}			
-		}
-		return liste_pieces(indice)
+		return matrix(i)(j)
 	}
-	*/
 
 
 	/**renvoie la liste des mouvements possibles pour le joueur "player"
@@ -261,6 +257,7 @@ class Partie(){
 abstract class Joueur(color:Char) {
 
 }
+/**
 /**permet de lancer l'ia sous forme de thread*/
 class IA(color:Char) extends Joueur with Runnable{
 	/**lance le thread du tour de l'ia*/
@@ -294,7 +291,7 @@ class IA(color:Char) extends Joueur with Runnable{
 		Projet.partie.next_turn()
 	}
 }
-
+**/
 object Projet{
 	/**stocke tous les paramètres de la partie*/
 	var partie= new Partie()
