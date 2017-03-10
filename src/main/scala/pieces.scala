@@ -208,8 +208,39 @@ trait Jump extends Dplct_positions {
 }
 
 
+
+trait Passing_take{
+	def prise_en_passant(position:(Int,Int),movement_list:List[(Int,Int)]) : List[(Int,Int)] = {
+		var (i,j) = position 
+		var res : List[ (Int,Int) ] = List()
+		val piece = Projet.partie.matrix(i)(j)
+		for (dplct <- movement_list) {
+			var (x,y) = dplct
+			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
+			{
+				var piece_met = Projet.partie.matrix(i+x)(j+y)
+				if (piece_met == null)  
+					{}
+				else if (piece_met.color == piece.color )
+					{res=res:+(i+x,j+y)}
+			}
+		}
+		return res
+	}
+}
+
+/*
+trait Roque{
+	def roque(position:(Int,Int),movement_list:List[(Int,Int)]): (List[(Int,Int)],List[(Int,Int)]) = {
+		if 
+	}
+}
+*/
+
+
+
 /**déplacement des pions*/
-trait Peon_move extends Dplct_positions {
+trait Peon_move extends Dplct_positions with Passing_take {
 	/**déplacement du pion blanc, avance vers le haut*/
 	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var movement_list : List[(Int,Int)] = List((1,0))
@@ -218,7 +249,14 @@ trait Peon_move extends Dplct_positions {
 		var (moves,attacks) = dpct_positions(position,movement_list)
 		if ((peon.nb_turn == 0) &&  (moves != List()) ) {
 			movement_list = List((1,0),(2,0)) 
-		 	return dpct_positions(position,movement_list)}
+		 	var (moves_int,attacks_int) = dpct_positions(position,movement_list)
+		 	moves = moves_int
+		 	attacks = attacks_int
+		}
+		movement_list = List((1,1),(1,-1))
+		var att_prise_passant = prise_en_passant(position,movement_list)
+		moves = moves ++ att_prise_passant
+		attacks = attacks ++ att_prise_passant
 		return (moves,attacks)
 	}
 
@@ -231,7 +269,14 @@ trait Peon_move extends Dplct_positions {
 		var (moves,attacks) = dpct_positions(position,movement_list)
 		if ((peon.nb_turn == 0) &&  (moves != List()) ) {
 			movement_list = List((-1,0),(-2,0)) 
-		 	return dpct_positions(position,movement_list)}
+		 	var (moves_int,attacks_int) = dpct_positions(position,movement_list)
+		 	moves = moves_int
+		 	attacks = attacks_int
+		}
+		movement_list = List((-1,1),(-1,-1))
+		var att_prise_passant = prise_en_passant(position,movement_list)
+		moves = moves ++ att_prise_passant
+		attacks = attacks ++ att_prise_passant
 		return (moves,attacks)
 	}
 
@@ -260,8 +305,8 @@ trait Id_creation {
 		var ind=0
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
-				var piece_ij = (Projet.partie.matrix(i)(j)).id
-				if ( piece_ij(0)==color )
+				var piece_ij = Projet.partie.matrix(i)(j)
+				if ((piece_ij != null) && (piece_ij.color ==color) )
 				{ if (piece_ij.substring(1,3)==name) {ind+=1}} 
 			}
 		}
