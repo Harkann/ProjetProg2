@@ -5,7 +5,8 @@
 //color de type char car la comparaison string char est fausse
 /**Superclasse abstraite contenant toutes les pièces,
 color : 'W' ou 'B'*/
-abstract class Piece(color:Char,var position : (Int,Int)) {
+abstract class Piece(col:Char,var position : (Int,Int)) {
+	val color = col;
 	/**nom de la pièce*/
 	val name:String; 
 	/**statut en vie ou non de la pièce*/
@@ -26,9 +27,8 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		/**coordonnées de la pièce prise*/
 		var (x,y)=posi
 		/**id de la pièce prise*/
-		var id_piece_deleted=Projet.partie.matrix_pieces(x)(y)
+		var piece_deleted=Projet.partie.matrix(x)(y)
 		/**pièce supprimée*/
-		var piece_deleted=Projet.partie.get_piece(id_piece_deleted)
 		piece_deleted.is_alive=false
 		move(posi)
 	}
@@ -39,141 +39,82 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		position=posi
 		/**coordonnées de la destination*/
 		var (x,y)=posi
-		Projet.partie.matrix_pieces(x)(y)=get_id()
-		Projet.partie.matrix_pieces(i)(j)="0"
+		Projet.partie.matrix(x)(y)=Projet.partie.matrix(i)(j)
+		Projet.partie.matrix(i)(j)=null
 		
 		nb_turn+=1
 	}
 
-	def matrix(position:(Int,Int)) : String = {
+	def matrix(position:(Int,Int)) : Piece = {
 		var (i,j) = position
-		return Projet.partie.matrix_pieces(i)(j)
+		return Projet.partie.matrix(i)(j)
 	}
-/*
-	def full_verif(position:(Int,Int)) = {
+
+	def full_verif(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		/**déplacements possibles (avec ou sans prise)*/
+		var res_moves : List[ (Int,Int) ] = List()
+		/**prises possibles*/
+		var	res_attacks : List[ (Int,Int) ] = List()
+		val (i,j) = position
+		val piece=matrix(position)
 		var (moves,attacks) = move_piece(position)
 			for (mv <-moves) {
-				var id=matrix(position)
 				var (x,y)= mv
 				var save = matrix(mv)
-				matrix(mv) = id
-				matrix(position)="0"
+				Projet.partie.matrix(x)(y) = piece
+				Projet.partie.matrix(i)(j) = null
 
-				if (Projet.partie.is_check(id(0))) {
-					matrix(position)=save
-					Projet.partie.matrix_pieces(i)(j)=id
+				if (Projet.partie.is_check(piece.color)) {
+					Projet.partie.matrix(x)(y)=save
+					Projet.partie.matrix(i)(j)=piece
 				}
 				else {
-					Projet.partie.matrix_pieces(x)(y)=save
-					Projet.partie.matrix_pieces(i)(j)=id
+					Projet.partie.matrix(x)(y)=save
+					Projet.partie.matrix(i)(j)=piece
 					res_moves=res_moves:+mv}
 			}
 			for (at <-attacks) {
 				var (x,y)= at
-				var save = Projet.partie.matrix_pieces(x)(y)
-				Projet.partie.matrix_pieces(x)(y)=id
-				Projet.partie.matrix_pieces(i)(j)="0"
+				var save = Projet.partie.matrix(x)(y)
+				Projet.partie.matrix(x)(y)=piece
+				Projet.partie.matrix(i)(j)=null
 
 				if (Projet.partie.is_check(id(0))) {
-					Projet.partie.matrix_pieces(x)(y)=save
-					Projet.partie.matrix_pieces(i)(j)=id
+					Projet.partie.matrix(x)(y)=save
+					Projet.partie.matrix(i)(j)=piece
 				}
 				else {
-					Projet.partie.matrix_pieces(x)(y)=save
-					Projet.partie.matrix_pieces(i)(j)=id
+					Projet.partie.matrix(x)(y)=save
+					Projet.partie.matrix(i)(j)=piece
 					res_attacks=res_attacks:+at}
 			}
+		return (res_moves,res_attacks)
 	}
-*/
+
 	/**renvoie la liste des cases atteignables par la pièce située en "position" en tenant compte de la mise en échec*/
 	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		/**coordonnée de la pièce*/
 		var (i,j)=position
 		/** id de la pièce sur la case*/
-		var id=Projet.partie.matrix_pieces(i)(j)
+		var piece=Projet.partie.matrix(i)(j)
 		/**pièce sur la case*/
-		var piece=Projet.partie.get_piece(id)
+		var id=piece.id
 		if (!(piece.is_alive)) {return (List(),List())}
-		/**déplacements possibles (avec ou sans prise)*/
-		var res_moves : List[ (Int,Int) ] = List()
-		/**prises possibles*/
-		var	res_attacks : List[ (Int,Int) ] = List()
 		/**autre joueur*/
 		val other=Projet.partie.other_player(id(0))
 		if (id.substring(1,3)=="Ki") {
-			var (moves,attacks) = move_piece(position)
-			for (mv <-moves) {
-				var (x,y)= mv
-				var save = Projet.partie.matrix_pieces(x)(y)
-				Projet.partie.matrix_pieces(x)(y)=id
-				Projet.partie.matrix_pieces(i)(j)="0"
-
-				if (Projet.partie.is_check(id(0))) {
-					Projet.partie.matrix_pieces(x)(y)=save
-					Projet.partie.matrix_pieces(i)(j)=id
-				}
-				else {
-					Projet.partie.matrix_pieces(x)(y)=save
-					Projet.partie.matrix_pieces(i)(j)=id
-					res_moves=res_moves:+mv}
-			}
-			for (at <-attacks) {
-				var (x,y)= at
-				var save = Projet.partie.matrix_pieces(x)(y)
-				Projet.partie.matrix_pieces(x)(y)=id
-				Projet.partie.matrix_pieces(i)(j)="0"
-
-				if (Projet.partie.is_check(id(0))) {
-					Projet.partie.matrix_pieces(x)(y)=save
-					Projet.partie.matrix_pieces(i)(j)=id
-				}
-				else {
-					Projet.partie.matrix_pieces(x)(y)=save
-					Projet.partie.matrix_pieces(i)(j)=id
-					res_attacks=res_attacks:+at}
-			}
+			return full_verif(position)
 		}
 		else {
 			var (moves,attacks) = move_piece(position)
 			if ((Projet.partie.in_danger_of(other).contains(position))||
 				Projet.partie.is_check(id(0))){
-				for (mv <-moves) {
-					var (x,y)= mv
-					var save = Projet.partie.matrix_pieces(x)(y)
-					Projet.partie.matrix_pieces(x)(y)=id
-					Projet.partie.matrix_pieces(i)(j)="0"
-
-					if (Projet.partie.is_check(id(0))) {
-						Projet.partie.matrix_pieces(x)(y)=save
-						Projet.partie.matrix_pieces(i)(j)=id
-					}
-					else {
-						Projet.partie.matrix_pieces(x)(y)=save
-						Projet.partie.matrix_pieces(i)(j)=id
-						res_moves=res_moves:+mv}
-				}
-				for (at <-attacks) {
-					var (x,y)= at
-					var save = Projet.partie.matrix_pieces(x)(y)
-					Projet.partie.matrix_pieces(x)(y)=id
-					Projet.partie.matrix_pieces(i)(j)="0"
-
-					if (Projet.partie.is_check(id(0))) {
-						Projet.partie.matrix_pieces(x)(y)=save
-						Projet.partie.matrix_pieces(i)(j)=id
-					}
-					else {
-						Projet.partie.matrix_pieces(x)(y)=save
-						Projet.partie.matrix_pieces(i)(j)=id
-						res_attacks=res_attacks:+at}
-				}
+				return full_verif(position)
 			}
 			else {
-				res_moves=moves
-				res_attacks=attacks
+				return (moves,attacks)
 			}
 		}
-		return (res_moves,res_attacks)
 	}
 }
 
@@ -185,7 +126,7 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 	def dpct_direction (position:(Int,Int),direction:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position
 		var (a,b) = direction //on se deplace selon cette direction
-		val id= Projet.partie.matrix_pieces(i)(j)
+		val piece= Projet.partie.matrix(i)(j)
 		i = i + a
 		j = j + b
 		var res : List[ (Int,Int) ] = List()
@@ -194,18 +135,18 @@ abstract class Piece(color:Char,var position : (Int,Int)) {
 		//tant qu'on est dans l'échequier et qu'on a pas croisé de pièce
 			((1<=i) && (i<=8) &&
 			(1<=j) && (j<=8) &&
-			(Projet.partie.matrix_pieces(i)(j)=="0")) 
+			(Projet.partie.matrix(i)(j)==null)) 
 		{
 			res=res:+(i,j)
 			//on se déplace selon le vecteur (a,b)
 			i=i+a
 			j=j+b
 		}
-
+		val piece_met = Projet.partie.matrix(i)(j)
 		if 	// à t'on croisé une pièce si oui, peut on la prendre?
 			((1<=i) && (i<=8) && 
 			(1<=j) && (j<=8) && 
-			(Projet.partie.matrix_pieces(i)(j)(0)==Projet.partie.other_player(id(0)))) 
+			(piece.color != piece_met.color)) 
 			{res=res:+(i,j);attack_list=attack_list:+(i,j)}
 		return (res,attack_list)
 
@@ -226,16 +167,16 @@ trait Dplct_positions{
 	def dpct_positions(position:(Int,Int),movement_list:List[(Int,Int)]) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
-		val id= Projet.partie.matrix_pieces(i)(j)
+		val piece= Projet.partie.matrix(i)(j)
 		var res : List[ (Int,Int) ] = List()
 		for( dplct <- movement_list) {
 			var (x,y) = dplct
 			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
 			{
-
-				if (Projet.partie.matrix_pieces(i+x)(j+y)=="0")  
+				var piece_met = Projet.partie.matrix(i+x)(j+y)
+				if (piece_met == null)  
 					{res=res:+(i+x,j+y)}
-				if (Projet.partie.matrix_pieces(i+x)(j+y)(0)==Projet.partie.other_player(id(0)))
+				else if (piece_met.color == piece.color )
 					{res=res:+(i+x,j+y);attack_list=attack_list:+(i+x,j+y)}
 			}
 		}
@@ -273,8 +214,7 @@ trait Peon_move extends Dplct_positions {
 	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var movement_list : List[(Int,Int)] = List((1,0))
 		var (i,j) = position
-		val id= Projet.partie.matrix_pieces(i)(j)
-		val peon=Projet.partie.get_piece(id)
+		val peon=Projet.partie.matrix(i)(j)
 		var (moves,attacks) = dpct_positions(position,movement_list)
 		if ((peon.nb_turn == 0) &&  (moves != List()) ) {
 			movement_list = List((1,0),(2,0)) 
@@ -287,8 +227,7 @@ trait Peon_move extends Dplct_positions {
 	def dpct_peon_black(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var movement_list : List[(Int,Int)] = List((-1,0))
 		var (i,j) = position
-		val id= Projet.partie.matrix_pieces(i)(j)
-		val peon=Projet.partie.get_piece(id)
+		val peon=Projet.partie.matrix(i)(j)
 		var (moves,attacks) = dpct_positions(position,movement_list)
 		if ((peon.nb_turn == 0) &&  (moves != List()) ) {
 			movement_list = List((-1,0),(-2,0)) 
@@ -299,8 +238,8 @@ trait Peon_move extends Dplct_positions {
 	/**déplacement global*/
 	def dpct_peon(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)])={
 		var (i,j) = position
-		val id= Projet.partie.matrix_pieces(i)(j)
-		if (id(0)=='B') {return dpct_peon_black(position)}
+		val peon=Projet.partie.matrix(i)(j)
+		if (peon.color =='B') {return dpct_peon_black(position)}
 		else {return dpct_peon_white(position)}
 	}
 
@@ -321,7 +260,7 @@ trait Id_creation {
 		var ind=0
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
-				var piece_ij = Projet.partie.matrix_pieces(i)(j)
+				var piece_ij = (Projet.partie.matrix(i)(j)).id
 				if ( piece_ij(0)==color )
 				{ if (piece_ij.substring(1,3)==name) {ind+=1}} 
 			}
@@ -346,7 +285,7 @@ with Id_creation with Diagonal with Horizontal_Vertical{
 	}
 	var (i,j) = position
 	//position normalement libre
-	Projet.partie.matrix_pieces(i)(j)=id
+	//Projet.partie.matrix(i)(j)=id
  
 }
 
@@ -359,7 +298,7 @@ with Id_creation with Peon_move{
 		return dpct_peon(position)
 	}
 	var (i,j) = position
-	Projet.partie.matrix_pieces(i)(j)=id 
+	//Projet.partie.matrix_pieces(i)(j)=id 
 
 }
 
@@ -372,7 +311,7 @@ with Id_creation with King_move{
 		return dpct_king(position)
 	}
 	var (i,j) = position
-	Projet.partie.matrix_pieces(i)(j)=id
+	//Projet.partie.matrix_pieces(i)(j)=id
 }
 
 class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
@@ -384,7 +323,7 @@ with Id_creation with Horizontal_Vertical{
 		return (dpct_horizon_vertic(position))
 	}
 	var (i,j) = position
-	Projet.partie.matrix_pieces(i)(j)=id
+	//Projet.partie.matrix_pieces(i)(j)=id
 }
 
 class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
@@ -394,7 +333,7 @@ with Id_creation with Jump{
 	val id=color+name+id_create(color,name)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = jump(position)
 	var (i,j) = position
-	Projet.partie.matrix_pieces(i)(j)=id
+	//Projet.partie.matrix_pieces(i)(j)=id
 }
 
 class Bishop(color:Char,position:(Int,Int)) extends Piece(color,position) 
@@ -406,5 +345,5 @@ with Id_creation with Diagonal{
 		return (dpct_diag(position))
 	}
 	var (i,j) = position
-	Projet.partie.matrix_pieces(i)(j)=id
+	//Projet.partie.matrix_pieces(i)(j)=id
 }
