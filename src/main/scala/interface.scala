@@ -4,6 +4,7 @@ import javax.swing.ImageIcon
 import java.awt.Color
 
 object Interface extends SimpleSwingApplication{
+
 	/*
 	/**liste des mouvements possibles pour la pièce sélectionnée*/
 	var moves:List[(Int,Int)] = List()
@@ -321,5 +322,7 @@ object Interface extends SimpleSwingApplication{
 
 		val RootWindow = new MainWindow()
 		def top = RootWindow
+		//il faudrait tester la resolution minimale sur d'autres ordis...
+		top.minimumSize = new Dimension(700, 1000)
 		RootWindow.init_menu()
 	}
