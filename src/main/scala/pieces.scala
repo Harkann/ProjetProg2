@@ -40,7 +40,7 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		var (x,y)=posi
 		Projet.partie.matrix(x)(y)=Projet.partie.matrix(i)(j)
 		Projet.partie.matrix(i)(j)=null
-		
+		Projet.partie.next_turn()
 		nb_turn+=1
 	}
 

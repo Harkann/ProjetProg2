@@ -83,9 +83,9 @@ object Interface extends SimpleSwingApplication{
 	}
 
 	class MainWindow() extends MainFrame{
-		val box = new BoxPanel(Orientation.Vertical) 
-		val menu_principal = new MainMenu(5,1,this)
-		val interface_partie = new EcranPartie(8,8,this)
+		var box = new BoxPanel(Orientation.Vertical) 
+		var menu_principal = new MainMenu(5,1,this)
+		var interface_partie = new EcranPartie(8,8,this)
 		//init()
 		
 		def init_menu()={
@@ -102,7 +102,7 @@ object Interface extends SimpleSwingApplication{
 	}
 
 	/**Case de l'échiquier*/
-	class Case(i:Int,j:Int) extends Button{
+	class Case(i:Int,j:Int,plateau:Echiquier) extends Button{
 		val myGreen = new Color (48, 163, 115)
 		val myBlue = new Color (0, 3, 112)
 		val myRed = new Color (112, 0, 0)
@@ -123,27 +123,40 @@ object Interface extends SimpleSwingApplication{
 		def get_image(){
 			piece = Projet.partie.matrix(i)(j)
 			if (piece != null){icon = piece.image}
+			else {icon = null}
+			println(i,j,icon)
+			this.revalidate()
+			this.repaint()
 		}
 
 		def unclic(){
+			var a = button_clicked_i
+			var b = button_clicked_j
 			button_clicked_i = 0
 			button_clicked_j = 0
+			if (a>0 && b>0){plateau.Cells(a)(b).unclic()}
 			is_clicked = false
 			is_button_clicked = false
-			Interface.RootWindow.interface_partie.plateau.reset_colors()
+			background = java.awt.Color.RED
+			get_image()
+			plateau.reset_colors()
 		}
 
 		def select_piece(){
-			var piece_selected = Projet.partie.get_piece(i,j)
+			piece_selected = Projet.partie.get_piece(i,j)
 			colorie("green")
 			var(piece_move,piece_take) = Projet.partie.get_piece(i,j).move_piece_check(i,j)
 			piece_allowed_move = piece_move
 			piece_allowed_take = piece_take
-			for ((i,j) <- piece_allowed_move){
-				Interface.RootWindow.interface_partie.plateau.Cells(i)(j).colorie("blue")
+			println(piece_allowed_move)
+			for ((a,b) <- piece_allowed_move){
+				plateau.Cells(a)(b).colorie("blue")
+				println("plop")
+				println(a)
+				println(b)
 			}
-			for ((i,j) <- piece_allowed_take){
-				Interface.RootWindow.interface_partie.plateau.Cells(i)(j).colorie("red")
+			for ((a,b) <- piece_allowed_take){
+				plateau.Cells(a)(b).colorie("red")
 			}
 		}
 
@@ -154,18 +167,26 @@ object Interface extends SimpleSwingApplication{
 		def colorie(couleur:String) ={
 			if (couleur == "green"){ background = myGreen }
 			else if (couleur == "red"){ background = myRed }
-			else if (couleur == "blue"){ background = myBlue }
+			else if (couleur == "blue"){ 
+				background = myBlue 
+				foreground = myBlue
+				println(background)
+				println(i,j)
+			}
 		}
+
 		init_colors()
 		get_image()
 		action = Action(""){
-			get_image()
 			if (Projet.partie.is_running && Projet.partie.is_interface){
 				if (is_clicked){
+					println("y")
 					unclic()
 				}
 				else if (is_button_clicked){
-
+					println("u")
+					println(piece_allowed_move)
+					println(piece_selected)
 					if (piece_allowed_move.contains(i,j)){
 						piece_selected.move(i,j)
 						unclic()
@@ -184,7 +205,6 @@ object Interface extends SimpleSwingApplication{
 				}
 				
 			}
-			get_image()
 		}
 
 	}
@@ -194,7 +214,7 @@ object Interface extends SimpleSwingApplication{
 		var Cells = ofDim[Case](9,9)
 		for (i <- 8 to 1 by -1){
 			for( j <- 1 to 8){
-				Cells(i)(j) = new Case(i,j)
+				Cells(i)(j) = new Case(i,j,this)
 				Cells(i)(j).init_colors()
 				Cells(i)(j).get_image()
 				this.contents+=Cells(i)(j)
@@ -225,7 +245,13 @@ object Interface extends SimpleSwingApplication{
 		val back_menu = new Button{
 			action = Action("Back to main menu"){
 				//Projet.partie.stop()
+				for( i <- 8 to 1 by -1) {
+					for( j <- 1 to 8) {
+						println(plateau.Cells(i)(j).background)
+					}
+				}
 				window.init_menu()
+				
 			}
 		}
 		val quit_program = new QuitButton(window)
@@ -242,6 +268,12 @@ object Interface extends SimpleSwingApplication{
 		}
 
 		def spawn_game():Unit = {
+			is_button_clicked = false
+			button_clicked_i = 0
+			button_clicked_j = 0
+			piece_selected = null
+			piece_allowed_move = List()
+			piece_allowed_take = List()
 			Projet.partie.start()
 			Projet.partie.partie_init()
 			plateau.set_images()
@@ -320,7 +352,7 @@ object Interface extends SimpleSwingApplication{
 
 
 
-		val RootWindow = new MainWindow()
+		var RootWindow = new MainWindow()
 		def top = RootWindow
 		//il faudrait tester la resolution minimale sur d'autres ordis...
 		top.minimumSize = new Dimension(700, 1000) //schwoon 1300*700

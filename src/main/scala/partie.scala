@@ -32,9 +32,9 @@ class Partie(){
 	}
 	/**lance le tour suivant*/
 	def next_turn():Unit = {
-		if (is_running){is_mat(player)}
-		if (is_running){is_mat(other_player(player))}
-		if (is_running){is_pat(other_player(player))}
+		//if (is_running){is_mat(player)}
+		//if (is_running){is_mat(other_player(player))}
+		//if (is_running){is_pat(other_player(player))}
 		if (is_running){
 			if (nb_ia == 0){
 				player = other_player(player)
