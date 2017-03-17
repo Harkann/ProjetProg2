@@ -22,15 +22,26 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 	var nb_turn = 0
 	/**prend la pièce à la position posi*/
 	def delete(posi:(Int,Int)) = {
-		/**coordonnées de la pièce*/
-		var(i,j)=position
-		/**coordonnées de la pièce prise*/
+		var (i,j)=position
+		/**coordonnées de la destination*/
 		var (x,y)=posi
-		/**id de la pièce prise*/
-		var piece_deleted=Projet.partie.matrix(x)(y)
-		/**pièce supprimée*/
-		piece_deleted.is_alive=false
-		move(posi)
+		val piece = Projet.partie.matrix(i)(j)
+		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==7)) {
+			val T = Projet.partie.matrix(j)(8)
+			Projet.partie.matrix(j)(6) = T
+			Projet.partie.matrix(j)(8) = null
+			T.nb_turn+=1
+		}
+		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==3)) {
+			val T = Projet.partie.matrix(j)(1)
+			Projet.partie.matrix(j)(4) = T
+			Projet.partie.matrix(j)(1) = null
+			T.nb_turn+=1
+		}
+		Projet.partie.matrix(x)(y)=piece
+		Projet.partie.matrix(i)(j)=null
+		nb_turn+=1
+		Projet.partie.next_turn()
 	}
 	/**déplace la pièce vers "posi"*/
 	def move(posi:(Int,Int)) = {
@@ -199,6 +210,22 @@ trait Dplct_positions{
 		}
 		return (res,attack_list)
 	}
+	def dpct_pos_attack_only(position:(Int,Int),movement_list:List[(Int,Int)]) : (List[(Int,Int)],List[(Int,Int)]) = {
+		var (i,j) = position 
+		var attack_list: List[ (Int,Int) ] = List()
+		val piece= Projet.partie.matrix(i)(j)
+		var res : List[ (Int,Int) ] = List()
+		for( dplct <- movement_list) {
+			var (x,y) = dplct
+			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
+			{
+				var piece_met = Projet.partie.matrix(i+x)(j+y)
+				if ((piece_met != null) && (piece_met.color != piece.color ))
+					{res=res:+(i+x,j+y);attack_list=attack_list:+(i+x,j+y)}
+			}
+		}
+		return (res,attack_list)
+	}
 }
 
 /**déplacement diagonal (fous)*/
@@ -333,13 +360,14 @@ trait Peon_move extends Dplct_positions with Passing_take {
 			movement_list = List((1,0),(2,0)) 
 		 	var (moves_int,attacks_int) = dpct_positions(position,movement_list)
 		 	moves = moves_int
-		 	attacks = attacks_int
 		}
+
 		movement_list = List((1,1),(1,-1))
-		var att_prise_passant = prise_en_passant(position,movement_list)
+		var (moves_att,attacks_att) = dpct_pos_attack_only(position,movement_list)
+		/*var att_prise_passant = prise_en_passant(position,movement_list)
 		moves = moves ++ att_prise_passant
-		attacks = attacks ++ att_prise_passant
-		return (moves,attacks)
+		attacks = attacks ++ att_prise_passant*/
+		return (moves++moves_att,attacks++attacks_att)
 	}
 
 
@@ -356,10 +384,11 @@ trait Peon_move extends Dplct_positions with Passing_take {
 		 	attacks = attacks_int
 		}
 		movement_list = List((-1,1),(-1,-1))
-		var att_prise_passant = prise_en_passant(position,movement_list)
+		var (moves_att,attacks_att) = dpct_pos_attack_only(position,movement_list)
+		/*var att_prise_passant = prise_en_passant(position,movement_list)
 		moves = moves ++ att_prise_passant
-		attacks = attacks ++ att_prise_passant
-		return (moves,attacks)
+		attacks = attacks ++ att_prise_passant*/
+		return (moves++moves_att,attacks++attacks_att)
 	}
 
 	/**déplacement global*/
