@@ -249,7 +249,6 @@ class Partie(){
 		matrix(8)(6) = new Bishop('B',(8,6))
 		matrix(8)(4) = new Queen('B',(8,4))
 		matrix(8)(5) = new King('B',(8,5))
-		println("Initialisation terminée")
 	}
 	
 }
