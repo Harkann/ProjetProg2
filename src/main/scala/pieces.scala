@@ -38,22 +38,21 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		var (i,j)=position
 		/**coordonnées de la destination*/
 		var (x,y)=posi
-		val piece = Projet.partie.matrix(x)(y)
+		val piece = Projet.partie.matrix(i)(j)
+		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==7)) {
+			val T = Projet.partie.matrix(j)(8)
+			Projet.partie.matrix(j)(6) = T
+			Projet.partie.matrix(j)(8) = null
+			T.nb_turn+=1
+		}
+		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==3)) {
+			val T = Projet.partie.matrix(j)(1)
+			Projet.partie.matrix(j)(4) = T
+			Projet.partie.matrix(j)(1) = null
+			T.nb_turn+=1
+		}
 		Projet.partie.matrix(x)(y)=piece
 		Projet.partie.matrix(i)(j)=null
-		
-		if ((piece.name == "Ki") && (piece.nb_turn==0) && (j==7)) {
-			val T = Projet.partie.matrix(x)(8)
-			Projet.partie.matrix(x)(6) = T
-			Projet.partie.matrix(x)(8) = null
-			T.nb_turn+=1
-		}
-		if ((piece.name == "Ki") && (piece.nb_turn==0) && (j==3)) {
-			val T = Projet.partie.matrix(x)(1)
-			Projet.partie.matrix(x)(4) = T
-			Projet.partie.matrix(x)(1) = null
-			T.nb_turn+=1
-		}
 		nb_turn+=1
 		Projet.partie.next_turn()
 	}
@@ -194,7 +193,7 @@ trait Dplct_positions{
 				var piece_met = Projet.partie.matrix(i+x)(j+y)
 				if (piece_met == null)  
 					{res=res:+(i+x,j+y)}
-				else if (piece_met.color == piece.color )
+				else if (piece_met.color != piece.color )
 					{res=res:+(i+x,j+y);attack_list=attack_list:+(i+x,j+y)}
 			}
 		}
