@@ -78,7 +78,7 @@ object Interface extends SimpleSwingApplication{
 			contents+= quit_program
 			revalidate()
 			repaint()
-			println("Menu set\n"+contents+"\n")
+			//println("Menu set\n"+contents+"\n")
 		}
 	}
 
@@ -94,8 +94,8 @@ object Interface extends SimpleSwingApplication{
 			box.contents.clear()
 			box.contents+=menu_principal
 			menu_principal.set_menu()
-			println(menu_principal.contents+"\n")
-			println(box.contents)
+			//println(menu_principal.contents+"\n")
+			//println(box.contents)
 			box.revalidate()
 			box.repaint()
 		}
