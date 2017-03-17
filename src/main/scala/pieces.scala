@@ -139,7 +139,11 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 			//on se déplace selon le vecteur (a,b)
 			i=i+a
 			j=j+b
+			println(i)
+			println(j)
 		}
+		println("ta maman"+i)
+		println(j)
 		if 	// à t'on croisé une pièce si oui, peut on la prendre?
 			((1<=i) && (i<=8) && 
 			(1<=j) && (j<=8) ){
