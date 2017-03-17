@@ -36,7 +36,6 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 	def move(posi:(Int,Int)) = {
 		/**coordonnées actuelles de la pièce*/
 		var (i,j)=position
-		position=posi
 		/**coordonnées de la destination*/
 		var (x,y)=posi
 		Projet.partie.matrix(x)(y)=Projet.partie.matrix(i)(j)
@@ -117,7 +116,6 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		}
 	}
 }
-
 
 
 
@@ -231,7 +229,7 @@ trait Passing_take{
 	}
 }
 
-
+/*
 trait Roque{
 	def roque(king_position:(Int,Int)): (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = king_position
@@ -240,7 +238,7 @@ trait Roque{
 	}
 }
 
-
+*/
 
 
 /**déplacement des pions*/
