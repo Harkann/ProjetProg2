@@ -277,6 +277,49 @@ trait Roque {
 }
 
 
+
+trait Promotion {
+	def promo(position:(Int,Int), new_type:String){
+		val (i,j) = position
+		val piece = Projet.partie.matrix(i)(j)
+		if (new_type == "Queen") {
+			Projet.partie.matrix(i)(j) = new Queen (piece.color, position)
+		}
+		else if (new_type == "Tower") {
+			Projet.partie.matrix(i)(j) = new Tower (piece.color, position)
+		}
+		else if (new_type == "Knight") {
+			Projet.partie.matrix(i)(j) = new Knight (piece.color, position)
+		}
+		else {
+			Projet.partie.matrix(i)(j) = new Bishop (piece.color, position)
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**déplacement des pions*/
 trait Peon_move extends Dplct_positions with Passing_take {
 	/**déplacement du pion blanc, avance vers le haut*/
