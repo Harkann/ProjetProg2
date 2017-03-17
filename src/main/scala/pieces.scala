@@ -1,5 +1,5 @@
 import javax.swing.ImageIcon
-//MATRIX_PIECE A SUPPRIMER ET REECRIRE DE CE FICHIER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 //color de type char car la comparaison string char est fausse
 /**Superclasse abstraite contenant toutes les pièces,
@@ -38,9 +38,21 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		var (i,j)=position
 		/**coordonnées de la destination*/
 		var (x,y)=posi
-		Projet.partie.matrix(x)(y)=Projet.partie.matrix(i)(j)
+		val piece = Projet.partie.matrix(x)(y)
+		Projet.partie.matrix(x)(y)=piece
 		Projet.partie.matrix(i)(j)=null
-		
+		if ((piece.name == "Ki") && (piece.nb_turn==0) && (j==7)) {
+			val T = Projet.partie.matrix(x)(8)
+			Projet.partie.matrix(x)(6) = T
+			Projet.partie.matrix(x)(8) = null
+			T.nb_turn+=1
+		}
+		if ((piece.name == "Ki") && (piece.nb_turn==0) && (j==3)) {
+			val T = Projet.partie.matrix(x)(1)
+			Projet.partie.matrix(x)(4) = T
+			Projet.partie.matrix(x)(1) = null
+			T.nb_turn+=1
+		}
 		nb_turn+=1
 	}
 
@@ -233,16 +245,36 @@ trait Passing_take{
 	}
 }
 
-/*
-trait Roque{
-	def roque(king_position:(Int,Int)): (List[(Int,Int)],List[(Int,Int)]) = {
-		var (i,j) = king_position
-		var king = Projet.partie.matrix(i)(j)
 
+trait Roque {
+	def roque_line(pos_K:(Int,Int),pos_T:(Int,Int)) : Boolean = {
+		var (i_K,j_K) = pos_K
+		val K = Projet.partie.matrix(i_K)(j_K)
+		var (i_T,j_T) = pos_T
+		val T = Projet.partie.matrix(i_T)(j_T)
+		if (T == null) return false
+		if ((K.nb_turn != 0) || (T.nb_turn != 0)) {
+			return false
+		}
+		for ( j <- (j_K min j_T) to (j_K max j_T)){
+			if (Projet.partie.matrix(i_K)(j) != null) {
+				return false
+			}
+		}
+		return true
+	}
+	def roque(pos:(Int,Int)) : List[(Int,Int)] = {
+		var (i,j) = pos
+		var res : List[(Int,Int)] = List()
+		if (roque_line(pos,(i,8))) {
+			res = res:+(i,7)
+		}
+		if (roque_line(pos,(i,1))) {
+			res = res:+(i,3)
+		}
+		return res
 	}
 }
-
-*/
 
 
 /**déplacement des pions*/
@@ -296,10 +328,11 @@ trait Peon_move extends Dplct_positions with Passing_take {
 
 }
 /**déplacement du roi*/
-trait King_move extends Dplct_positions {
+trait King_move extends Dplct_positions with Roque {
 	def dpct_king(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = { //déplacemnt du roi
 		val movement_list : List[(Int,Int)] = List((1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1))
-		return (dpct_positions(position,movement_list))
+		var (mv,att) = dpct_positions(position,movement_list)
+		return (mv ++ roque(position),att)
 	}
 }
 
@@ -319,6 +352,7 @@ trait Id_creation {
 		return ind
 	}	
 }
+
 
 
 
