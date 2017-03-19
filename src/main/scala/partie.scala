@@ -84,6 +84,27 @@ class Partie(){
 		return matrix(i)(j)
 	}
 
+/*
+	chantier de réflexions :
+	- Prise en passant : 
+	 besoin du dernier mouvement de l'adversaire.
+	- Stocker les parties :
+	 tableau des changement de positions et potentielles prises de piece ?
+	definir un type special pour ça position de depart position d'arrive prise de qqch= null ou some(piece)
+	- Promotion : 
+	 variable globale pour lancer le choix la promotion ? NON
+	 move : redécomposition -> déplacement de la tour dans le roque dans une fonction a part parce que là c'est moche.
+							-> même chose pour le declanchement de la promotion.
+	- 50 coups -> compteur reinitialisé a chaque prise de piece ou déplacement de pions.
+	- Imposibilitée de mater : avoir un tableau qui garde le nombre de piece pour chaque couleur : genre en_jeu[0]=nb pion en jeux.
+	- triple repetition de la position : rejouer la partie depuis le début ? :/ je penses que y a moyen d'être plus subtil.
+	- perte au temps : timer
+
+
+	Mika beaucoup d'interface à gerer...
+
+
+*/
 
 	/**renvoie la liste des mouvements possibles pour le joueur "player"
 	(utilisée par l'ia)*/
