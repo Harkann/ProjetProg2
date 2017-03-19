@@ -38,7 +38,8 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 			Projet.partie.matrix(j)(1) = null
 			T.nb_turn+=1
 		}
-		Projet.partie.matrix(x)(y)=piece
+		position = (x,y)
+		Projet.partie.matrix(x)(y)=Projet.partie.matrix(i)(j)
 		Projet.partie.matrix(i)(j)=null
 		nb_turn+=1
 		Projet.partie.next_turn()
@@ -50,18 +51,28 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		/**coordonnées de la destination*/
 		var (x,y)=posi
 		val piece = Projet.partie.matrix(i)(j)
-		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==7)) {
-			val T = Projet.partie.matrix(j)(8)
-			Projet.partie.matrix(j)(6) = T
-			Projet.partie.matrix(j)(8) = null
+		println("le nombre de tour du roi : " + piece.nb_turn )
+		println(piece.name)
+		println(i)
+		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==7)) {
+			println("on effectut le roque")
+			val T = Projet.partie.matrix(i)(8)
+			T.position = (i,6)
+			Projet.partie.matrix(i)(6) = T
+			Projet.partie.matrix(i)(8) = null
 			T.nb_turn+=1
 		}
-		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==3)) {
-			val T = Projet.partie.matrix(j)(1)
-			Projet.partie.matrix(j)(4) = T
-			Projet.partie.matrix(j)(1) = null
+		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==3)) {
+			println("on effectut le roque")
+			val T = Projet.partie.matrix(i)(1)
+			T.position=(i,4)
 			T.nb_turn+=1
+			Projet.partie.matrix(i)(4) = Projet.partie.matrix(i)(1)
+			Projet.partie.matrix(i)(1) = null
+			println("deplacement de la tour fait normalement...")
 		}
+		position = (x,y)
+		println (Projet.partie.matrix(1)(1)
 		Projet.partie.matrix(x)(y)=piece
 		Projet.partie.matrix(i)(j)=null
 		nb_turn+=1
@@ -163,11 +174,7 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 			//on se déplace selon le vecteur (a,b)
 			i=i+a
 			j=j+b
-			println(i)
-			println(j)
 		}
-		println("ta maman"+i)
-		println(j)
 		if 	// à t'on croisé une pièce si oui, peut on la prendre?
 			((1<=i) && (i<=8) && 
 			(1<=j) && (j<=8) ){
@@ -282,10 +289,12 @@ trait Roque {
 		val T = Projet.partie.matrix(i_T)(j_T)
 		if (T == null) return false
 		if ((K.nb_turn != 0) || (T.nb_turn != 0)) {
+			println("prolème de nombre de tour")
 			return false
 		}
-		for ( j <- (j_K min j_T) to (j_K max j_T)){
+		for ( j <- ((j_K min j_T)+1) to ((j_K max j_T))-1){
 			if (Projet.partie.matrix(i_K)(j) != null) {
+				//println("prolème d'une case non vide")
 				return false
 			}
 		}
@@ -295,9 +304,11 @@ trait Roque {
 		var (i,j) = pos
 		var res : List[(Int,Int)] = List()
 		if (roque_line(pos,(i,8))) {
+			//println("il y a un roque!")
 			res = res:+(i,7)
 		}
 		if (roque_line(pos,(i,1))) {
+			//println("il y a un roque!")
 			res = res:+(i,3)
 		}
 		return res
