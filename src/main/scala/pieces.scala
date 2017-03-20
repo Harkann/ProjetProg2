@@ -1,10 +1,19 @@
 import javax.swing.ImageIcon
 
+/*
+***************************************************************************************************************
+______________________________DÉFINITION DE LA CLASSE ABSTRAITE PIECE  _______________________________________
+
+***************************************************************************************************************
+*/
+
+
+
 
 //color de type char car la comparaison string char est fausse
 /**Superclasse abstraite contenant toutes les pièces,
 color : 'W' ou 'B'*/
-abstract class Piece(col:Char,var position : (Int,Int)) {
+abstract class Piece(col:Char,var position : (Int,Int)) extends Standard {
 	val color = col;
 	/**nom de la pièce*/
 	val name:String; 
@@ -20,30 +29,7 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 
 	/**nombre de déplacements de la pièce*/
 	var nb_turn = 0
-	/**prend la pièce à la position posi*/
-	def delete(posi:(Int,Int)) = {
-		var (i,j)=position
-		/**coordonnées de la destination*/
-		var (x,y)=posi
-		val piece = Projet.partie.matrix(i)(j)
-		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==7)) {
-			val T = Projet.partie.matrix(j)(8)
-			Projet.partie.matrix(j)(6) = T
-			Projet.partie.matrix(j)(8) = null
-			T.nb_turn+=1
-		}
-		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==3)) {
-			val T = Projet.partie.matrix(j)(1)
-			Projet.partie.matrix(j)(4) = T
-			Projet.partie.matrix(j)(1) = null
-			T.nb_turn+=1
-		}
-		position = (x,y)
-		Projet.partie.matrix(x)(y)=Projet.partie.matrix(i)(j)
-		Projet.partie.matrix(i)(j)=null
-		nb_turn+=1
-		Projet.partie.next_turn()
-	}
+	
 	/**déplace la pièce vers "posi"*/
 	def move(posi:(Int,Int)) = {
 		/**coordonnées actuelles de la pièce*/
@@ -51,9 +37,23 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		/**coordonnées de la destination*/
 		var (x,y)=posi
 		val piece = Projet.partie.matrix(i)(j)
-		println("le nombre de tour du roi : " + piece.nb_turn )
-		println(piece.name)
-		println(i)
+		 
+		roque_check(posi)
+
+		position = (x,y)
+		Projet.partie.matrix(x)(y)=piece
+		Projet.partie.matrix(i)(j)=null
+		nb_turn+=1
+		promotion_check(posi)
+		Projet.partie.next_turn()
+	}
+
+	def roque_check(posi:(Int,Int)){
+
+		var (i,j)=position
+		var (x,y)=posi
+		val piece = matrix(position)
+
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==7)) {
 			println("on effectut le roque")
 			val T = Projet.partie.matrix(i)(8)
@@ -61,6 +61,7 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 			Projet.partie.matrix(i)(6) = T
 			Projet.partie.matrix(i)(8) = null
 			T.nb_turn+=1
+			promotion_check(posi)
 		}
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==3)) {
 			println("on effectut le roque")
@@ -71,17 +72,15 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 			Projet.partie.matrix(i)(1) = null
 			println("deplacement de la tour fait normalement...")
 		}
-		position = (x,y)
-		println (Projet.partie.matrix(1)(1)
-		Projet.partie.matrix(x)(y)=piece
-		Projet.partie.matrix(i)(j)=null
-		nb_turn+=1
-		Projet.partie.next_turn()
 	}
 
-	def matrix(position:(Int,Int)) : Piece = {
-		var (i,j) = position
-		return Projet.partie.matrix(i)(j)
+	def promotion_check(posi:(Int,Int)){
+		var (x,y) = posi
+		val piece = matrix(posi)
+		println( "check_promotion : " + piece )
+		if ((piece != null) && (piece.name == "Pe") && ((x == 8) || (x == 1))){
+			piece.asInstanceOf[Peon].promo(posi)
+		}
 	}
 
 	def full_verif(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -105,22 +104,9 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 				else {
 					Projet.partie.matrix(x)(y)=save
 					Projet.partie.matrix(i)(j)=piece
-					res_moves=res_moves:+mv}
-			}
-			for (at <-attacks) {
-				var (x,y)= at
-				var save = Projet.partie.matrix(x)(y)
-				Projet.partie.matrix(x)(y)=piece
-				Projet.partie.matrix(i)(j)=null
-
-				if (Projet.partie.is_check(id(0))) {
-					Projet.partie.matrix(x)(y)=save
-					Projet.partie.matrix(i)(j)=piece
+					res_moves=res_moves:+mv
+					if (attacks.contains(mv)) {res_attacks=res_attacks:+mv}
 				}
-				else {
-					Projet.partie.matrix(x)(y)=save
-					Projet.partie.matrix(i)(j)=piece
-					res_attacks=res_attacks:+at}
 			}
 		return (res_moves,res_attacks)
 	}
@@ -128,9 +114,9 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 	/**renvoie la liste des cases atteignables par la pièce située en "position" en tenant compte de la mise en échec*/
 	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		/**coordonnée de la pièce*/
-		var (i,j)=position
+		var (i,j) = position
 		/** id de la pièce sur la case*/
-		var piece=Projet.partie.matrix(i)(j)
+		var piece = matrix((i,j))
 		/**pièce sur la case*/
 		var id=piece.id
 		if (!(piece.is_alive)) {return (List(),List())}
@@ -154,12 +140,52 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 
 
 
+
+
+
+/*
+***************************************************************************************************************
+____________________________ DÉFINITION DES TRAITS GENERAUX DE DEPLACEMENT ___________________________________
+
+***************************************************************************************************************
+*/
+
+
+
+
+
+
+
+trait Standard {
+	def matrix(position:(Int,Int)) : Piece = {
+		var (i,j) = position
+		return Projet.partie.matrix(i)(j)
+		}
+}
+
+
+trait Id_creation extends Standard {
+	/**crée un Id*/
+	def id_create(color:Char,name:String) : Int = {
+		var ind=0
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				var piece_ij = matrix((i,j))
+				if ((piece_ij != null) && (piece_ij.color ==color) )
+				{ if (piece_ij.id.substring(1,3)==name) {ind+=1}} 
+			}
+		}
+		return ind
+	}	
+}
+
+
 /**definition des deplacements plus générale pour eviter la redondance de code*/
- trait Dplct_directions {
+ trait Dplct_directions extends Standard{
 	def dpct_direction (position:(Int,Int),direction:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position
 		var (a,b) = direction //on se deplace selon cette direction
-		val piece= Projet.partie.matrix(i)(j)
+		val piece= matrix(position)
 		i = i + a
 		j = j + b
 		var res : List[ (Int,Int) ] = List()
@@ -178,7 +204,7 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		if 	// à t'on croisé une pièce si oui, peut on la prendre?
 			((1<=i) && (i<=8) && 
 			(1<=j) && (j<=8) ){
-				val piece_met = Projet.partie.matrix(i)(j)
+				val piece_met = matrix((i,j))
 				if (piece.color != piece_met.color){
 					res=res:+(i,j);attack_list=attack_list:+(i,j)
 				}
@@ -186,6 +212,8 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		return (res,attack_list)
 
 	} 
+
+	/** fonction qui map sur une liste la premiere fonction dpct_direction **/
 	def dpct_direction_list(position:(Int,Int),direction_list:List[(Int,Int)]) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var res : List[ (Int,Int) ] = List()
 		var attack_list: List[ (Int,Int) ] = List()
@@ -198,17 +226,20 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 	}
 }
 
-trait Dplct_positions{
+
+/** donne les déplacements et les attaques possible a partir d'une liste de position relatives ou l'on peut aller **/
+trait Dplct_positions extends Standard {
+
 	def dpct_positions(position:(Int,Int),movement_list:List[(Int,Int)]) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
-		val piece= Projet.partie.matrix(i)(j)
+		val piece= matrix(position)
 		var res : List[ (Int,Int) ] = List()
 		for( dplct <- movement_list) {
 			var (x,y) = dplct
 			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
 			{
-				var piece_met = Projet.partie.matrix(i+x)(j+y)
+				var piece_met = matrix((i+x,j+y))
 				if (piece_met == null)  
 					{res=res:+(i+x,j+y)}
 				else if (piece_met.color != piece.color )
@@ -217,16 +248,18 @@ trait Dplct_positions{
 		}
 		return (res,attack_list)
 	}
+
+	/** Ici on ne permet de considerer le mouvement que si c'est une attaque  **/
 	def dpct_pos_attack_only(position:(Int,Int),movement_list:List[(Int,Int)]) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
-		val piece= Projet.partie.matrix(i)(j)
+		val piece= matrix(i,j)
 		var res : List[ (Int,Int) ] = List()
 		for( dplct <- movement_list) {
 			var (x,y) = dplct
 			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
 			{
-				var piece_met = Projet.partie.matrix(i+x)(j+y)
+				var piece_met = matrix((i+x,j+y))
 				if ((piece_met != null) && (piece_met.color != piece.color ))
 					{res=res:+(i+x,j+y);attack_list=attack_list:+(i+x,j+y)}
 			}
@@ -260,33 +293,12 @@ trait Jump extends Dplct_positions {
 
 
 
-trait Passing_take{
-	def prise_en_passant(position:(Int,Int),movement_list:List[(Int,Int)]) : List[(Int,Int)] = {
-		var (i,j) = position 
-		var res : List[ (Int,Int) ] = List()
-		val piece = Projet.partie.matrix(i)(j)
-		for (dplct <- movement_list) {
-			var (x,y) = dplct
-			if ( (i+x >=1) && (i+x <=8) && (j+y <=8) && (j+y >=1) )
-			{
-				var piece_met = Projet.partie.matrix(i+x)(j+y)
-				if (piece_met == null)  
-					{}
-				else if (piece_met.color == piece.color )
-					{res=res:+(i+x,j+y)}
-			}
-		}
-		return res
-	}
-}
-
-
-trait Roque {
+trait Roque extends Standard {
 	def roque_line(pos_K:(Int,Int),pos_T:(Int,Int)) : Boolean = {
 		var (i_K,j_K) = pos_K
-		val K = Projet.partie.matrix(i_K)(j_K)
+		val K = matrix(pos_K)
 		var (i_T,j_T) = pos_T
-		val T = Projet.partie.matrix(i_T)(j_T)
+		val T = matrix(pos_T)
 		if (T == null) return false
 		if ((K.nb_turn != 0) || (T.nb_turn != 0)) {
 			println("prolème de nombre de tour")
@@ -317,10 +329,13 @@ trait Roque {
 
 
 
-trait Promotion {
-	def promo(position:(Int,Int), new_type:String){
+trait Promotion extends Standard {
+
+	def promo(position:(Int,Int)){
 		val (i,j) = position
-		val piece = Projet.partie.matrix(i)(j)
+		val piece = matrix(position)
+		//val new_type = click_promotion() // qui permettrais de savoir ce que le joueur prefere
+		val new_type = "Queen" // TEMPORAIRE
 		if (new_type == "Queen") {
 			Projet.partie.matrix(i)(j) = new Queen (piece.color, position)
 		}
@@ -333,6 +348,7 @@ trait Promotion {
 		else {
 			Projet.partie.matrix(i)(j) = new Bishop (piece.color, position)
 		}
+
 	}
 }
 
@@ -343,24 +359,17 @@ trait Promotion {
 
 
 
+/*
+***************************************************************************************************************
+____________________________ DÉFINITION DES TRAITS SPECIFIQUES DE DEPLACEMENT _________________________________
 
-
-
-
-
-
-
-
-
-
-
-
-
+***************************************************************************************************************
+*/
 
 
 
 /**déplacement des pions*/
-trait Peon_move extends Dplct_positions with Passing_take {
+trait Peon_move extends Dplct_positions  {
 	/**déplacement du pion blanc, avance vers le haut*/
 	def dpct_peon_white(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var movement_list : List[(Int,Int)] = List((1,0))
@@ -422,21 +431,13 @@ trait King_move extends Dplct_positions with Roque {
 
 
 
-trait Id_creation {
-	/**crée un Id*/
-	def id_create(color:Char,name:String) : Int = {
-		var ind=0
-		for( i <- 1 to 8) {
-			for( j <- 1 to 8) {
-				var piece_ij = Projet.partie.matrix(i)(j)
-				if ((piece_ij != null) && (piece_ij.color ==color) )
-				{ if (piece_ij.id.substring(1,3)==name) {ind+=1}} 
-			}
-		}
-		return ind
-	}	
-}
 
+/*
+***************************************************************************************************************
+______________________________DÉFINITION DES DIFFERENTES CLASSES DE PIECES ___________________________________
+
+***************************************************************************************************************
+*/
 
 
 
@@ -460,7 +461,7 @@ with Id_creation with Diagonal with Horizontal_Vertical{
 }
 
 class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
-with Id_creation with Peon_move{
+with Id_creation with Peon_move with Promotion {
 	val name="Pe"
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
@@ -468,6 +469,7 @@ with Id_creation with Peon_move{
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		return dpct_peon(position)
 	}
+	def promotion(position:(Int,Int)) { promo(position) }
 	var (i,j) = position
 	//Projet.partie.matrix_pieces(i)(j)=id 
 

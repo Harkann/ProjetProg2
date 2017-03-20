@@ -133,13 +133,7 @@ object Interface extends SimpleSwingApplication{
 			if (Projet.partie.is_running && Projet.partie.is_interface){
 				if (is_clicked){ unclic() }
 				else if (is_button_clicked){
-					if (piece_allowed_take.contains(i,j)){
-						println ("je veux attaquer ")
-						piece_selected.delete(i,j)
-						println ("j'ai pris la piece normalement ")
-						unclic()
-					}
-					else if (piece_allowed_move.contains(i,j)){
+					if (piece_allowed_move.contains(i,j)){
 						piece_selected.move(i,j)
 						unclic()
 					}
