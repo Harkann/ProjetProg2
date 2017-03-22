@@ -134,7 +134,7 @@ object Interface extends SimpleSwingApplication{
 				if (is_clicked){ unclic() }
 				else if (is_button_clicked){
 					if (piece_allowed_move.contains(i,j)){
-						piece_selected.move((i,j),Projet.partie)
+						piece_selected.move((i,j))
 						unclic()
 					}
 				}
@@ -143,7 +143,7 @@ object Interface extends SimpleSwingApplication{
 					clic()
 				}
 				else {
-					//il se passe rien
+					//il ne se passe rien
 				}
 				
 			}

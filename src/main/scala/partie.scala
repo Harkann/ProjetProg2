@@ -84,6 +84,27 @@ class Partie(){
 		return matrix(i)(j)
 	}
 
+/*
+	chantier de réflexions :
+	- Prise en passant : 
+	 besoin du dernier mouvement de l'adversaire.
+	- Stocker les parties :
+	 tableau des changement de positions et potentielles prises de piece ?
+	definir un type special pour ça position de depart position d'arrive prise de qqch= null ou some(piece)
+	- Promotion : 
+	 variable globale pour lancer le choix la promotion ? NON
+	 move : redécomposition -> déplacement de la tour dans le roque dans une fonction a part parce que là c'est moche.
+							-> même chose pour le declanchement de la promotion.
+	- 50 coups -> compteur reinitialisé a chaque prise de piece ou déplacement de pions.
+	- Imposibilitée de mater : avoir un tableau qui garde le nombre de piece pour chaque couleur : genre en_jeu[0]=nb pion en jeux.
+	- triple repetition de la position : rejouer la partie depuis le début ? :/ je penses que y a moyen d'être plus subtil.
+	- perte au temps : timer
+
+
+	Mika beaucoup d'interface à gerer...
+
+
+*/
 
 	/**renvoie la liste des mouvements possibles pour le joueur "player"
 	(utilisée par l'ia)*/
@@ -215,40 +236,40 @@ class Partie(){
 		}
 		player = 'W'
 		nb_tours = 0
-		matrix(2)(1) = new Peon('W',(2,1))
-		matrix(2)(2) = new Peon('W',(2,2))
-		matrix(2)(3) = new Peon('W',(2,3))
-		matrix(2)(4) = new Peon('W',(2,4))
-		matrix(2)(5) = new Peon('W',(2,5))
-		matrix(2)(6) = new Peon('W',(2,6))
-		matrix(2)(7) = new Peon('W',(2,7))
-		matrix(2)(8) = new Peon('W',(2,8))
-		matrix(1)(1) = new Tower('W',(1,1))
-		matrix(1)(8) = new Tower('W',(1,8))
-		matrix(1)(2) = new Knight('W',(1,2))
-		matrix(1)(7) = new Knight('W',(1,7))
-		matrix(1)(3) = new Bishop('W',(1,3))
-		matrix(1)(6) = new Bishop('W',(1,6))
-		matrix(1)(4) = new Queen('W',(1,4))
-		matrix(1)(5) = new King('W',(1,5))
+		matrix(2)(1) = new Peon('W',(2,1),this)
+		matrix(2)(2) = new Peon('W',(2,2),this)
+		matrix(2)(3) = new Peon('W',(2,3),this)
+		matrix(2)(4) = new Peon('W',(2,4),this)
+		matrix(2)(5) = new Peon('W',(2,5),this)
+		matrix(2)(6) = new Peon('W',(2,6),this)
+		matrix(2)(7) = new Peon('W',(2,7),this)
+		matrix(2)(8) = new Peon('W',(2,8),this)
+		matrix(1)(1) = new Tower('W',(1,1),this)
+		matrix(1)(8) = new Tower('W',(1,8),this)
+		matrix(1)(2) = new Knight('W',(1,2),this)
+		matrix(1)(7) = new Knight('W',(1,7),this)
+		matrix(1)(3) = new Bishop('W',(1,3),this)
+		matrix(1)(6) = new Bishop('W',(1,6),this)
+		matrix(1)(4) = new Queen('W',(1,4),this)
+		matrix(1)(5) = new King('W',(1,5),this)
 
 		//definition des pieces noires
-		matrix(7)(1) = new Peon('B',(7,1))
-		matrix(7)(2) = new Peon('B',(7,2))
-		matrix(7)(3) = new Peon('B',(7,3))
-		matrix(7)(4) = new Peon('B',(7,4))
-		matrix(7)(5) = new Peon('B',(7,5))
-		matrix(7)(6) = new Peon('B',(7,6))
-		matrix(7)(7) = new Peon('B',(7,7))
-		matrix(7)(8) = new Peon('B',(7,8))
-		matrix(8)(1) = new Tower('B',(8,1))
-		matrix(8)(8) = new Tower('B',(8,8))
-		matrix(8)(2) = new Knight('B',(8,2))
-		matrix(8)(7) = new Knight('B',(8,7))
-		matrix(8)(3) = new Bishop('B',(8,3))
-		matrix(8)(6) = new Bishop('B',(8,6))
-		matrix(8)(4) = new Queen('B',(8,4))
-		matrix(8)(5) = new King('B',(8,5))
+		matrix(7)(1) = new Peon('B',(7,1),this)
+		matrix(7)(2) = new Peon('B',(7,2),this)
+		matrix(7)(3) = new Peon('B',(7,3),this)
+		matrix(7)(4) = new Peon('B',(7,4),this)
+		matrix(7)(5) = new Peon('B',(7,5),this)
+		matrix(7)(6) = new Peon('B',(7,6),this)
+		matrix(7)(7) = new Peon('B',(7,7),this)
+		matrix(7)(8) = new Peon('B',(7,8),this)
+		matrix(8)(1) = new Tower('B',(8,1),this)
+		matrix(8)(8) = new Tower('B',(8,8),this)
+		matrix(8)(2) = new Knight('B',(8,2),this)
+		matrix(8)(7) = new Knight('B',(8,7),this)
+		matrix(8)(3) = new Bishop('B',(8,3),this)
+		matrix(8)(6) = new Bishop('B',(8,6),this)
+		matrix(8)(4) = new Queen('B',(8,4),this)
+		matrix(8)(5) = new King('B',(8,5),this)
 	}
 	
 }
