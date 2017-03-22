@@ -30,10 +30,11 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		var piece_deleted=Projet.partie.matrix(x)(y)
 		/**pièce supprimée*/
 		piece_deleted.is_alive=false
-		move(posi)
+		//move(posi)
 	}
+
 	/**déplace la pièce vers "posi"*/
-	def move(posi:(Int,Int)) = {
+	def move(posi:(Int,Int),partie:Partie) = {
 		/**coordonnées actuelles de la pièce*/
 		var (i,j)=position
 		/**coordonnées de la destination*/
@@ -41,20 +42,20 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 		val piece = Projet.partie.matrix(i)(j)
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==7)) {
 			val T = Projet.partie.matrix(j)(8)
-			Projet.partie.matrix(j)(6) = T
-			Projet.partie.matrix(j)(8) = null
+			partie.matrix(j)(6) = T
+			partie.matrix(j)(8) = null
 			T.nb_turn+=1
 		}
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (j==3)) {
 			val T = Projet.partie.matrix(j)(1)
-			Projet.partie.matrix(j)(4) = T
-			Projet.partie.matrix(j)(1) = null
+			partie.matrix(j)(4) = T
+			partie.matrix(j)(1) = null
 			T.nb_turn+=1
 		}
-		Projet.partie.matrix(x)(y)=piece
-		Projet.partie.matrix(i)(j)=null
+		partie.matrix(x)(y) = piece
+		partie.matrix(i)(j) = null
 		nb_turn+=1
-		Projet.partie.next_turn()
+		partie.next_turn()
 	}
 
 	def matrix(position:(Int,Int)) : Piece = {
@@ -152,11 +153,7 @@ abstract class Piece(col:Char,var position : (Int,Int)) {
 			//on se déplace selon le vecteur (a,b)
 			i=i+a
 			j=j+b
-			println(i)
-			println(j)
 		}
-		println("ta maman"+i)
-		println(j)
 		if 	// à t'on croisé une pièce si oui, peut on la prendre?
 			((1<=i) && (i<=8) && 
 			(1<=j) && (j<=8) ){
