@@ -248,7 +248,7 @@ class Partie(){
 		}*/
 	}
 	/**initialise la partie*/
-	def partie_init() = {
+	def partie_init(partie: Partie) = {
 		is_running = true
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
@@ -257,40 +257,40 @@ class Partie(){
 		}
 		player = 'W'
 		nb_tours = 0
-		matrix(2)(1) = new Peon('W',(2,1))
-		matrix(2)(2) = new Peon('W',(2,2))
-		matrix(2)(3) = new Peon('W',(2,3))
-		matrix(2)(4) = new Peon('W',(2,4))
-		matrix(2)(5) = new Peon('W',(2,5))
-		matrix(2)(6) = new Peon('W',(2,6))
-		matrix(2)(7) = new Peon('W',(2,7))
-		matrix(2)(8) = new Peon('W',(2,8))
-		matrix(1)(1) = new Tower('W',(1,1))
-		matrix(1)(8) = new Tower('W',(1,8))
-		matrix(1)(2) = new Knight('W',(1,2))
-		matrix(1)(7) = new Knight('W',(1,7))
-		matrix(1)(3) = new Bishop('W',(1,3))
-		matrix(1)(6) = new Bishop('W',(1,6))
-		matrix(1)(4) = new Queen('W',(1,4))
-		matrix(1)(5) = new King('W',(1,5))
+		matrix(2)(1) = new Peon('W',(2,1),partie)
+		matrix(2)(2) = new Peon('W',(2,2),partie)
+		matrix(2)(3) = new Peon('W',(2,3),partie)
+		matrix(2)(4) = new Peon('W',(2,4),partie)
+		matrix(2)(5) = new Peon('W',(2,5),partie)
+		matrix(2)(6) = new Peon('W',(2,6),partie)
+		matrix(2)(7) = new Peon('W',(2,7),partie)
+		matrix(2)(8) = new Peon('W',(2,8),partie)
+		matrix(1)(1) = new Tower('W',(1,1),partie)
+		matrix(1)(8) = new Tower('W',(1,8),partie)
+		matrix(1)(2) = new Knight('W',(1,2),partie)
+		matrix(1)(7) = new Knight('W',(1,7),partie)
+		matrix(1)(3) = new Bishop('W',(1,3),partie)
+		matrix(1)(6) = new Bishop('W',(1,6),partie)
+		matrix(1)(4) = new Queen('W',(1,4),partie)
+		matrix(1)(5) = new King('W',(1,5),partie)
 
 		//definition des pieces noires
-		matrix(7)(1) = new Peon('B',(7,1))
-		matrix(7)(2) = new Peon('B',(7,2))
-		matrix(7)(3) = new Peon('B',(7,3))
-		matrix(7)(4) = new Peon('B',(7,4))
-		matrix(7)(5) = new Peon('B',(7,5))
-		matrix(7)(6) = new Peon('B',(7,6))
-		matrix(7)(7) = new Peon('B',(7,7))
-		matrix(7)(8) = new Peon('B',(7,8))
-		matrix(8)(1) = new Tower('B',(8,1))
-		matrix(8)(8) = new Tower('B',(8,8))
-		matrix(8)(2) = new Knight('B',(8,2))
-		matrix(8)(7) = new Knight('B',(8,7))
-		matrix(8)(3) = new Bishop('B',(8,3))
-		matrix(8)(6) = new Bishop('B',(8,6))
-		matrix(8)(4) = new Queen('B',(8,4))
-		matrix(8)(5) = new King('B',(8,5))
+		matrix(7)(1) = new Peon('B',(7,1),partie)
+		matrix(7)(2) = new Peon('B',(7,2),partie)
+		matrix(7)(3) = new Peon('B',(7,3),partie)
+		matrix(7)(4) = new Peon('B',(7,4),partie)
+		matrix(7)(5) = new Peon('B',(7,5),partie)
+		matrix(7)(6) = new Peon('B',(7,6),partie)
+		matrix(7)(7) = new Peon('B',(7,7),partie)
+		matrix(7)(8) = new Peon('B',(7,8),partie)
+		matrix(8)(1) = new Tower('B',(8,1),partie)
+		matrix(8)(8) = new Tower('B',(8,8),partie)
+		matrix(8)(2) = new Knight('B',(8,2),partie)
+		matrix(8)(7) = new Knight('B',(8,7),partie)
+		matrix(8)(3) = new Bishop('B',(8,3),partie)
+		matrix(8)(6) = new Bishop('B',(8,6),partie)
+		matrix(8)(4) = new Queen('B',(8,4),partie)
+		matrix(8)(5) = new King('B',(8,5),partie)
 	}
 	
 }

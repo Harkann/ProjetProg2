@@ -212,7 +212,7 @@ object Interface extends SimpleSwingApplication{
 			piece_allowed_move = List()
 			piece_allowed_take = List()
 			Projet.partie.start()
-			Projet.partie.partie_init()
+			Projet.partie.partie_init(Projet.partie)
 			plateau.set_images()
 			window.contents = this
 			this.contents+=plateau
