@@ -42,7 +42,6 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 	partie.modif_piece(color,num_type,1)
 
 
-
 	/**déplace la pièce vers "posi"*/
 	def move(posi:(Int,Int)) = {
 		/**coordonnées actuelles de la pièce*/
@@ -459,6 +458,7 @@ ______________________________DÉFINITION DES DIFFERENTES CLASSES DE PIECES ____
 
 
 
+
 class Peon(color:Char,pos:(Int,Int),partie:Partie) extends Piece(color,pos,partie)
 with Id_creation with Peon_move with Promotion {
 	val num_type = 0
@@ -475,8 +475,6 @@ with Id_creation with Peon_move with Promotion {
 	//Projet.partie.matrix_pieces(i)(j)=id 
 
 }
-
-
 
 class Tower(color:Char,pos:(Int,Int),partie:Partie) extends Piece(color,pos,partie) 
 with Id_creation with Horizontal_Vertical{
