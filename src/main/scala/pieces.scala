@@ -1,5 +1,12 @@
 import javax.swing.ImageIcon
 
+
+/*REPORT PROBLEM Pion qui pense pouvoir prendre ce quil y a directement devant lui......*/
+
+
+
+
+
 /*
 ***************************************************************************************************************
 ______________________________DÉFINITION DE LA CLASSE ABSTRAITE PIECE  _______________________________________
@@ -17,6 +24,8 @@ abstract class Piece(col:Char,var position : (Int,Int)) extends Standard {
 	val color = col;
 	/**nom de la pièce*/
 	val name:String; 
+	/** un numreo attribué a chaque type de piece **/
+	val num_type:Int;
 	/**statut en vie ou non de la pièce*/
 	var is_alive:Boolean;
 	/**id de la pièce, l'id "0" désigne une case vide*/
@@ -29,15 +38,22 @@ abstract class Piece(col:Char,var position : (Int,Int)) extends Standard {
 
 	/**nombre de déplacements de la pièce*/
 	var nb_turn = 0
-	
+	/** permet la prise en compte de la nouvelle piece dans les tableaux pieces_W et pieces_B **/
+	Projet.partie.modif_piece(color,num_type,1)
+
+
+
 	/**déplace la pièce vers "posi"*/
 	def move(posi:(Int,Int)) = {
 		/**coordonnées actuelles de la pièce*/
 		var (i,j)=position
 		/**coordonnées de la destination*/
 		var (x,y)=posi
-		val piece = Projet.partie.matrix(i)(j)
-		 
+		val piece = matrix(position)
+		val piece_met = matrix(posi)
+
+		// prise d'une piece
+		if (piece_met != null) {Projet.partie.modif_piece(piece_met.color,piece_met.num_type,-1)}
 		roque_check(posi)
 
 		position = (x,y)
@@ -336,17 +352,22 @@ trait Promotion extends Standard {
 		val piece = matrix(position)
 		//val new_type = click_promotion() // qui permettrais de savoir ce que le joueur prefere
 		val new_type = "Queen" // TEMPORAIRE
+		Projet.partie.modif_piece(piece.color,0,-1)
 		if (new_type == "Queen") {
 			Projet.partie.matrix(i)(j) = new Queen (piece.color, position)
+			Projet.partie.modif_piece(piece.color,4,1)
 		}
 		else if (new_type == "Tower") {
 			Projet.partie.matrix(i)(j) = new Tower (piece.color, position)
+			Projet.partie.modif_piece(piece.color,1,1)
 		}
 		else if (new_type == "Knight") {
 			Projet.partie.matrix(i)(j) = new Knight (piece.color, position)
+			Projet.partie.modif_piece(piece.color,2,1)
 		}
 		else {
 			Projet.partie.matrix(i)(j) = new Bishop (piece.color, position)
+			Projet.partie.modif_piece(piece.color,3,1)
 		}
 
 	}
@@ -439,13 +460,66 @@ ______________________________DÉFINITION DES DIFFERENTES CLASSES DE PIECES ____
 ***************************************************************************************************************
 */
 
+class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
+with Id_creation with Peon_move with Promotion {
+	val num_type = 0
+	val name="Pe"
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	var is_alive=true
+	val id=color+name+id_create(color,name)
+	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		return dpct_peon(position)
+	}
+	var (i,j) = position
+	//Projet.partie.matrix_pieces(i)(j)=id 
 
+}
 
+class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
+with Id_creation with Horizontal_Vertical{
+	val name = "To"
+	val num_type = 1
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	var is_alive=true
+	val id=color+name+id_create(color,name)
+	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		return (dpct_horizon_vertic(position))
+	}
+	var (i,j) = position
+	//Projet.partie.matrix_pieces(i)(j)=id
+}
+
+class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
+with Id_creation with Jump{
+	val name="Kn"
+	val num_type = 2
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	var is_alive=true
+	val id=color+name+id_create(color,name)
+	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = jump(position)
+	var (i,j) = position
+	//Projet.partie.matrix_pieces(i)(j)=id
+}
+
+class Bishop(color:Char,position:(Int,Int)) extends Piece(color,position) 
+with Id_creation with Diagonal{
+	val name="Bi"
+	val num_type = 3
+	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	var is_alive=true
+	val id=color+name+id_create(color,name)
+	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		return (dpct_diag(position))
+	}
+	var (i,j) = position
+	//Projet.partie.matrix_pieces(i)(j)=id
+}
 
 class Queen(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
 with Id_creation with Diagonal with Horizontal_Vertical{ 
 	//si jamais on remet "position" et pas un autre nom soit "pos" position est considéré constante
 	val name = "Qu"
+	val num_type = 4
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive= true
 	val id=color+name+id_create(color,name)
@@ -460,24 +534,11 @@ with Id_creation with Diagonal with Horizontal_Vertical{
  
 }
 
-class Peon(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
-with Id_creation with Peon_move with Promotion {
-	val name="Pe"
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
-	var is_alive=true
-	val id=color+name+id_create(color,name)
-	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
-		return dpct_peon(position)
-	}
-	def promotion(position:(Int,Int)) { promo(position) }
-	var (i,j) = position
-	//Projet.partie.matrix_pieces(i)(j)=id 
-
-}
 
 class King(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
 with Id_creation with King_move{
 	val name="Ki"
+	val num_type = 5
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
 	val id=color+name+id_create(color,name)
@@ -488,39 +549,4 @@ with Id_creation with King_move{
 	//Projet.partie.matrix_pieces(i)(j)=id
 }
 
-class Tower(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
-with Id_creation with Horizontal_Vertical{
-	val name="To"
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
-	var is_alive=true
-	val id=color+name+id_create(color,name)
-	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
-		return (dpct_horizon_vertic(position))
-	}
-	var (i,j) = position
-	//Projet.partie.matrix_pieces(i)(j)=id
-}
 
-class Knight(color:Char,pos:(Int,Int)) extends Piece(color,pos) 
-with Id_creation with Jump{
-	val name="Kn"
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
-	var is_alive=true
-	val id=color+name+id_create(color,name)
-	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = jump(position)
-	var (i,j) = position
-	//Projet.partie.matrix_pieces(i)(j)=id
-}
-
-class Bishop(color:Char,position:(Int,Int)) extends Piece(color,position) 
-with Id_creation with Diagonal{
-	val name="Bi"
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
-	var is_alive=true
-	val id=color+name+id_create(color,name)
-	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
-		return (dpct_diag(position))
-	}
-	var (i,j) = position
-	//Projet.partie.matrix_pieces(i)(j)=id
-}

@@ -5,6 +5,12 @@ class Partie(){
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
+	var pieces_B = Array(0,0,0,0,0,0)
+	var pieces_W = Array(0,0,0,0,0,0)
+	def modif_piece(color:Char,num:Int,modif:Int){
+		if (color == 'B') {pieces_B(num) += modif}
+		else if (color == 'W'){pieces_W(num) +=modif }
+	}
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/
 	var nb_ia = 0
@@ -105,6 +111,17 @@ class Partie(){
 
 
 */
+	def nothing_but_pat(tab_color:Array[Int],tab_other_color:Array[Int]) {
+		if (
+			((tab_color==Array(0,0,0,0,0,1)) && (tab_other_color==Array(0,0,0,0,0,1))) ||
+			((tab_color==Array(0,0,0,1,0,1)) && (tab_other_color==Array(0,0,0,0,0,1))) ||
+			((tab_color==Array(0,0,0,1,0,1)) && (tab_other_color==Array(0,0,0,1,0,1))) ||		
+			((tab_color==Array(0,0,0,0,0,1)) && (tab_other_color==Array(0,0,1,0,0,1))) 
+
+			){
+			pat()
+		}
+	}
 
 	/**renvoie la liste des mouvements possibles pour le joueur "player"
 	(utilisée par l'ia)*/
@@ -133,9 +150,13 @@ class Partie(){
 	/**teste si le joueur "player" est pat et affiche pat*/
 	def is_pat(player:Char) = { 
 		if (allowed_moves(player) == List()){
-			Projet.partie.stop()
-			Interface.RootWindow.interface_partie.pat()
+			pat()
 		}
+	}
+
+	def pat(){
+		Projet.partie.stop()
+		Interface.RootWindow.interface_partie.pat()
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -309,7 +330,8 @@ class IA(color:Char) extends Joueur with Runnable{
 		}
 		if (player == 'W') {player = 'B'}
 		else {player = 'W'}
-
+		nothing_but_pat(pieces_W,pieces_B)
+		nothing_but_pat(pieces_B,pieces_W)
 		Projet.partie.next_turn()
 	}
 }
