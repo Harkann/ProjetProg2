@@ -186,10 +186,12 @@ class Partie() extends Save {
 		for (pos <-list_in_danger){
 			var (i,j)=pos
 			var piece= matrix(i)(j)
+			if (piece == null){println(i,j)}
+			else{
 			var id_piece=piece.id
 			if (id_piece.substring(0,3)==player+"Ki"){
 				return true
-			}
+			}}
 		}
 		return false
 

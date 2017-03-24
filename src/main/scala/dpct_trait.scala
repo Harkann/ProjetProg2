@@ -226,14 +226,13 @@ trait Promotion extends Standard {
 
 trait Prise_en_passant {
 	def prise_en_passant(position:(Int,Int),partie:Partie,c:Int) : List[(Int,Int)] = {
-		println("nb_turn = "+partie.nb_turn)
+		
 		if (partie.nb_turn == 0) {return List ()}
 		val dpct = partie.last_move(partie)
 		val (i,j)=position
-		println("dernier move posi_begin" + dpct.posi_begin)
-		println("dernier move posi_end" + dpct.posi_end)
 		if ((Math.abs(dpct.j-j) == 1) &&
-			(dpct.x == i) && (dpct.i == i-c*2)){
+			(dpct.x == i) && (dpct.i == i+c*2) &&
+			(dpct.piece.color != partie.matrix(i)(j).color)){
 			return List((i+c,dpct.j))
 		}
 		else{
@@ -258,6 +257,7 @@ trait Peon_move extends Dplct_positions with Prise_en_passant {
 	/**déplacement du pion blanc, avance vers le haut*/
 	def dpct_peon_w_or_b(position:(Int,Int),partie:Partie, c:Int) : (List[(Int,Int)],List[(Int,Int)]) = {
 		var movement_list : List[(Int,Int)] = List((1*c,0))
+
 		var (i,j) = position
 		val peon=partie.matrix(i)(j)
 		var (moves,attacks) = dpct_pos_dpct_only(position,movement_list,partie)
@@ -269,9 +269,9 @@ trait Peon_move extends Dplct_positions with Prise_en_passant {
 
 		movement_list = List((1*c,1),(1*c,-1))
 		var (moves_att,attacks_att) = dpct_pos_attack_only(position,movement_list,partie)
-		/*var prise_passant = prise_en_passant(position,partie,c)
+		var prise_passant = prise_en_passant(position,partie,c)
 		moves = moves ++ prise_passant
-		attacks = attacks ++ prise_passant*/
+		attacks = attacks ++ prise_passant
 		return (moves++moves_att,attacks++attacks_att)
 	}
 
