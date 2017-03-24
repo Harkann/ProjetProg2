@@ -225,6 +225,6 @@ object Interface extends SimpleSwingApplication{
 	var RootWindow = new MainWindow()
 	def top = RootWindow
 	//il faudrait tester la resolution minimale sur d'autres ordis...
-	top.minimumSize = new Dimension(700, 1000) //schwoon 1300*700
+	top.minimumSize = new Dimension(Config.res_x,Config.res_y) //schwoon 1300*700
 	RootWindow.init_menu()
 }

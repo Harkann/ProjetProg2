@@ -5,7 +5,7 @@ class Partie(){
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
-	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
+	
 	var pieces_B = Array(0,0,0,0,0,0)
 	var pieces_W = Array(0,0,0,0,0,0)
 
@@ -19,6 +19,7 @@ class Partie(){
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
+	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/
 	var nb_ia = 0
@@ -27,16 +28,12 @@ class Partie(){
 	/**la partie est en cours ou non */
 	var is_running = true
 	/**délai en ms avant le déplacement des pièces de l'ia*/
-	var delai_ia = 10
-
+	var delai_ia = Config.delai_ia
+	/**l'interface peut deplacer des pieces*/
 	var is_interface= true
 	/**renvoie si la partie est finie*/
 	def stop() ={
 		is_running = false
-	}
-	/**sera utilisée pour définir la vitesse du jeu de l'IA*/
-	def set_delay_ia(value:Int) = {
-		delai_ia = value
 	}
 	/**renvoie la couleur du joueur opposé a "player"*/
 	def other_player(player: Char):Char = {
@@ -225,6 +222,8 @@ class Partie(){
 		/***/
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
+			this.stop()
+			println("MAT")
 			//Interface.RootWindow.interface_partie.perdu(player)
 		}
 
@@ -295,28 +294,3 @@ class Partie(){
 
 }
 
-/**permet de lancer l'ia sous forme de thread*/
-class IA(color:Char,partie:Partie) extends Runnable{
-	/**lance le thread du tour de l'ia*/
-	override def run = {
-		partie.is_interface = false
-		var moves_ia = partie.allowed_moves(color)
-		Thread.sleep(partie.delai_ia)
-		/**objet random*/
-		var random_move = scala.util.Random
-		/**entier random permettant de choisir un mouvement*/
-		var random_moveInt = random_move.nextInt(moves_ia.length)
-		/**origine et destination de la pièce*/
-		var (origin,destination) = moves_ia(random_moveInt)
-		/**coordonnées de l'origine*/
-		var (oi,oj) = origin
-		/**coordonnées de la destination*/
-		var (di,dj) = destination
-		/**id de la pièce de départ*/
-		var piece_selected = partie.get_piece(oi,oj)
-		/**id de la pièce sur la case de destination*/
-		piece_selected.move(destination)
-		partie.is_interface = true
-		partie.next_turn()
-	}
-}
