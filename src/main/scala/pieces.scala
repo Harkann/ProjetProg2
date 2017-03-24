@@ -69,7 +69,6 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		val piece = matrix(position,partie)
 
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==7)) {
-			println("on effectut le roque")
 			val T = partie.matrix(i)(8)
 			T.position = (i,6)
 			partie.matrix(i)(6) = T
@@ -78,20 +77,18 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 			promotion_check(posi)
 		}
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==3)) {
-			println("on effectut le roque")
 			val T = partie.matrix(i)(1)
 			T.position=(i,4)
 			T.nb_turn+=1
 			partie.matrix(i)(4) = partie.matrix(i)(1)
 			partie.matrix(i)(1) = null
-			println("deplacement de la tour fait normalement...")
+			
 		}
 	}
 
 	def promotion_check(posi:(Int,Int)){
 		var (x,y) = posi
 		val piece = matrix(posi,partie)
-		println( "check_promotion : " + piece )
 		if ((piece != null) && (piece.name == "Pe") && ((x == 8) || (x == 1))){
 			piece.asInstanceOf[Peon].promo(posi,partie)
 		}

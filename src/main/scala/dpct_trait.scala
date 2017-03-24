@@ -225,6 +225,23 @@ trait Promotion extends Standard {
 	}
 }
 
+trait Prise_en_passant {
+	def prise_en_passant(position:(Int,Int),partie:Partie,c:Int) : List[(Int,Int)] = {
+		println("nb_turn = "+partie.nb_turn)
+		if (partie.nb_turn == 0) {return List ()}
+		val dpct = partie.last_move(partie)
+		val (i,j)=position
+		println("dernier move posi_begin" + dpct.posi_begin)
+		println("dernier move posi_end" + dpct.posi_end)
+		if ((Math.abs(dpct.j-j) == 1) &&
+			(dpct.x == i) && (dpct.i == i-c*2)){
+			return List((i+c,dpct.j))
+		}
+		else{
+			return List()
+		}
+	}
+}
 
 
 
@@ -238,54 +255,34 @@ ____________________________ DÉFINITION DES TRAITS SPECIFIQUES DE DEPLACEMENT _
 
 
 /**déplacement des pions*/
-trait Peon_move extends Dplct_positions  {
+trait Peon_move extends Dplct_positions with Prise_en_passant {
 	/**déplacement du pion blanc, avance vers le haut*/
-	def dpct_peon_white(position:(Int,Int),partie:Partie) : (List[(Int,Int)],List[(Int,Int)]) = {
-		var movement_list : List[(Int,Int)] = List((1,0))
+	def dpct_peon_w_or_b(position:(Int,Int),partie:Partie, c:Int) : (List[(Int,Int)],List[(Int,Int)]) = {
+		var movement_list : List[(Int,Int)] = List((1*c,0))
 		var (i,j) = position
 		val peon=partie.matrix(i)(j)
 		var (moves,attacks) = dpct_pos_dpct_only(position,movement_list,partie)
 		if ((peon.nb_turn == 0) &&  (moves != List()) ) {
-			movement_list = List((1,0),(2,0)) 
+			movement_list = List((1*c,0),(2*c,0)) 
 		 	var (moves_int,attacks_int) = dpct_pos_dpct_only(position,movement_list,partie)
 		 	moves = moves_int
 		}
 
-		movement_list = List((1,1),(1,-1))
+		movement_list = List((1*c,1),(1*c,-1))
 		var (moves_att,attacks_att) = dpct_pos_attack_only(position,movement_list,partie)
-		/*var att_prise_passant = prise_en_passant(position,movement_list)
-		moves = moves ++ att_prise_passant
-		attacks = attacks ++ att_prise_passant*/
+		/*var prise_passant = prise_en_passant(position,partie,c)
+		moves = moves ++ prise_passant
+		attacks = attacks ++ prise_passant*/
 		return (moves++moves_att,attacks++attacks_att)
 	}
 
-
-	/**déplacement du pion blanc, avance vers le bas*/
-	def dpct_peon_black(position:(Int,Int),partie:Partie) : (List[(Int,Int)],List[(Int,Int)]) = {
-		var movement_list : List[(Int,Int)] = List((-1,0))
-		var (i,j) = position
-		val peon=partie.matrix(i)(j)
-		var (moves,attacks) = dpct_pos_dpct_only(position,movement_list,partie)
-		if ((peon.nb_turn == 0) &&  (moves != List()) ) {
-			movement_list = List((-1,0),(-2,0)) 
-		 	var (moves_int,attacks_int) = dpct_pos_dpct_only(position,movement_list,partie)
-		 	moves = moves_int
-		 	attacks = attacks_int
-		}
-		movement_list = List((-1,1),(-1,-1))
-		var (moves_att,attacks_att) = dpct_pos_attack_only(position,movement_list,partie)
-		/*var att_prise_passant = prise_en_passant(position,movement_list)
-		moves = moves ++ att_prise_passant
-		attacks = attacks ++ att_prise_passant*/
-		return (moves++moves_att,attacks++attacks_att)
-	}
 
 	/**déplacement global*/
 	def dpct_peon(position:(Int,Int),partie:Partie) : (List[(Int,Int)],List[(Int,Int)])={
 		var (i,j) = position
 		val peon=partie.matrix(i)(j)
-		if (peon.color =='B') {return dpct_peon_black(position,partie)}
-		else {return dpct_peon_white(position,partie)}
+		if (peon.color =='B') {return dpct_peon_w_or_b(position,partie,-1)}
+		else {return dpct_peon_w_or_b(position,partie,1)}
 	}
 
 }
