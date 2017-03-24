@@ -14,8 +14,8 @@ object Interface extends SimpleSwingApplication{
 	/**Boutons permettant de lancer la partie*/
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
-			//Projet.partie.partie_nb_ia(nbIA,colorIA)
-                        var partie = new Partie()
+            var partie = new Partie()
+            partie.partie_nb_ia(nbIA,colorIA)
 			var interface_partie = new EcranPartie(8,8,window,partie)
 			interface_partie.spawn_game()
 		}
@@ -85,7 +85,7 @@ object Interface extends SimpleSwingApplication{
 		}
 
 		def get_image(){
-			piece = Projet.partie.matrix(i)(j)
+			piece = partie.matrix(i)(j)
 			if (piece != null){icon = piece.image}
 			else {icon = null}
 			this.revalidate()
