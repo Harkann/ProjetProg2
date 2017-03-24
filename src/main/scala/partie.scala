@@ -47,7 +47,6 @@ class Partie() extends Save {
 			}
 			else if (nb_ia == 1){
 				player = other_player(player)
-				println(player+","+color_ia)
 				if (player == color_ia){
 					is_interface = false
 					new Thread(new IA(color_ia,this)).start
@@ -55,6 +54,7 @@ class Partie() extends Save {
 				} 
 			}
 			else {
+
 				player = other_player(player)
 				new Thread(new IA(player,this)).start
 
@@ -152,6 +152,7 @@ class Partie() extends Save {
 
 	def pat(){
 		this.stop()
+		game_window.notif.pat()
 		println("PAT")
 		//Interface.RootWindow.interface_partie.pat()
 	}
@@ -218,6 +219,7 @@ class Partie() extends Save {
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
 			this.stop()
+			game_window.notif.perdu(player)
 			println("MAT")
 			//Interface.RootWindow.interface_partie.perdu(player)
 		}
@@ -237,6 +239,7 @@ class Partie() extends Save {
 			new Thread(new IA('W',this)).start
 		}
 		else if (nb_ia == 2){
+			is_interface = false
 			new Thread(new IA('W',this)).start
 		}
 	}

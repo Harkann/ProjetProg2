@@ -20,7 +20,6 @@ class IA(color:Char,partie:Partie) extends Runnable{
 		/**id de la pièce sur la case de destination*/
 		
 		piece_selected.move(destination)
-		partie.game_window.plateau.set_images()
 		partie.next_turn()
 	}
 }
