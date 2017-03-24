@@ -1,7 +1,7 @@
 import Array._
 import scala.collection.mutable.ArrayBuffer
 
-class Partie(){
+class Partie() extends Save {
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
@@ -10,12 +10,8 @@ class Partie(){
 	var pieces_W = Array(0,0,0,0,0,0)
 
 	def modif_piece(color:Char,num:Int,modif:Int){
-		if (color == 'B') {pieces_B(num) += modif
-			println("+1")
-		}
-		else if (color == 'W'){pieces_W(num) +=modif 
-			println("+1")
-		}
+		if (color == 'B') {pieces_B(num) += modif}
+		else if (color == 'W'){pieces_W(num) +=modif}
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
@@ -46,6 +42,7 @@ class Partie(){
 		//if (is_running){is_mat(player)}
 		//if (is_running){is_mat(other_player(player))}
 		//if (is_running){is_pat(other_player(player))}
+		nb_turn +=1
 		if (is_running){
 			if (nb_ia == 0){
 				player = other_player(player)

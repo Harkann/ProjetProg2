@@ -8,9 +8,17 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 	val piece_met = partie.matrix(x)(y)
 }
 
-trait Return {
+trait Save {
+
 	def return_back(partie:Partie) = {
-		val dpct = partie.dplct_save.remove(partie.nb_turn)
+	val dpct = partie.dplct_save.remove(partie.nb_turn)
+	partie.matrix(dpct.i)(dpct.j)= dpct.piece
+	partie.matrix(dpct.x)(dpct.y)= dpct.piece_met
+	partie.nb_turn -=1
+	}
+
+	def last_move(partie:Partie) : Dpct = {
+		return partie.dplct_save(partie.nb_turn)
 	}
 	
 }
