@@ -48,12 +48,11 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		// prise d'une piece
 		if (piece_met != null) {partie.modif_piece(piece_met.color,piece_met.num_type,-1)}
 
-		println(partie.pieces_B(1))
-		println(partie.pieces_W(1))
 
 		partie.dplct_save += new Dpct(position,posi,partie)
 		// ATTENTION GERER LE RAJOUT DU ROQUE OU DE LA PROMOTION DANS L'ENREGISTEMENT D'UN MOVE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		roque_check(posi)
+		prise_en_passant_check(posi)
 		position = (x,y)
 		partie.matrix(x)(y)=piece
 		partie.matrix(i)(j)=null
@@ -94,6 +93,15 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		}
 	}
 
+	def prise_en_passant_check(posi:(Int,Int)){
+		val (i,j) = position
+		val (x,y) = posi
+		val piece_met = matrix(posi,partie)
+		if ((name == "Pe") && (j != y) && (piece_met == null)){
+			partie.matrix(i)(y)=null
+		}
+	}
+
 	def full_verif(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		/**déplacements possibles (avec ou sans prise)*/
 		var res_moves : List[ (Int,Int) ] = List()
@@ -124,6 +132,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 
 	/**renvoie la liste des cases atteignables par la pièce située en "position" en tenant compte de la mise en échec*/
 	def move_piece_check(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
+		
 		/**coordonnée de la pièce*/
 		var (i,j) = position
 		/** id de la pièce sur la case*/

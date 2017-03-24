@@ -9,7 +9,6 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 }
 
 trait Save {
-
 	def return_back(partie:Partie) = {
 	val dpct = partie.dplct_save.remove(partie.nb_turn)
 	partie.matrix(dpct.i)(dpct.j)= dpct.piece
@@ -18,7 +17,8 @@ trait Save {
 	}
 
 	def last_move(partie:Partie) : Dpct = {
-		return partie.dplct_save(partie.nb_turn)
+		//println("longueur : "+partie.dplct_save.length)
+		return partie.dplct_save(partie.nb_turn-1)
 	}
 	
 }
