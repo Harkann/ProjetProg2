@@ -5,7 +5,7 @@ class Partie() extends Save {
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
-	
+	var game_window:Interface.EcranPartie = null
 	var pieces_B = Array(0,0,0,0,0,0)
 	var pieces_W = Array(0,0,0,0,0,0)
 
@@ -23,8 +23,6 @@ class Partie() extends Save {
 	var color_ia = 'B';
 	/**la partie est en cours ou non */
 	var is_running = true
-	/**délai en ms avant le déplacement des pièces de l'ia*/
-	var delai_ia = Config.delai_ia
 	/**l'interface peut deplacer des pieces*/
 	var is_interface= true
 	/**renvoie si la partie est finie*/
@@ -39,9 +37,9 @@ class Partie() extends Save {
 	}
 	/**lance le tour suivant*/
 	def next_turn():Unit = {
-		//if (is_running){is_mat(player)}
-		//if (is_running){is_mat(other_player(player))}
-		//if (is_running){is_pat(other_player(player))}
+		if (is_running){is_mat(player)}
+		if (is_running){is_mat(other_player(player))}
+		if (is_running){is_pat(other_player(player))}
 		nb_turn +=1
 		if (is_running){
 			if (nb_ia == 0){
@@ -49,13 +47,16 @@ class Partie() extends Save {
 			}
 			else if (nb_ia == 1){
 				player = other_player(player)
+				println(player+","+color_ia)
 				if (player == color_ia){
+					is_interface = false
 					new Thread(new IA(color_ia,this)).start
+					is_interface = true
 				} 
 			}
 			else {
 				player = other_player(player)
-				new Thread(new IA(color_ia,this)).start
+				new Thread(new IA(player,this)).start
 
 			}
 		}
@@ -123,28 +124,23 @@ class Partie() extends Save {
 		}
 	}
 
-	/**renvoie la liste des mouvements possibles pour le joueur "player"
+	/**renvoie la liste des mouvements possibles pour le joueur "color"
 	(utilisée par l'ia)*/
-	def allowed_moves(player:Char): List[((Int,Int),(Int,Int))] = {
+	def allowed_moves(color:Char): List[((Int,Int),(Int,Int))] = {
 		/**liste des mouvements possibles*/
 		var all_moves : List[ ((Int,Int),(Int,Int)) ] = List()
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
-				/**pièce sur la case (i,j)*/
-				var piece_ij=matrix(i)(j)
-				/**id de la pièce sur la case (i,j)*/
-				var id_piece_ij = piece_ij.id
-
-				if (id_piece_ij(0)==player)
-				{
-					/**liste des mouvements possibles de la pièce courante*/
-					var (list_move,list_attack)= piece_ij.move_piece_check((i,j))
+				println(i+","+j+","+this.get_color(i,j))
+				if (this.get_color(i,j) == color){
+					var (list_move,list_attack)= get_piece(i,j).move_piece_check((i,j))
 					for( move <- list_move) {
 						all_moves=all_moves:+((i,j),move)
 					}
 				}
 			}
 		}
+		println(all_moves+"plop"+color_ia)
 		return all_moves
 	}
 	/**teste si le joueur "player" est pat et affiche pat*/
@@ -209,10 +205,12 @@ class Partie() extends Save {
 			for( j <- 1 to 8) {
 				var piece_ij=matrix(i)(j)
 				/**id de la pièce sur la case (i,j)*/
-				var id_piece_ij = piece_ij.id
-				if(id_king==id_piece_ij) {
-					position=(i,j)
-					king = matrix(i)(j)
+				if (piece_ij != null){
+					var id_piece_ij = piece_ij.id
+					if(id_king==id_piece_ij) {
+						position=(i,j)
+						king = matrix(i)(j)
+					}
 				}
 			}
 		}
@@ -225,9 +223,10 @@ class Partie() extends Save {
 		}
 
 	}
-	def partie_nb_ia(nbIA:Int,colorIA:Char) = {
+	def partie_nb_ia(nbIA:Int,colorIA:Char,ecran:Interface.EcranPartie) = {
 		nb_ia = nbIA
 		color_ia=colorIA
+		game_window=ecran
 	}
 	/**compte le nombre de tours*/
 	var nb_turn = 0
@@ -235,11 +234,9 @@ class Partie() extends Save {
 	/**démarre la partie*/
 	def start() = {
 		if (nb_ia == 1 && color_ia == 'W'){
-			println("plop")
 			new Thread(new IA('W',this)).start
 		}
 		else if (nb_ia == 2){
-			println("plop")
 			new Thread(new IA('W',this)).start
 		}
 	}

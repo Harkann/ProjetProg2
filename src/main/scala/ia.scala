@@ -2,9 +2,9 @@
 class IA(color:Char,partie:Partie) extends Runnable{
 	/**lance le thread du tour de l'ia*/
 	override def run = {
-		partie.is_interface = false
+		
 		var moves_ia = partie.allowed_moves(color)
-		Thread.sleep(partie.delai_ia)
+		Thread.sleep(Config.delai_ia)
 		/**objet random*/
 		var random_move = scala.util.Random
 		/**entier random permettant de choisir un mouvement*/
@@ -18,8 +18,9 @@ class IA(color:Char,partie:Partie) extends Runnable{
 		/**id de la pièce de départ*/
 		var piece_selected = partie.get_piece(oi,oj)
 		/**id de la pièce sur la case de destination*/
+		
 		piece_selected.move(destination)
-		partie.is_interface = true
+		partie.game_window.plateau.set_images()
 		partie.next_turn()
 	}
 }

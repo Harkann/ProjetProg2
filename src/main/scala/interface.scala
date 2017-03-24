@@ -15,8 +15,8 @@ object Interface extends SimpleSwingApplication{
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
             var partie = new Partie()
-            partie.partie_nb_ia(nbIA,colorIA)
 			var interface_partie = new EcranPartie(8,8,window,partie)
+			partie.partie_nb_ia(nbIA,colorIA,interface_partie)
 			interface_partie.spawn_game()
 		}
 	}
@@ -133,6 +133,7 @@ object Interface extends SimpleSwingApplication{
 				else if (is_button_clicked){
 					if (piece_allowed_move.contains(i,j)){
 						piece_selected.move((i,j))
+						partie.next_turn()
 						unclic()
 					}
 				}
@@ -209,8 +210,8 @@ object Interface extends SimpleSwingApplication{
 			piece_selected = null
 			piece_allowed_move = List()
 			piece_allowed_take = List()
-			partie.start()
 			partie.partie_init()
+			partie.start()
 			plateau.set_images()
 			window.contents = this
 			this.contents+=plateau
