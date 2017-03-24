@@ -15,7 +15,8 @@ object Interface extends SimpleSwingApplication{
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
 			//Projet.partie.partie_nb_ia(nbIA,colorIA)
-			var interface_partie = new EcranPartie(8,8,window)
+                        var partie = new Partie()
+			var interface_partie = new EcranPartie(8,8,window,partie)
 			interface_partie.spawn_game()
 		}
 	}
@@ -52,10 +53,7 @@ object Interface extends SimpleSwingApplication{
 
 	class MainWindow() extends MainFrame{
 		var box = new BoxPanel(Orientation.Vertical) 
-		var menu_principal = new MainMenu(5,1,this)
-		var interface_partie = new EcranPartie(8,8,this)
-		//init()
-		
+		var menu_principal = new MainMenu(5,1,this)		
 		def init_menu()={
 			title = "Chess"
 			contents = box
@@ -68,11 +66,11 @@ object Interface extends SimpleSwingApplication{
 	}
 
 	/**Case de l'échiquier*/
-	class Case(i:Int,j:Int,plateau:Echiquier) extends Button{
+	class Case(i:Int,j:Int,plateau:Echiquier,partie:Partie) extends Button{
 		val myGreen = new Color (48, 163, 115)
 		val myBlue = new Color (0, 3, 112)
 		val myRed = new Color (112, 0, 0)
-		var piece = Projet.partie.matrix(i)(j)
+		var piece = partie.matrix(i)(j)
 		var is_clicked = false
 
 		def set_is_clicked(value:Boolean){
@@ -108,9 +106,9 @@ object Interface extends SimpleSwingApplication{
 		}
 
 		def select_piece(){
-			piece_selected = Projet.partie.get_piece(i,j)
+			piece_selected = partie.get_piece(i,j)
 			colorie("green")
-			var(piece_move,piece_take) = Projet.partie.get_piece(i,j).move_piece_check(i,j)
+			var(piece_move,piece_take) = partie.get_piece(i,j).move_piece_check(i,j)
 			piece_allowed_move = piece_move
 			piece_allowed_take = piece_take
 			for ((a,b) <- piece_allowed_move){ plateau.Cells(a)(b).colorie("blue") }
@@ -130,7 +128,7 @@ object Interface extends SimpleSwingApplication{
 		init_colors()
 		get_image()
 		action = Action(""){
-			if (Projet.partie.is_running && Projet.partie.is_interface){
+			if (partie.is_running && partie.is_interface){
 				if (is_clicked){ unclic() }
 				else if (is_button_clicked){
 					if (piece_allowed_move.contains(i,j)){
@@ -138,7 +136,7 @@ object Interface extends SimpleSwingApplication{
 						unclic()
 					}
 				}
-				else if (Projet.partie.get_color(i,j) == Projet.partie.player){
+				else if (partie.get_color(i,j) == partie.player){
 					select_piece()
 					clic()
 				}
@@ -151,12 +149,12 @@ object Interface extends SimpleSwingApplication{
 
 	}
 	/**Grille de taille i,j contenant les différentes cases*/
-	class Echiquier(i:Int,j:Int,window:MainWindow) extends GridPanel(i,j){
+	class Echiquier(i:Int,j:Int,window:MainWindow,partie:Partie) extends GridPanel(i,j){
 		
 		var Cells = ofDim[Case](9,9)
 		for (i <- 8 to 1 by -1){
 			for( j <- 1 to 8){
-				Cells(i)(j) = new Case(i,j,this)
+				Cells(i)(j) = new Case(i,j,this,partie)
 				Cells(i)(j).init_colors()
 				Cells(i)(j).get_image()
 				this.contents+=Cells(i)(j)
@@ -181,9 +179,9 @@ object Interface extends SimpleSwingApplication{
 
 	}
 	/**Ecran de jeu contenant l'échiquier de taille i,j*/
-	class EcranPartie(i:Int,j:Int,window:MainWindow) extends BoxPanel(Orientation.Vertical){
+	class EcranPartie(i:Int,j:Int,window:MainWindow,partie:Partie) extends BoxPanel(Orientation.Vertical){
 
-		var plateau = new Echiquier(i,j,window)
+		var plateau = new Echiquier(i,j,window,partie)
 		val back_menu = new Button{
 			action = Action("Back to main menu"){
 				//Projet.partie.stop()
@@ -211,8 +209,8 @@ object Interface extends SimpleSwingApplication{
 			piece_selected = null
 			piece_allowed_move = List()
 			piece_allowed_take = List()
-			Projet.partie.start()
-			Projet.partie.partie_init(Projet.partie)
+			partie.start()
+			partie.partie_init()
 			plateau.set_images()
 			window.contents = this
 			this.contents+=plateau

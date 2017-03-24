@@ -258,7 +258,7 @@ class Partie(){
 		}*/
 	}
 	/**initialise la partie*/
-	def partie_init(partie: Partie) = {
+	def partie_init() = {
 		is_running = true
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
@@ -313,10 +313,9 @@ abstract class Joueur(color:Char) {
 
 /**
 /**permet de lancer l'ia sous forme de thread*/
-class IA(color:Char) extends Joueur with Runnable{
+class IA(color:Char,partie:Partie) extends Joueur with Runnable{
 	/**lance le thread du tour de l'ia*/
 	override def run = {
-		nb_turn=nb_turn+1
 		var moves_ia = allowed_moves(color)
 		Thread.sleep(delai_ia)
 		/**objet random*/
