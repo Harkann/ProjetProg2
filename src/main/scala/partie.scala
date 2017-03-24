@@ -1,4 +1,5 @@
 import Array._
+import scala.collection.mutable.ArrayBuffer
 
 class Partie(){
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
@@ -7,10 +8,16 @@ class Partie(){
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var pieces_B = Array(0,0,0,0,0,0)
 	var pieces_W = Array(0,0,0,0,0,0)
+
 	def modif_piece(color:Char,num:Int,modif:Int){
-		if (color == 'B') {pieces_B(num) += modif}
-		else if (color == 'W'){pieces_W(num) +=modif }
+		if (color == 'B') {pieces_B(num) += modif
+			println("+1")}
+		else if (color == 'W'){pieces_W(num) +=modif 
+		println("+1")}
 	}
+
+	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
+
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/
 	var nb_ia = 0
@@ -109,14 +116,17 @@ class Partie(){
 
 	Mika beaucoup d'interface à gerer...
 
+	/* LA  PROMOTION PEUT METTRE E ECHEC BRUTALEMENT LE ROI ET IL N'AFFICHE PLUS MAT C'EST NORMAL ?*/
+
+
 
 */
 	def nothing_but_pat(tab_color:Array[Int],tab_other_color:Array[Int]) {
 		if (
-			((tab_color==Array(0,0,0,0,0,1)) && (tab_other_color==Array(0,0,0,0,0,1))) ||
-			((tab_color==Array(0,0,0,1,0,1)) && (tab_other_color==Array(0,0,0,0,0,1))) ||
-			((tab_color==Array(0,0,0,1,0,1)) && (tab_other_color==Array(0,0,0,1,0,1))) ||		
-			((tab_color==Array(0,0,0,0,0,1)) && (tab_other_color==Array(0,0,1,0,0,1))) 
+			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
+			((tab_color.deep == Array(0,0,0,1,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
+			((tab_color.deep == Array(0,0,0,1,0,1).deep) && (tab_other_color.deep == Array(0,0,0,1,0,1).deep)) ||		
+			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,1,0,0,1).deep)) 
 
 			){
 			pat()
@@ -238,7 +248,7 @@ class Partie(){
 		color_ia = '0'
 	}
 	/**compte le nombre de tours*/
-	var nb_tours = 0
+	var nb_turn = 0
 	
 	/**démarre la partie*/
 	def start() = {
@@ -256,7 +266,7 @@ class Partie(){
 			}
 		}
 		player = 'W'
-		nb_tours = 0
+		nb_turn = 0
 
 		matrix(2)(1) = new Peon('W',(2,1),this)
 		matrix(2)(2) = new Peon('W',(2,2),this)
@@ -306,7 +316,7 @@ abstract class Joueur(color:Char) {
 class IA(color:Char) extends Joueur with Runnable{
 	/**lance le thread du tour de l'ia*/
 	override def run = {
-		nb_tours=nb_tours+1
+		nb_turn=nb_turn+1
 		var moves_ia = allowed_moves(color)
 		Thread.sleep(delai_ia)
 		/**objet random*/
