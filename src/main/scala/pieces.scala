@@ -58,7 +58,8 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		partie.matrix(i)(j)=null
 		nb_turn+=1
 		promotion_check(posi)
-		partie.next_turn()
+		partie.game_window.plateau.set_images()
+		
 	}
 
 	def roque_check(posi:(Int,Int)){

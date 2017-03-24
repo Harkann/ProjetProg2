@@ -5,7 +5,7 @@ class Partie() extends Save {
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
-	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
+	var game_window:Interface.EcranPartie = null
 	var pieces_B = Array(0,0,0,0,0,0)
 	var pieces_W = Array(0,0,0,0,0,0)
 
@@ -15,6 +15,7 @@ class Partie() extends Save {
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
+	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/
 	var nb_ia = 0
@@ -22,17 +23,11 @@ class Partie() extends Save {
 	var color_ia = 'B';
 	/**la partie est en cours ou non */
 	var is_running = true
-	/**délai en ms avant le déplacement des pièces de l'ia*/
-	var delai_ia = 10
-
+	/**l'interface peut deplacer des pieces*/
 	var is_interface= true
 	/**renvoie si la partie est finie*/
 	def stop() ={
 		is_running = false
-	}
-	/**sera utilisée pour définir la vitesse du jeu de l'IA*/
-	def set_delay_ia(value:Int) = {
-		delai_ia = value
 	}
 	/**renvoie la couleur du joueur opposé a "player"*/
 	def other_player(player: Char):Char = {
@@ -42,9 +37,9 @@ class Partie() extends Save {
 	}
 	/**lance le tour suivant*/
 	def next_turn():Unit = {
-		//if (is_running){is_mat(player)}
-		//if (is_running){is_mat(other_player(player))}
-		//if (is_running){is_pat(other_player(player))}
+		if (is_running){is_mat(player)}
+		if (is_running){is_mat(other_player(player))}
+		if (is_running){is_pat(other_player(player))}
 		nb_turn +=1
 		if (is_running){
 			if (nb_ia == 0){
@@ -53,12 +48,15 @@ class Partie() extends Save {
 			else if (nb_ia == 1){
 				player = other_player(player)
 				if (player == color_ia){
+					is_interface = false
 					new Thread(new IA(color_ia,this)).start
+					is_interface = true
 				} 
 			}
 			else {
+
 				player = other_player(player)
-				new Thread(new IA(color_ia,this)).start
+				new Thread(new IA(player,this)).start
 
 			}
 		}
@@ -126,28 +124,23 @@ class Partie() extends Save {
 		}
 	}
 
-	/**renvoie la liste des mouvements possibles pour le joueur "player"
+	/**renvoie la liste des mouvements possibles pour le joueur "color"
 	(utilisée par l'ia)*/
-	def allowed_moves(player:Char): List[((Int,Int),(Int,Int))] = {
+	def allowed_moves(color:Char): List[((Int,Int),(Int,Int))] = {
 		/**liste des mouvements possibles*/
 		var all_moves : List[ ((Int,Int),(Int,Int)) ] = List()
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
-				/**pièce sur la case (i,j)*/
-				var piece_ij=matrix(i)(j)
-				/**id de la pièce sur la case (i,j)*/
-				var id_piece_ij = piece_ij.id
-
-				if (id_piece_ij(0)==player)
-				{
-					/**liste des mouvements possibles de la pièce courante*/
-					var (list_move,list_attack)= piece_ij.move_piece_check((i,j))
+				println(i+","+j+","+this.get_color(i,j))
+				if (this.get_color(i,j) == color){
+					var (list_move,list_attack)= get_piece(i,j).move_piece_check((i,j))
 					for( move <- list_move) {
 						all_moves=all_moves:+((i,j),move)
 					}
 				}
 			}
 		}
+		println(all_moves+"plop"+color_ia)
 		return all_moves
 	}
 	/**teste si le joueur "player" est pat et affiche pat*/
@@ -159,6 +152,7 @@ class Partie() extends Save {
 
 	def pat(){
 		this.stop()
+		game_window.notif.pat()
 		println("PAT")
 		//Interface.RootWindow.interface_partie.pat()
 	}
@@ -214,23 +208,29 @@ class Partie() extends Save {
 			for( j <- 1 to 8) {
 				var piece_ij=matrix(i)(j)
 				/**id de la pièce sur la case (i,j)*/
-				var id_piece_ij = piece_ij.id
-				if(id_king==id_piece_ij) {
-					position=(i,j)
-					king = matrix(i)(j)
+				if (piece_ij != null){
+					var id_piece_ij = piece_ij.id
+					if(id_king==id_piece_ij) {
+						position=(i,j)
+						king = matrix(i)(j)
+					}
 				}
 			}
 		}
 		/***/
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
+			this.stop()
+			game_window.notif.perdu(player)
+			println("MAT")
 			//Interface.RootWindow.interface_partie.perdu(player)
 		}
 
 	}
-	def partie_nb_ia(nbIA:Int,colorIA:Char) = {
+	def partie_nb_ia(nbIA:Int,colorIA:Char,ecran:Interface.EcranPartie) = {
 		nb_ia = nbIA
 		color_ia=colorIA
+		game_window=ecran
 	}
 	/**compte le nombre de tours*/
 	var nb_turn = 0
@@ -238,11 +238,10 @@ class Partie() extends Save {
 	/**démarre la partie*/
 	def start() = {
 		if (nb_ia == 1 && color_ia == 'W'){
-			println("plop")
 			new Thread(new IA('W',this)).start
 		}
 		else if (nb_ia == 2){
-			println("plop")
+			is_interface = false
 			new Thread(new IA('W',this)).start
 		}
 	}
@@ -294,28 +293,3 @@ class Partie() extends Save {
 
 }
 
-/**permet de lancer l'ia sous forme de thread*/
-class IA(color:Char,partie:Partie) extends Runnable{
-	/**lance le thread du tour de l'ia*/
-	override def run = {
-		partie.is_interface = false
-		var moves_ia = partie.allowed_moves(color)
-		Thread.sleep(partie.delai_ia)
-		/**objet random*/
-		var random_move = scala.util.Random
-		/**entier random permettant de choisir un mouvement*/
-		var random_moveInt = random_move.nextInt(moves_ia.length)
-		/**origine et destination de la pièce*/
-		var (origin,destination) = moves_ia(random_moveInt)
-		/**coordonnées de l'origine*/
-		var (oi,oj) = origin
-		/**coordonnées de la destination*/
-		var (di,dj) = destination
-		/**id de la pièce de départ*/
-		var piece_selected = partie.get_piece(oi,oj)
-		/**id de la pièce sur la case de destination*/
-		piece_selected.move(destination)
-		partie.is_interface = true
-		partie.next_turn()
-	}
-}

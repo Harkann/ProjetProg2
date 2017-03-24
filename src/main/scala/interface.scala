@@ -4,7 +4,6 @@ import javax.swing.ImageIcon
 import java.awt.Color
 
 object Interface extends SimpleSwingApplication{
-
 	var is_button_clicked = false
 	var button_clicked_i = 0
 	var button_clicked_j = 0
@@ -15,8 +14,8 @@ object Interface extends SimpleSwingApplication{
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
             var partie = new Partie()
-            partie.partie_nb_ia(nbIA,colorIA)
 			var interface_partie = new EcranPartie(8,8,window,partie)
+			partie.partie_nb_ia(nbIA,colorIA,interface_partie)
 			interface_partie.spawn_game()
 		}
 	}
@@ -97,11 +96,8 @@ object Interface extends SimpleSwingApplication{
 			var b = button_clicked_j
 			button_clicked_i = 0
 			button_clicked_j = 0
-			if (a>0 && b>0){plateau.Cells(a)(b).unclic()}
 			is_clicked = false
 			is_button_clicked = false
-			background = java.awt.Color.RED
-			get_image()
 			plateau.reset_colors()
 		}
 
@@ -133,6 +129,7 @@ object Interface extends SimpleSwingApplication{
 				else if (is_button_clicked){
 					if (piece_allowed_move.contains(i,j)){
 						piece_selected.move((i,j))
+						partie.next_turn()
 						unclic()
 					}
 				}
@@ -178,30 +175,77 @@ object Interface extends SimpleSwingApplication{
 
 
 	}
+	class PieceButtons(color:Char,notif:Notification) extends BoxPanel(Orientation.Horizontal) {
+		
+		def act (piece:String)= Action(""){
+			piece match {
+				case "Qu" => notif.typeretour = "Queen"
+				case "Bi" => notif.typeretour = "Bishop"
+				case "Kn" => notif.typeretour = "Knight"
+				case "To" => notif.typeretour = "Tower"
+			}
+			notif.contents.clear()
+			notif.revalidate()
+			notif.repaint()
+		}
+		val queen = new Button()
+			queen.icon = new ImageIcon(getClass.getResource(color+"Qu.PNG"))
+			queen.action = act("Qu")
+		val bishop = new Button()
+			bishop.action = act("Bi")
+			bishop.icon = new ImageIcon(getClass.getResource(color+"Bi.PNG"))
+		val knight = new Button()
+			knight.action = act("Kn")
+			knight.icon = new ImageIcon(getClass.getResource(color+"Kn.PNG"))
+		val tower = new Button()
+			tower.action = act("To")
+			tower.icon = new ImageIcon(getClass.getResource(color+"Kn.PNG"))
+	}
+
+	class Notification(window:MainWindow,partie:Partie) extends BoxPanel(Orientation.Vertical){
+		var typeretour:String = null
+		
+		def promote(color:Char):String = {
+			typeretour = null
+			this.contents+= new PieceButtons(color,this)
+			revalidate()
+			repaint()
+			while (typeretour == null){
+				partie.is_running = false
+			}
+			partie.is_running = true
+			return typeretour
+		}
+
+		def perdu(player:Char) = {
+			println("MAT")
+			this.background = java.awt.Color.RED
+			this.contents+= new Label (player+" a perdu")
+			revalidate()
+			repaint()
+		}
+
+		def pat() = {
+			println("PAT")
+			this.background = java.awt.Color.GREEN
+			this.contents+= new Label ("pat")
+			revalidate()
+			repaint()
+		}
+
+	}
 	/**Ecran de jeu contenant l'échiquier de taille i,j*/
 	class EcranPartie(i:Int,j:Int,window:MainWindow,partie:Partie) extends BoxPanel(Orientation.Vertical){
-
+		var notif = new Notification(window,partie)
 		var plateau = new Echiquier(i,j,window,partie)
 		val back_menu = new Button{
 			action = Action("Back to main menu"){
-				//Projet.partie.stop()
 				window.init_menu()
 				
 			}
 		}
+
 		val quit_program = new QuitButton(window)
-
-		def pat() = {
-			println("pat")
-			this.contents+= new Label ("pat")
-		}
-
-		def perdu(player:Char) = {
-			//Projet.partie.stop()
-			println("perdu")
-			this.contents+= new Label (player+" a perdu")
-		}
-
 		def spawn_game():Unit = {
 			is_button_clicked = false
 			button_clicked_i = 0
@@ -209,10 +253,11 @@ object Interface extends SimpleSwingApplication{
 			piece_selected = null
 			piece_allowed_move = List()
 			piece_allowed_take = List()
-			partie.start()
 			partie.partie_init()
+			partie.start()
 			plateau.set_images()
 			window.contents = this
+			this.contents+=notif
 			this.contents+=plateau
 			this.contents+= new GridPanel(1,2){
 				contents+= back_menu
@@ -225,6 +270,6 @@ object Interface extends SimpleSwingApplication{
 	var RootWindow = new MainWindow()
 	def top = RootWindow
 	//il faudrait tester la resolution minimale sur d'autres ordis...
-	top.minimumSize = new Dimension(700, 1000) //schwoon 1300*700
+	top.minimumSize = new Dimension(Config.res_x,Config.res_y) //schwoon 1300*700
 	RootWindow.init_menu()
 }
