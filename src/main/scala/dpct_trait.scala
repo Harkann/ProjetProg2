@@ -208,7 +208,7 @@ trait Promotion extends Standard {
 		val piece = matrix(position,partie)
 		//val new_type = click_promotion() // qui permettrais de savoir ce que le joueur prefere
 		val new_type = "Queen" // TEMPORAIRE
-		Projet.partie.modif_piece(piece.color,0,-1)
+		partie.modif_piece(piece.color,0,-1)
 		if (new_type == "Queen") {
 			partie.matrix(i)(j) = new Queen (piece.color, position,partie)
 		}

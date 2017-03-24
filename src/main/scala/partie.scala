@@ -15,7 +15,6 @@ class Partie() extends Save {
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
-
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/
 	var nb_ia = 0
@@ -51,22 +50,17 @@ class Partie() extends Save {
 			if (nb_ia == 0){
 				player = other_player(player)
 			}
-			/*else if (nb_ia == 1){
+			else if (nb_ia == 1){
+				player = other_player(player)
 				if (player == color_ia){
-					player = other_player(player)
-				}
-				else {
-					new Thread(new IA(color_ia)).start
-				}
+					new Thread(new IA(color_ia,this)).start
+				} 
 			}
-			else if (nb_ia == 2){
-				if (player == 'W'){
-					new Thread(new IA('W')).start
-				}
-				else {
-					new Thread(new IA('B')).start
-				}
-			}*/
+			else {
+				player = other_player(player)
+				new Thread(new IA(color_ia,this)).start
+
+			}
 		}
 	}
 	/**renvoie l'id de la pièce a la position (i,j)*/
@@ -119,7 +113,7 @@ class Partie() extends Save {
 
 
 
-*/
+	*/
 	def nothing_but_pat(tab_color:Array[Int],tab_other_color:Array[Int]) {
 		if (
 			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
@@ -164,8 +158,9 @@ class Partie() extends Save {
 	}
 
 	def pat(){
-		Projet.partie.stop()
-		Interface.RootWindow.interface_partie.pat()
+		this.stop()
+		println("PAT")
+		//Interface.RootWindow.interface_partie.pat()
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -227,37 +222,30 @@ class Partie() extends Save {
 		/***/
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
-			Interface.RootWindow.interface_partie.perdu(player)
+			//Interface.RootWindow.interface_partie.perdu(player)
 		}
 
 	}
-	/**défini les paramètres de la partie pour deux joueurs*/
-	def partie_two_players() = {
-		nb_ia = 0
-		color_ia = '0'
-	}
-	/**défini les paramètres de la partie pour un joueur et une ia de couleur "color"*/
-	def partie_one_ia(color:Char) ={
-		nb_ia = 1
-		color_ia = color
-	}
-	/**défini les paramètres de la partie pour deux joueurs*/
-	def partie_two_ia() = {
-		nb_ia = 2
-		color_ia = '0'
+	def partie_nb_ia(nbIA:Int,colorIA:Char) = {
+		nb_ia = nbIA
+		color_ia=colorIA
 	}
 	/**compte le nombre de tours*/
 	var nb_turn = 0
 	
 	/**démarre la partie*/
 	def start() = {
-		/*if (color_ia == 'W'|| nb_ia == 2){
-			if (nb_ia == 1){player = 'B'}
-			new Thread(new IA('W')).start
-		}*/
+		if (nb_ia == 1 && color_ia == 'W'){
+			println("plop")
+			new Thread(new IA('W',this)).start
+		}
+		else if (nb_ia == 2){
+			println("plop")
+			new Thread(new IA('W',this)).start
+		}
 	}
 	/**initialise la partie*/
-	def partie_init(partie: Partie) = {
+	def partie_init() = {
 		is_running = true
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
@@ -266,7 +254,6 @@ class Partie() extends Save {
 		}
 		player = 'W'
 		nb_turn = 0
-
 		matrix(2)(1) = new Peon('W',(2,1),this)
 		matrix(2)(2) = new Peon('W',(2,2),this)
 		matrix(2)(3) = new Peon('W',(2,3),this)
@@ -302,22 +289,16 @@ class Partie() extends Save {
 		matrix(8)(4) = new Queen('B',(8,4),this)
 		matrix(8)(5) = new King('B',(8,5),this)
 	}
-	
-}
-
-
-abstract class Joueur(color:Char) {
 
 }
 
-/**
 /**permet de lancer l'ia sous forme de thread*/
-class IA(color:Char) extends Joueur with Runnable{
+class IA(color:Char,partie:Partie) extends Runnable{
 	/**lance le thread du tour de l'ia*/
 	override def run = {
-		nb_turn=nb_turn+1
-		var moves_ia = allowed_moves(color)
-		Thread.sleep(delai_ia)
+		partie.is_interface = false
+		var moves_ia = partie.allowed_moves(color)
+		Thread.sleep(partie.delai_ia)
 		/**objet random*/
 		var random_move = scala.util.Random
 		/**entier random permettant de choisir un mouvement*/
@@ -329,26 +310,10 @@ class IA(color:Char) extends Joueur with Runnable{
 		/**coordonnées de la destination*/
 		var (di,dj) = destination
 		/**id de la pièce de départ*/
-		var id_piece_selected = id_piece_on_case(oi,oj)
+		var piece_selected = partie.get_piece(oi,oj)
 		/**id de la pièce sur la case de destination*/
-		var id_destination = id_piece_on_case(di,dj)
-		if (id_destination == "0"){
-			//Interface.piece_move(id_piece_selected,(oi,oj),(di,dj))
-		}
-		else{
-			//Interface.piece_take(id_piece_selected,(oi,oj),(di,dj))
-		}
-		if (player == 'W') {player = 'B'}
-		else {player = 'W'}
-		nothing_but_pat(pieces_W,pieces_B)
-		nothing_but_pat(pieces_B,pieces_W)
-		Projet.partie.next_turn()
+		piece_selected.move(destination)
+		partie.is_interface = true
+		partie.next_turn()
 	}
 }
-**/
-object Projet{
-	/**stocke tous les paramètres de la partie*/
-	var partie= new Partie()
-}
-
-
