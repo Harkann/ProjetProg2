@@ -60,7 +60,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		nb_turn+=1
 		promotion_check(posi)
 		partie.game_window.plateau.set_images()
-		
+
 	}
 
 	def roque_check(posi:(Int,Int)){
@@ -88,10 +88,11 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 	}
 
 	def promotion_check(posi:(Int,Int)){
+		println("pr check")
 		var (x,y) = posi
 		val piece = matrix(posi,partie)
 		if ((piece != null) && (piece.name == "Pe") && ((x == 8) || (x == 1))){
-			piece.asInstanceOf[Peon].promo(posi,partie)
+			partie.game_window.notif.promote(posi,color,piece)
 		}
 	}
 
@@ -176,7 +177,7 @@ with Id_creation with Peon_move with Promotion {
 		return dpct_peon(position,partie)
 	}
 
-	def promotion(position:(Int,Int)) { promo(position,partie) }
+	//def promotion(position:(Int,Int)) { promo(position,partie) }
 	var (i,j) = position
 	partie.modif_piece(color,num_type,1)
 	//Projet.partie.matrix_pieces(i)(j)=id 
