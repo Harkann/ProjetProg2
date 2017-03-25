@@ -175,14 +175,14 @@ object Interface extends SimpleSwingApplication{
 
 
 	}
-	class PieceButtons(color:Char,notif:Notification) extends BoxPanel(Orientation.Horizontal) {
+	class PieceButtons(posi:(Int,Int),color:Char,piece:Piece,notif:Notification,partie:Partie) extends BoxPanel(Orientation.Horizontal) {
 		
-		def act (piece:String)= Action(""){
-			piece match {
-				case "Qu" => notif.typeretour = "Queen"
-				case "Bi" => notif.typeretour = "Bishop"
-				case "Kn" => notif.typeretour = "Knight"
-				case "To" => notif.typeretour = "Tower"
+		def act (new_piece:String)= Action(""){
+			new_piece match {
+				case "Qu" => piece.asInstanceOf[Peon].promo(posi,"Queen",partie)
+				case "Bi" => piece.asInstanceOf[Peon].promo(posi,"Bishop",partie)
+				case "Kn" => piece.asInstanceOf[Peon].promo(posi,"Knight",partie)
+				case "To" => piece.asInstanceOf[Peon].promo(posi,"Tower",partie)
 			}
 			notif.contents.clear()
 			notif.revalidate()
@@ -203,26 +203,20 @@ object Interface extends SimpleSwingApplication{
 	}
 
 	class Notification(window:MainWindow,partie:Partie) extends BoxPanel(Orientation.Vertical){
-		var typeretour:String = null
-		
-		def promote(color:Char):String = {
-			typeretour = null
-			this.contents+= new PieceButtons(color,this)
+
+		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
+			println("promo")
+			this.contents+= new PieceButtons(posi,color,piece,this,partie)
 			revalidate()
 			repaint()
-			while (typeretour == null){
-				partie.is_running = false
-			}
-			partie.is_running = true
-			return typeretour
 		}
 
 		def perdu(player:Char) = {
 			println("MAT")
 			this.background = java.awt.Color.RED
 			this.contents+= new Label (player+" a perdu")
-			revalidate()
-			repaint()
+			this.revalidate()
+			this.repaint()
 		}
 
 		def pat() = {

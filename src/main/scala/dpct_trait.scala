@@ -203,10 +203,9 @@ trait Roque extends Standard {
 
 trait Promotion extends Standard {
 
-	def promo(position:(Int,Int),partie:Partie){
+	def promo(position:(Int,Int),new_type:String,partie:Partie){
 		val (i,j) = position
 		val piece = matrix(position,partie)
-		val new_type = partie.game_window.notif.promote(piece.color) // qui permettrais de savoir ce que le joueur prefere
 		//val new_type = "Queen" // TEMPORAIRE
 		partie.modif_piece(piece.color,0,-1)
 		if (new_type == "Queen") {
