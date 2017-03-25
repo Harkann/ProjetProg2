@@ -1,3 +1,6 @@
+import Array._
+
+
 /*
 ***************************************************************************************************************
 ____________________________ DÉFINITION DES TRAITS GENERAUX DE DEPLACEMENT ___________________________________
@@ -6,16 +9,21 @@ ____________________________ DÉFINITION DES TRAITS GENERAUX DE DEPLACEMENT ____
 */
 
 
-
-
-
-
-
 trait Standard {
 	def matrix(position:(Int,Int),partie:Partie) : Piece = {
 		var (i,j) = position
 		return partie.matrix(i)(j)
 		}
+
+	def Copy_of(matrix : Array[Array[Piece]]) : Array[Array[Piece]] = {
+		var res = ofDim[Piece](9,9)
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				res(i)(j)=matrix(i)(j)
+			}	
+		}
+		return res
+	}
 }
 
 

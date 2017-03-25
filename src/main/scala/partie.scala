@@ -1,7 +1,7 @@
 import Array._
 import scala.collection.mutable.ArrayBuffer
 
-class Partie() extends Save {
+class Partie() extends Save with Moves_50 with Repetions_3 {
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
@@ -10,8 +10,8 @@ class Partie() extends Save {
 
 
 	/* *************************************** Sauvegarde / var globale pour la partir 2 ********************************* */
-	var pieces_B = Array(0,0,0,0,0,0)
-	var pieces_W = Array(0,0,0,0,0,0)
+	var pieces_B = ofDim[Int](8)
+	var pieces_W = ofDim[Int](8)
 
 	def modif_piece(color:Char,num:Int,modif:Int){
 		if (color == 'B') {pieces_B(num) += modif}
@@ -22,8 +22,6 @@ class Partie() extends Save {
 
 	var matrix_save = ofDim[Piece](9,9);
 	var last_important_change = 0
-
-
 
 
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
@@ -101,7 +99,6 @@ class Partie() extends Save {
 
 /*
 	chantier de réflexions :
-	- 50 coups -> compteur reinitialisé a chaque prise de piece ou déplacement de pions.
 	- Imposibilitée de mater : avoir un tableau qui garde le nombre de piece pour chaque couleur : genre en_jeu[0]=nb pion en jeux.
 	- triple repetition de la position : rejouer la partie depuis le début ? :/ je penses que y a moyen d'être plus subtil.
 	- perte au temps : timer
@@ -109,7 +106,6 @@ class Partie() extends Save {
 
 	Mika beaucoup d'interface à gerer...
 
-	/* LA  PROMOTION PEUT METTRE E ECHEC BRUTALEMENT LE ROI ET IL N'AFFICHE PLUS MAT C'EST NORMAL ?*/
 
 
 
@@ -133,7 +129,7 @@ class Partie() extends Save {
 		var all_moves : List[ ((Int,Int),(Int,Int)) ] = List()
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
-				println(i+","+j+","+this.get_color(i,j))
+				//printlnn(i+","+j+","+this.get_color(i,j))
 				if (this.get_color(i,j) == color){
 					var (list_move,list_attack)= get_piece(i,j).move_piece_check((i,j))
 					for( move <- list_move) {
@@ -142,7 +138,7 @@ class Partie() extends Save {
 				}
 			}
 		}
-		println(all_moves+"plop"+color_ia)
+		//printlnn(all_moves+"plop"+color_ia)
 		return all_moves
 	}
 	/**teste si le joueur "player" est pat et affiche pat*/
@@ -155,7 +151,7 @@ class Partie() extends Save {
 	def pat(){
 		this.stop()
 		game_window.notif.pat()
-		println("PAT")
+		//printlnn("PAT")
 		//Interface.RootWindow.interface_partie.pat()
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
@@ -188,7 +184,7 @@ class Partie() extends Save {
 		for (pos <-list_in_danger){
 			var (i,j)=pos
 			var piece= matrix(i)(j)
-			if (piece == null){println(i,j)}
+			if (piece == null){}
 			else{
 			var id_piece=piece.id
 			if (id_piece.substring(0,3)==player+"Ki"){
@@ -224,7 +220,7 @@ class Partie() extends Save {
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
 			this.stop()
 			game_window.notif.perdu(player)
-			println("MAT")
+			//printlnn("MAT")
 			//Interface.RootWindow.interface_partie.perdu(player)
 		}
 
@@ -291,6 +287,8 @@ class Partie() extends Save {
 		matrix(8)(6) = new Bishop('B',(8,6),this)
 		matrix(8)(4) = new Queen('B',(8,4),this)
 		matrix(8)(5) = new King('B',(8,5),this)
+
+		matrix_save = Copy_of(matrix)
 	}
 
 }

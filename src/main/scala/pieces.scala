@@ -14,7 +14,7 @@ ______________________________DÉFINITION DE LA CLASSE ABSTRAITE PIECE  ________
 //color de type char car la comparaison string char est fausse
 /**Superclasse abstraite contenant toutes les pièces,
 color : 'W' ou 'B'*/
-abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extends Standard {
+abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extends Standard with condition_check {
 	val color = col;
 	/**nom de la pièce*/
 	val name:String; 
@@ -45,64 +45,31 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		val piece = matrix(position,partie)
 		val piece_met = matrix(posi,partie)
 
+		if ((piece_met!=null)||(name=="Pe")){
+			partie.last_important_change=partie.nb_turn+1
+			partie.matrix_save = partie.matrix.clone
+		}
+
 		// prise d'une piece
-		if (piece_met != null) {partie.modif_piece(piece_met.color,piece_met.num_type,-1)}
+		if (piece_met != null) {
+			partie.modif_piece(piece_met.color,piece_met.num_type,-1)}
 
 
-		partie.dplct_save += new Dpct(position,posi,partie)
-		// ATTENTION GERER LE RAJOUT DU ROQUE OU DE LA PROMOTION DANS L'ENREGISTEMENT D'UN MOVE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		roque_check(posi)
-		prise_en_passant_check(posi)
+		var dpct= new Dpct(position,posi,partie)
+		roque_check(dpct,partie)
+		prise_en_passant_check(dpct,partie)
 		position = (x,y)
 		partie.matrix(x)(y)=piece
 		partie.matrix(i)(j)=null
 		nb_turn+=1
-		promotion_check(posi)
+		promotion_check(dpct,partie)
+		partie.dplct_save += dpct
 		partie.game_window.plateau.set_images()
+		partie.moves_50_check(partie)
+		partie.repetitions_3_check(partie)
 
 	}
 
-	def roque_check(posi:(Int,Int)){
-
-		var (i,j)=position
-		var (x,y)=posi
-		val piece = matrix(position,partie)
-
-		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==7)) {
-			val T = partie.matrix(i)(8)
-			T.position = (i,6)
-			partie.matrix(i)(6) = T
-			partie.matrix(i)(8) = null
-			T.nb_turn+=1
-			promotion_check(posi)
-		}
-		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==3)) {
-			val T = partie.matrix(i)(1)
-			T.position=(i,4)
-			T.nb_turn+=1
-			partie.matrix(i)(4) = partie.matrix(i)(1)
-			partie.matrix(i)(1) = null
-			
-		}
-	}
-
-	def promotion_check(posi:(Int,Int)){
-		println("pr check")
-		var (x,y) = posi
-		val piece = matrix(posi,partie)
-		if ((piece != null) && (piece.name == "Pe") && ((x == 8) || (x == 1))){
-			partie.game_window.notif.promote(posi,color,piece)
-		}
-	}
-
-	def prise_en_passant_check(posi:(Int,Int)){
-		val (i,j) = position
-		val (x,y) = posi
-		val piece_met = matrix(posi,partie)
-		if ((name == "Pe") && (j != y) && (piece_met == null)){
-			partie.matrix(i)(y)=null
-		}
-	}
 
 	def full_verif(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
 		/**déplacements possibles (avec ou sans prise)*/
