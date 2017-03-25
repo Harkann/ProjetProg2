@@ -19,7 +19,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
-
+	var waiting = false
 	var matrix_save = ofDim[Piece](9,9);
 	var last_important_change = 0
 
@@ -129,7 +129,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		var all_moves : List[ ((Int,Int),(Int,Int)) ] = List()
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
-				//printlnn(i+","+j+","+this.get_color(i,j))
 				if (this.get_color(i,j) == color){
 					var (list_move,list_attack)= get_piece(i,j).move_piece_check((i,j))
 					for( move <- list_move) {
@@ -138,7 +137,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 				}
 			}
 		}
-		//printlnn(all_moves+"plop"+color_ia)
 		return all_moves
 	}
 	/**teste si le joueur "player" est pat et affiche pat*/
@@ -151,7 +149,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	def pat(){
 		this.stop()
 		game_window.notif.pat()
-		//printlnn("PAT")
 		//Interface.RootWindow.interface_partie.pat()
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
@@ -220,8 +217,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
 			this.stop()
 			game_window.notif.perdu(player)
-			//printlnn("MAT")
-			//Interface.RootWindow.interface_partie.perdu(player)
 		}
 
 	}

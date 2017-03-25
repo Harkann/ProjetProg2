@@ -64,9 +64,12 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		nb_turn+=1
 		promotion_check(dpct,partie)
 		partie.dplct_save += dpct
-		partie.game_window.plateau.set_images()
-		partie.moves_50_check(partie)
-		partie.repetitions_3_check(partie)
+		partie.game_window.plateau.reset_all()
+		//partie.moves_50_check(partie)
+		//partie.repetitions_3_check(partie)
+		if (partie.waiting == false){
+			partie.next_turn()
+		}
 
 	}
 

@@ -181,7 +181,7 @@ trait Roque extends Standard {
 		val T = matrix(pos_T,partie)
 		if (T == null) return false
 		if ((K.nb_turn != 0) || (T.nb_turn != 0)) {
-			println("prolème de nombre de tour")
+			//println("prolème de nombre de tour")
 			return false
 		}
 		for ( j <- ((j_K min j_T)+1) to ((j_K max j_T))-1){
@@ -216,18 +216,19 @@ trait Promotion extends Standard {
 		val piece = matrix(position,partie)
 		//val new_type = "Queen" // TEMPORAIRE
 		partie.modif_piece(piece.color,0,-1)
-		if (new_type == "Queen") {
+		if (new_type == "Qu") {
 			partie.matrix(i)(j) = new Queen (piece.color, position,partie)
 		}
-		else if (new_type == "Tower") {
+		else if (new_type == "To") {
 			partie.matrix(i)(j) = new Tower (piece.color, position,partie)
 		}
-		else if (new_type == "Knight") {
+		else if (new_type == "Kn") {
 			partie.matrix(i)(j) = new Knight (piece.color, position,partie)
 		}
 		else {
 			partie.matrix(i)(j) = new Bishop (piece.color, position,partie)
 		}
+		partie.game_window.plateau.reset_all()
 
 	}
 }

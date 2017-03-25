@@ -13,7 +13,7 @@ object Interface extends SimpleSwingApplication{
 	/**Boutons permettant de lancer la partie*/
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
-            var partie = new Partie()
+			var partie = new Partie()
 			var interface_partie = new EcranPartie(8,8,window,partie)
 			partie.partie_nb_ia(nbIA,colorIA,interface_partie)
 			interface_partie.spawn_game()
@@ -91,16 +91,6 @@ object Interface extends SimpleSwingApplication{
 			this.repaint()
 		}
 
-		def unclic(){
-			var a = button_clicked_i
-			var b = button_clicked_j
-			button_clicked_i = 0
-			button_clicked_j = 0
-			is_clicked = false
-			is_button_clicked = false
-			plateau.reset_colors()
-		}
-
 		def select_piece(){
 			piece_selected = partie.get_piece(i,j)
 			colorie("green")
@@ -121,16 +111,17 @@ object Interface extends SimpleSwingApplication{
 			else if (couleur == "blue"){ background = myBlue }
 		}
 
-		init_colors()
 		get_image()
 		action = Action(""){
 			if (partie.is_running && partie.is_interface){
-				if (is_clicked){ unclic() }
+				if (is_clicked){ 
+					plateau.reset_all()
+				}
 				else if (is_button_clicked){
 					if (piece_allowed_move.contains(i,j)){
 						piece_selected.move((i,j))
-						partie.next_turn()
-						unclic()
+						//partie.next_turn()
+						plateau.reset_all()
 					}
 				}
 				else if (partie.get_color(i,j) == partie.player){
@@ -152,63 +143,58 @@ object Interface extends SimpleSwingApplication{
 		for (i <- 8 to 1 by -1){
 			for( j <- 1 to 8){
 				Cells(i)(j) = new Case(i,j,this,partie)
-				Cells(i)(j).init_colors()
-				Cells(i)(j).get_image()
 				this.contents+=Cells(i)(j)
 			}
 		}
-
-		def reset_colors()  = {
+		reset_all()
+		def reset_all() = {
 			for( i <- 8 to 1 by -1) {
 				for( j <- 1 to 8) {
+					Cells(i)(j).is_clicked = false
 					Cells(i)(j).init_colors()
-				}
-			}
-		}
-		def set_images() ={
-			for( i <- 8 to 1 by -1) {
-				for( j <- 1 to 8) {
 					Cells(i)(j).get_image()
 				}
 			}
+			button_clicked_i = 0
+			button_clicked_j = 0
+			is_button_clicked = false
 		}
-
-
 	}
-	class PieceButtons(posi:(Int,Int),color:Char,piece:Piece,notif:Notification,partie:Partie) extends BoxPanel(Orientation.Horizontal) {
-		
-		def act (new_piece:String)= Action(""){
-			new_piece match {
-				case "Qu" => piece.asInstanceOf[Peon].promo(posi,"Queen",partie)
-				case "Bi" => piece.asInstanceOf[Peon].promo(posi,"Bishop",partie)
-				case "Kn" => piece.asInstanceOf[Peon].promo(posi,"Knight",partie)
-				case "To" => piece.asInstanceOf[Peon].promo(posi,"Tower",partie)
-			}
+
+	class PieceButton(posi:(Int,Int),color:Char,piece:Piece,piece_type:String,notif:Notification,partie:Partie) extends Button {
+		icon = new ImageIcon(getClass.getResource(color+piece_type+".PNG"))
+		this.repaint()
+		this.revalidate()
+		this.action = Action(""){
+			piece.asInstanceOf[Peon].promo(posi,piece_type,partie)
+			partie.waiting = false
+			partie.next_turn()
 			notif.contents.clear()
 			notif.revalidate()
 			notif.repaint()
 		}
-		val queen = new Button()
-			queen.icon = new ImageIcon(getClass.getResource(color+"Qu.PNG"))
-			queen.action = act("Qu")
-		val bishop = new Button()
-			bishop.action = act("Bi")
-			bishop.icon = new ImageIcon(getClass.getResource(color+"Bi.PNG"))
-		val knight = new Button()
-			knight.action = act("Kn")
-			knight.icon = new ImageIcon(getClass.getResource(color+"Kn.PNG"))
-		val tower = new Button()
-			tower.action = act("To")
-			tower.icon = new ImageIcon(getClass.getResource(color+"Kn.PNG"))
+	}
+
+	class PiecePanel(posi:(Int,Int),color:Char,piece:Piece,notif:Notification,partie:Partie) extends BoxPanel(Orientation.Horizontal) {
+		val queen = new PieceButton(posi,color,piece,"Qu",notif,partie)
+		this.contents+= queen
+		val bishop = new PieceButton(posi,color,piece,"Bi",notif,partie)
+		this.contents+=bishop
+		val knight = new PieceButton(posi,color,piece,"Kn",notif,partie)
+		this.contents+=knight
+		val tower = new PieceButton(posi,color,piece,"To",notif,partie)
+		this.contents+=tower
+		this.revalidate()
+		this.repaint()
 	}
 
 	class Notification(window:MainWindow,partie:Partie) extends BoxPanel(Orientation.Vertical){
 
 		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
-			println("promo")
-			this.contents+= new PieceButtons(posi,color,piece,this,partie)
-			revalidate()
-			repaint()
+			partie.waiting = true
+			this.contents+= new PiecePanel(posi,color,piece,this,partie)
+			this.revalidate()
+			this.repaint()
 		}
 
 		def perdu(player:Char) = {
@@ -249,7 +235,7 @@ object Interface extends SimpleSwingApplication{
 			piece_allowed_take = List()
 			partie.partie_init()
 			partie.start()
-			plateau.set_images()
+			plateau.reset_all()
 			window.contents = this
 			this.contents+=notif
 			this.contents+=plateau

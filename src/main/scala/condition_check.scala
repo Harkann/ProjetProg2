@@ -27,7 +27,7 @@ trait condition_check {
 	}
 
 	def promotion_check(dpct:Dpct,partie:Partie){
-		println("pr check")
+		//println("pr check")
 		var (i,j) = dpct.posi_begin
 		var (x,y) = dpct.posi_end
 		val piece = partie.matrix(x)(y)

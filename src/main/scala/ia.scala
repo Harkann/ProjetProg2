@@ -20,6 +20,6 @@ class IA(color:Char,partie:Partie) extends Runnable{
 		/**id de la pièce sur la case de destination*/
 		
 		piece_selected.move(destination)
-		partie.next_turn()
+		//partie.next_turn()
 	}
 }
