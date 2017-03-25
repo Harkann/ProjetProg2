@@ -6,6 +6,10 @@ class Partie() extends Save {
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
 	var game_window:Interface.EcranPartie = null
+
+
+
+	/* *************************************** Sauvegarde / var globale pour la partir 2 ********************************* */
 	var pieces_B = Array(0,0,0,0,0,0)
 	var pieces_W = Array(0,0,0,0,0,0)
 
@@ -15,6 +19,13 @@ class Partie() extends Save {
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
+
+	var matrix_save = ofDim[Piece](9,9);
+	var last_important_change = 0
+
+
+
+
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/
@@ -90,15 +101,6 @@ class Partie() extends Save {
 
 /*
 	chantier de réflexions :
-	- Prise en passant : 
-	 besoin du dernier mouvement de l'adversaire.
-	- Stocker les parties :
-	 tableau des changement de positions et potentielles prises de piece ?
-	definir un type special pour ça position de depart position d'arrive prise de qqch= null ou some(piece)
-	- Promotion : 
-	 variable globale pour lancer le choix la promotion ? NON
-	 move : redécomposition -> déplacement de la tour dans le roque dans une fonction a part parce que là c'est moche.
-							-> même chose pour le declanchement de la promotion.
 	- 50 coups -> compteur reinitialisé a chaque prise de piece ou déplacement de pions.
 	- Imposibilitée de mater : avoir un tableau qui garde le nombre de piece pour chaque couleur : genre en_jeu[0]=nb pion en jeux.
 	- triple repetition de la position : rejouer la partie depuis le début ? :/ je penses que y a moyen d'être plus subtil.
