@@ -23,3 +23,13 @@ class IA(color:Char,partie:Partie) extends Runnable{
 		//partie.next_turn()
 	}
 }
+
+object IA_promote {
+	def promote(posi:(Int,Int),piece:Piece,partie:Partie) = {
+		partie.waiting = true
+		var random_prom = scala.util.Random
+		var random_promInt = random_prom.nextInt(Config.possible_proms.length)
+		piece.asInstanceOf[Peon].promo(posi,Config.possible_proms(random_promInt),partie)
+		partie.waiting = false
+	}
+}
