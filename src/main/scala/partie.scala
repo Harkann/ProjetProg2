@@ -136,9 +136,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		}
 	}
 
-	def pat(){
+	def pat(motif:String){
 		this.stop()
-		game_window.notif.text_end(player,"PAT","")
+		game_window.notif.text_end(player,"PAT",motif)
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -204,11 +204,16 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		/***/
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
-			this.stop()
-			game_window.notif.text_end(player,"MAT","")
+			perdu(player,"")
 		}
 
 	}
+
+	def perdu(color:Char,motif:String) = {
+		this.stop()
+		game_window.notif.text_end(color,"MAT",motif)
+	}
+
 	def partie_nb_ia(nbIA:Int,colorIA:Char,ecran:Interface.EcranPartie) = {
 		nb_ia = nbIA
 		color_ia=colorIA
@@ -219,6 +224,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	
 	/**démarre la partie*/
 	def start() = {
+		//new Thread(new Timer(10000,'W',this)).start
 		if (nb_ia == 1 && color_ia == 'W'){
 			new Thread(new IA('W',this)).start
 		}

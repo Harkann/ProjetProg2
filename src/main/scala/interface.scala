@@ -188,26 +188,27 @@ object Interface extends SimpleSwingApplication{
 		this.revalidate()
 		this.repaint()
 	}
-	class TextAreaEnd(color:Char,type_end:String,complement:String) extends Label(){
-		println(color+" "+type_end)
+	class TextAreaEnd(color:Char,type_end:String,complement:String) extends GridPanel(2,1){
+		println(color+" "+type_end+" "+complement)
 		type_end match {
 			case "MAT" => {
 				this.background = java.awt.Color.RED
 				color match {
-					case 'W' => this.text = "Le joueur Blanc a perdu\n"
-					case 'B' => this.text = "Le joueur Noir a perdu\n"
+					case 'W' => this.contents+= new Label(){text = "Le joueur Blanc a perdu\n" } 
+					case 'B' => 
 				}
 			}
 			case "PAT" => {
 				this.background = java.awt.Color.PINK
-				this.text = "PAT\n"
+				this.contents+= new Label(){text = "PAT\n" } 
 			}
 		}
 
 		complement match {
 			
-			case "50" => this.text += "Cause : règle des 50 coups"
-			case "3" => this.text += "Cause : 3 fois même position"
+			case "50" => this.contents+= new Label(){text = "Cause : règle des 50 coups" }  
+			case "3" => this.contents+= new Label(){text = "Cause : 3 fois la même position" }  
+			case "temps" => this.contents+= new Label(){text = "Cause : temps écoulé" }  
 			case _ => {}
 		}
 		this.revalidate()

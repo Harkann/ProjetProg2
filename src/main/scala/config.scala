@@ -5,4 +5,5 @@ object Config {
 	val possible_proms = List("Qu","Bi","Kn","To")
 	val return_allowed = true
 	val timer = true
+	val init_time = 3663
 }
