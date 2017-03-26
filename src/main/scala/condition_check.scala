@@ -60,7 +60,7 @@ trait condition_check {
 			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,1,0,0,1).deep)) 
 
 			){
-			partie.pat()
+			partie.pat("Not able to mat anymore")
 		}
 	}
 }

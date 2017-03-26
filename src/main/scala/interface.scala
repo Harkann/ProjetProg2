@@ -195,7 +195,7 @@ object Interface extends SimpleSwingApplication{
 				this.background = java.awt.Color.RED
 				color match {
 					case 'W' => this.contents+= new Label(){text = "Le joueur Blanc a perdu\n" } 
-					case 'B' => 
+					case 'B' => this.contents+= new Label(){text = "Le joueur Noir a perdu\n" } 
 				}
 			}
 			case "PAT" => {
@@ -209,7 +209,8 @@ object Interface extends SimpleSwingApplication{
 			case "50" => this.contents+= new Label(){text = "Cause : règle des 50 coups" }  
 			case "3" => this.contents+= new Label(){text = "Cause : 3 fois la même position" }  
 			case "temps" => this.contents+= new Label(){text = "Cause : temps écoulé" }  
-			case _ => {}
+			case "" => {}
+			case _ => this.contents+= new Label(){text = "Cause : inconnue "+complement }  
 		}
 		this.revalidate()
 		this.repaint()

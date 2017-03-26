@@ -56,7 +56,7 @@ trait Moves_50 {
 	def moves_50_check(partie: Partie) {
 		if (partie.nb_turn-partie.last_important_change > 50) {
 			println("50 coups sans changements")
-			partie.pat()
+			partie.pat("50")
 		}
 	}
 }
@@ -79,7 +79,7 @@ trait Repetions_3 extends Standard {
 		}
 		if(nb_repetition>=3){
 			println("3 répetitions")
-			partie.pat()
+			partie.pat("3")
 		}
 	}
 	

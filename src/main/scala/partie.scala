@@ -132,7 +132,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	/**teste si le joueur "player" est pat et affiche pat*/
 	def is_pat(player:Char) = { 
 		if (allowed_moves(player) == List()){
-			pat()
+			pat("no moves allowed")
 		}
 	}
 
