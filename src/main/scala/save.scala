@@ -46,7 +46,6 @@ trait Save {
 	}
 
 	def last_move(partie:Partie) : Dpct = {
-		//println("longueur : "+partie.dplct_save.length)
 		return partie.dplct_save(partie.nb_turn-1)
 	}
 	
@@ -55,8 +54,7 @@ trait Save {
 trait Moves_50 {
 	def moves_50_check(partie: Partie) {
 		if (partie.nb_turn-partie.last_important_change > 50) {
-			println("50 coups sans changements")
-			partie.pat()
+			partie.pat("50")
 		}
 	}
 }
@@ -65,21 +63,21 @@ trait Repetions_3 extends Standard {
 	def repetitions_3_check(partie:Partie) {
 		var matrix_intermediate = copy_of(partie.matrix_save)
 		var nb_repetition = 0
-		if (equal(partie.matrix,matrix_intermediate)){
+		if ((partie.last_important_change == 0) && (equal(partie.matrix,matrix_intermediate))){
 				nb_repetition +=1
-				//println(matrix_intermediate.deep.mkString("\n"))
+				println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
 			}
 		for( i <- partie.last_important_change+1 to partie.dplct_save.length) {
 			var dpct = partie.dplct_save(i-1)
+			println(dpct.piece+" "+dpct.posi_begin+" "+dpct.posi_end)
 			dpct.do_dpct(matrix_intermediate)
 			if (equal(partie.matrix,matrix_intermediate)){
 				nb_repetition +=1
-				//println(matrix_intermediate.deep.mkString("\n"))
+				println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
 			}
 		}
-		if(nb_repetition>=3){
-			println("3 répetitions")
-			partie.pat()
+		if(nb_repetition >= 3){
+			partie.pat("3")
 		}
 	}
 	
