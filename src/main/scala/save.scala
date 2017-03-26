@@ -28,9 +28,19 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 trait Save {
 	def return_back(partie:Partie) = {
 	val dpct = partie.dplct_save.remove(partie.nb_turn-1)
+	dpct.piece.nb_turn -=1
+	dpct.piece.position = dpct.posi_begin
 	partie.matrix(dpct.i)(dpct.j)= dpct.piece
 	partie.matrix(dpct.x)(dpct.y)= dpct.piece_met
-	partie.nb_turn -=1
+	if (dpct.optional_other_dpct != null){
+		val other_dpct = dpct.optional_other_dpct
+		other_dpct.piece.position = other_dpct.posi_begin
+		other_dpct.piece.nb_turn -=1
+		partie.matrix(other_dpct.i)(other_dpct.j)= other_dpct.piece
+		partie.matrix(other_dpct.x)(other_dpct.y)= other_dpct.piece_met
+
+	}
+	partie.nb_turn -=2
 	partie.next_turn()
 	partie.game_window.plateau.reset_all()
 	}

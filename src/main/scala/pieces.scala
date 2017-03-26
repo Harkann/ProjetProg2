@@ -46,8 +46,6 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		val piece = matrix(position,partie)
 		val piece_met = matrix(posi,partie)
 
-	
-
 		// prise d'une piece
 		if (piece_met != null) {
 			partie.modif_piece(piece_met.color,piece_met.num_type,-1)}
@@ -74,6 +72,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)		
 		partie.moves_50_check(partie)
 		partie.repetitions_3_check(partie)
+
 		if (partie.waiting == false){
 			partie.next_turn()
 		}

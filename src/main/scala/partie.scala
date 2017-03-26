@@ -46,10 +46,10 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	}
 	/**lance le tour suivant*/
 	def next_turn():Unit = {
+		nb_turn +=1
 		if (is_running){is_mat(player)}
 		if (is_running){is_mat(other_player(player))}
 		if (is_running){is_pat(other_player(player))}
-		nb_turn +=1
 		if (is_running){
 			if (nb_ia == 0){
 				player = other_player(player)

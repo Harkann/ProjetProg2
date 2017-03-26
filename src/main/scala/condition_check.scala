@@ -46,7 +46,7 @@ trait condition_check {
 		val (x,y) = dpct.posi_end
 		val piece = dpct.piece
 		val piece_met = dpct.piece_met
-		if ((piece.name == "Pe") && (j != y) && (piece_met == null)){
+		if ((piece != null) && (piece.name == "Pe") && (j != y) && (piece_met == null)){
 			dpct.optional_other_dpct = new Dpct((0,0),(i,y),partie)
 			partie.matrix(i)(y)=null
 		}
