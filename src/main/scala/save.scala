@@ -27,7 +27,7 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 
 trait Save {
 	def return_back(partie:Partie) = {
-	val dpct = partie.dplct_save.remove(partie.nb_turn)
+	val dpct = partie.dplct_save.remove(partie.nb_turn-1)
 	partie.matrix(dpct.i)(dpct.j)= dpct.piece
 	partie.matrix(dpct.x)(dpct.y)= dpct.piece_met
 	partie.nb_turn -=1
@@ -71,4 +71,15 @@ trait Repetions_3 extends Standard {
 		}
 	}
 	
+}
+
+trait Convesion_to_PNG {
+	val lettre = Array('z','a','b','c','d','e','f','g','h')
+	def save_to_PNG(partie:Partie){
+		for( i <- 0 to partie.dplct_save.length-1) {
+			val dpct = partie.dplct_save(i)
+			println(dpct.piece.PNG_name)
+			
+		}
+	}
 }
