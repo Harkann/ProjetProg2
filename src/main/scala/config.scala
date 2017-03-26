@@ -3,4 +3,6 @@ object Config {
 	val res_x = 700
 	val res_y = 1000
 	val possible_proms = List("Qu","Bi","Kn","To")
+	val return_allowed = true
+	val timer = true
 }

@@ -31,6 +31,8 @@ trait Save {
 	partie.matrix(dpct.i)(dpct.j)= dpct.piece
 	partie.matrix(dpct.x)(dpct.y)= dpct.piece_met
 	partie.nb_turn -=1
+	partie.next_turn()
+	partie.game_window.plateau.reset_all()
 	}
 
 	def last_move(partie:Partie) : Dpct = {

@@ -190,37 +190,48 @@ object Interface extends SimpleSwingApplication{
 	}
 	class TextAreaEnd(color:Char,type_end:String,complement:String) extends Label(){
 		println(color+" "+type_end)
-
-		if (type_end == "MAT"){
-			this.background = java.awt.Color.RED
-			if (color == 'W'){
-				this.text = "Le joueur Blanc a perdu"
+		type_end match {
+			case "MAT" => {
+				this.background = java.awt.Color.RED
+				color match {
+					case 'W' => this.text = "Le joueur Blanc a perdu\n"
+					case 'B' => this.text = "Le joueur Noir a perdu\n"
+				}
 			}
-			else {
-				this.text = "Le joueur Noir a perdu"
+			case "PAT" => {
+				this.background = java.awt.Color.PINK
+				this.text = "PAT\n"
 			}
 		}
-		else if (type_end == "PAT"){
-			this.background = java.awt.Color.PINK
-			if (complement == ""){
-				this.text = "PAT"
 
-			}
+		complement match {
+			
+			case "50" => this.text += "Cause : règle des 50 coups"
+			case "3" => this.text += "Cause : 3 fois même position"
+			case _ => {}
 		}
 		this.revalidate()
 		this.repaint()
 	}
+	class Timer(color:Char){
+
+	}
 	class Notification(window:MainWindow,partie:Partie) extends GridPanel(1,3){
-		
+
 		def initial() = {
 			this.contents.clear()
-			var retour = new Button(){
-				action = Action("Return"){
-					partie.return_back(partie)
+			if (Config.return_allowed){
+				var retour = new Button(){
+					action = Action("Return"){
+						partie.return_back(partie)
+					}
 				}
+				this.contents+= retour
+				retour.maximumSize = new Dimension(Config.res_x/3,Config.res_y/10)
 			}
-			this.contents+= retour
-			retour.maximumSize = new Dimension(Config.res_x/3,Config.res_y/10)
+			if (Config.timer){
+
+			}
 			this.preferredSize = new Dimension(Config.res_x,Config.res_y/10)
 			this.revalidate()
 			this.repaint()
@@ -247,7 +258,7 @@ object Interface extends SimpleSwingApplication{
 		val back_menu = new Button{
 			action = Action("Back to main menu"){
 				window.init_menu()
-				
+
 			}
 		}
 
