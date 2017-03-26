@@ -47,4 +47,15 @@ trait condition_check {
 		}
 	}
 	
+	def nothing_but_pat_check(partie:Partie,tab_color:Array[Int],tab_other_color:Array[Int]) {
+		if (
+			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
+			((tab_color.deep == Array(0,0,0,1,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
+			((tab_color.deep == Array(0,0,0,1,0,1).deep) && (tab_other_color.deep == Array(0,0,0,1,0,1).deep)) ||		
+			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,1,0,0,1).deep)) 
+
+			){
+			partie.pat()
+		}
+	}
 }

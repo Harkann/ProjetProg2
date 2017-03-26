@@ -15,7 +15,7 @@ trait Standard {
 		return partie.matrix(i)(j)
 		}
 
-	def Copy_of(matrix : Array[Array[Piece]]) : Array[Array[Piece]] = {
+	def copy_of(matrix : Array[Array[Piece]]) : Array[Array[Piece]] = {
 		var res = ofDim[Piece](9,9)
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
@@ -23,6 +23,22 @@ trait Standard {
 			}	
 		}
 		return res
+	}
+	def equal (matrix1 : Array[Array[Piece]],matrix2 :Array[Array[Piece]]) : Boolean = {
+		for(i<- 1 to 8){
+			for(j<- 1 to 8){
+				val piece1= matrix1(i)(j)
+				val piece2=matrix2(i)(j)
+				if (((piece1 == null) && (piece2 != null)) || ((piece1 != null) && (piece2 == null))){
+					return false
+				}
+				else if ((piece1 == null) && (piece2 == null)){}
+				else if ((piece1.name != piece2.name) || (piece1.color != piece2.color)){
+					return false
+				}	
+			}
+		}
+		return true
 	}
 }
 

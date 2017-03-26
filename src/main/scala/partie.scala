@@ -10,8 +10,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 
 
 	/* *************************************** Sauvegarde / var globale pour la partir 2 ********************************* */
-	var pieces_B = ofDim[Int](8)
-	var pieces_W = ofDim[Int](8)
+	var pieces_B = ofDim[Int](6)
+	var pieces_W = ofDim[Int](6)
 
 	def modif_piece(color:Char,num:Int,modif:Int){
 		if (color == 'B') {pieces_B(num) += modif}
@@ -110,17 +110,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 
 
 	*/
-	def nothing_but_pat(tab_color:Array[Int],tab_other_color:Array[Int]) {
-		if (
-			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
-			((tab_color.deep == Array(0,0,0,1,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
-			((tab_color.deep == Array(0,0,0,1,0,1).deep) && (tab_other_color.deep == Array(0,0,0,1,0,1).deep)) ||		
-			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,1,0,0,1).deep)) 
 
-			){
-			pat()
-		}
-	}
 
 	/**renvoie la liste des mouvements possibles pour le joueur "color"
 	(utilisée par l'ia)*/
@@ -283,7 +273,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		matrix(8)(4) = new Queen('B',(8,4),this)
 		matrix(8)(5) = new King('B',(8,5),this)
 
-		matrix_save = Copy_of(matrix)
+		matrix_save = copy_of(matrix)
 	}
 
 }

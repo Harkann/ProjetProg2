@@ -45,10 +45,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		val piece = matrix(position,partie)
 		val piece_met = matrix(posi,partie)
 
-		if ((piece_met!=null)||(name=="Pe")){
-			partie.last_important_change=partie.nb_turn+1
-			partie.matrix_save = partie.matrix.clone
-		}
+	
 
 		// prise d'une piece
 		if (piece_met != null) {
@@ -61,12 +58,21 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		position = (x,y)
 		partie.matrix(x)(y)=piece
 		partie.matrix(i)(j)=null
+
 		nb_turn+=1
+		if ((piece_met!=null)||(name=="Pe")){
+			partie.last_important_change=partie.nb_turn
+			partie.matrix_save = copy_of(partie.matrix)
+		}
+
+
 		promotion_check(dpct,partie)
 		partie.dplct_save += dpct
 		partie.game_window.plateau.reset_all()
-		//partie.moves_50_check(partie)
-		//partie.repetitions_3_check(partie)
+		nothing_but_pat_check(partie,partie.pieces_B,partie.pieces_W)
+		nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)		
+		partie.moves_50_check(partie)
+		partie.repetitions_3_check(partie)
 		if (partie.waiting == false){
 			partie.next_turn()
 		}
