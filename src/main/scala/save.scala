@@ -65,15 +65,15 @@ trait Repetions_3 extends Standard {
 		var nb_repetition = 0
 		if ((partie.last_important_change == 0) && (equal(partie.matrix,matrix_intermediate))){
 				nb_repetition +=1
-				println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
+				//println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
 			}
 		for( i <- partie.last_important_change+1 to partie.dplct_save.length) {
 			var dpct = partie.dplct_save(i-1)
-			println(dpct.piece+" "+dpct.posi_begin+" "+dpct.posi_end)
+			//println(dpct.piece+" "+dpct.posi_begin+" "+dpct.posi_end)
 			dpct.do_dpct(matrix_intermediate)
 			if (equal(partie.matrix,matrix_intermediate)){
 				nb_repetition +=1
-				println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
+				//println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
 			}
 		}
 		if(nb_repetition >= 3){
