@@ -162,9 +162,6 @@ object Interface extends SimpleSwingApplication{
 	}
 
 	class PieceButton(posi:(Int,Int),color:Char,piece:Piece,piece_type:String,notif:Notification,partie:Partie) extends Button {
-		icon = new ImageIcon(getClass.getResource(color+piece_type+".PNG"))
-		this.repaint()
-		this.revalidate()
 		this.action = Action(""){
 			piece.asInstanceOf[Peon].promo(posi,piece_type,partie)
 			partie.waiting = false
@@ -178,12 +175,16 @@ object Interface extends SimpleSwingApplication{
 	class PiecePanel(posi:(Int,Int),color:Char,piece:Piece,notif:Notification,partie:Partie) extends BoxPanel(Orientation.Horizontal) {
 		val queen = new PieceButton(posi,color,piece,"Qu",notif,partie)
 		this.contents+= queen
+		queen.icon = new ImageIcon(getClass.getResource(color+"Qu"+".PNG"))
 		val bishop = new PieceButton(posi,color,piece,"Bi",notif,partie)
 		this.contents+=bishop
+		bishop.icon = new ImageIcon(getClass.getResource(color+"Bi"+".PNG"))
 		val knight = new PieceButton(posi,color,piece,"Kn",notif,partie)
 		this.contents+=knight
+		knight.icon = new ImageIcon(getClass.getResource(color+"Kn"+".PNG"))
 		val tower = new PieceButton(posi,color,piece,"To",notif,partie)
 		this.contents+=tower
+		tower.icon = new ImageIcon(getClass.getResource(color+"To"+".PNG"))
 		this.revalidate()
 		this.repaint()
 	}
