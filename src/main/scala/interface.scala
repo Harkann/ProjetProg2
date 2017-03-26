@@ -166,9 +166,9 @@ object Interface extends SimpleSwingApplication{
 			piece.asInstanceOf[Peon].promo(posi,piece_type,partie)
 			partie.waiting = false
 			partie.next_turn()
-			notif.contents.clear()
-			notif.revalidate()
-			notif.repaint()
+			notif.initial()
+			//notif.revalidate()
+			//notif.repaint()
 		}
 	}
 
@@ -188,30 +188,55 @@ object Interface extends SimpleSwingApplication{
 		this.revalidate()
 		this.repaint()
 	}
+	class TextAreaEnd(color:Char,type_end:String,complement:String) extends Label(){
+		println(color+" "+type_end)
 
-	class Notification(window:MainWindow,partie:Partie) extends BoxPanel(Orientation.Vertical){
+		if (type_end == "MAT"){
+			this.background = java.awt.Color.RED
+			if (color == 'W'){
+				this.text = "Le joueur Blanc a perdu"
+			}
+			else {
+				this.text = "Le joueur Noir a perdu"
+			}
+		}
+		else if (type_end == "PAT"){
+			this.background = java.awt.Color.PINK
+			if (complement == ""){
+				this.text = "PAT"
 
+			}
+		}
+		this.revalidate()
+		this.repaint()
+	}
+	class Notification(window:MainWindow,partie:Partie) extends GridPanel(1,3){
+		
+		def initial() = {
+			this.contents.clear()
+			var retour = new Button(){
+				action = Action("Return"){
+					partie.return_back(partie)
+				}
+			}
+			this.contents+= retour
+			retour.maximumSize = new Dimension(Config.res_x/3,Config.res_y/10)
+			this.preferredSize = new Dimension(Config.res_x,Config.res_y/10)
+			this.revalidate()
+			this.repaint()
+		}
+		initial()
 		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
 			partie.waiting = true
 			this.contents+= new PiecePanel(posi,color,piece,this,partie)
 			this.revalidate()
 			this.repaint()
 		}
-
-		def perdu(player:Char) = {
-			println("MAT")
-			this.background = java.awt.Color.RED
-			this.contents+= new Label (player+" a perdu")
+		def text_end(color:Char,type_end:String,complement:String) = {
+			this.contents+= new TextAreaEnd(color,type_end,complement)
+			this.preferredSize = new Dimension(Config.res_x/3,Config.res_y/10)
 			this.revalidate()
 			this.repaint()
-		}
-
-		def pat() = {
-			println("PAT")
-			this.background = java.awt.Color.GREEN
-			this.contents+= new Label ("pat")
-			revalidate()
-			repaint()
 		}
 
 	}

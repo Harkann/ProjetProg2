@@ -138,8 +138,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 
 	def pat(){
 		this.stop()
-		game_window.notif.pat()
-		//Interface.RootWindow.interface_partie.pat()
+		game_window.notif.text_end(player,"PAT","")
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -206,7 +205,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
 			this.stop()
-			game_window.notif.perdu(player)
+			game_window.notif.text_end(player,"MAT","")
 		}
 
 	}
