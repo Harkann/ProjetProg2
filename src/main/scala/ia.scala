@@ -17,10 +17,8 @@ class IA(color:Char,partie:Partie) extends Runnable{
 		var (di,dj) = destination
 		/**id de la pièce de départ*/
 		var piece_selected = partie.get_piece(oi,oj)
-		/**id de la pièce sur la case de destination*/
 		
 		piece_selected.move(destination)
-		//partie.next_turn()
 	}
 }
 
