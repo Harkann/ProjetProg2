@@ -6,4 +6,5 @@ object Config {
 	val return_allowed = true
 	val timer = true
 	val init_time = 3663000
+	//en milisecondes
 }

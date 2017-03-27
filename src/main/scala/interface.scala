@@ -248,7 +248,7 @@ object Interface extends SimpleSwingApplication{
 			this.revalidate()
 			this.repaint()
 		}
-		else {
+		else {println("plop")
 			partie.is_interface = true
 			partie.start()
 		}
@@ -259,6 +259,7 @@ object Interface extends SimpleSwingApplication{
 			this.repaint()
 		}
 		def text_end(color:Char,type_end:String,complement:String) = {
+			initial()
 			this.contents+= new TextAreaEnd(color,type_end,complement)
 			this.preferredSize = new Dimension(Config.res_x/3,Config.res_y/10)
 			this.revalidate()
