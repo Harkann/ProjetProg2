@@ -88,8 +88,8 @@ trait Convesion_to_PNG {
 	def save_to_PNG(partie:Partie){
 		for( i <- 0 to partie.dplct_save.length-1) {
 			val dpct = partie.dplct_save(i)
-			println(dpct.piece.PNG_name)
-			
+			println((i+1)+". "+dpct.piece.PNG_name+lettre(dpct.i)+dpct.j+lettre(dpct.x)+dpct.y)
+			//gerere la fin de ligne qui dois pas sautée et le fais qu'un tour c'est les deux mouvements !
 		}
 	}
 }
