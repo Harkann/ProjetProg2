@@ -208,9 +208,10 @@ object Interface extends SimpleSwingApplication{
 			
 			case "50" => this.contents+= new Label(){text = "Cause : règle des 50 coups" }  
 			case "3" => this.contents+= new Label(){text = "Cause : 3 fois la même position" }  
-			case "temps" => this.contents+= new Label(){text = "Cause : temps écoulé" }  
-			case "" => {}
-			case _ => this.contents+= new Label(){text = "Cause : inconnue "+complement }  
+			case "temps" => this.contents+= new Label(){text = "Cause : temps écoulé" }
+			case "nulle" => this.contents+= new Label(){text = "Cause : impossibilité de mater"}
+			case "Pat" =>this.contents+= new Label(){text = "Cause : plus aucun mouvements possibles"}
+			case _ => {}
 		}
 		this.revalidate()
 		this.repaint()
