@@ -215,9 +215,6 @@ object Interface extends SimpleSwingApplication{
 		this.revalidate()
 		this.repaint()
 	}
-	class Timer(color:Char){
-
-	}
 	class Notification(window:MainWindow,partie:Partie) extends GridPanel(1,3){
 
 		def initial() = {

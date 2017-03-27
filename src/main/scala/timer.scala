@@ -1,8 +1,6 @@
-class Timer(duration:Int,color:Char,partie:Partie) extends Runnable(){
-
+class TimerClock(duration:Int,color:Char,partie:Partie) extends Runnable(){
 	val end_time = System.currentTimeMillis + duration
-
-	var is_running = true 
+	var is_running = false 
 	override def run() = {
 		while (is_running){
 			if (System.currentTimeMillis < end_time){
