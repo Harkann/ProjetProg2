@@ -18,7 +18,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 	val color = col;
 	/**nom de la pièce*/
 	val name:String; 
-	val PNG_name:String; 
+	val PGN_name:String; 
 	/** un numreo attribué a chaque type de piece **/
 	val num_type:Int;
 	/**statut en vie ou non de la pièce*/
@@ -155,7 +155,7 @@ class Peon(color:Char,pos:(Int,Int),partie:Partie) extends Piece(color,pos,parti
 with Id_creation with Peon_move with Promotion {
 	val num_type = 0
 	val name="Pe"
-	val PNG_name=""
+	val PGN_name=""
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
@@ -173,7 +173,7 @@ with Id_creation with Peon_move with Promotion {
 class Tower(color:Char,pos:(Int,Int),partie:Partie) extends Piece(color,pos,partie) 
 with Id_creation with Horizontal_Vertical{
 	val name = "To"
-	val PNG_name="R"
+	val PGN_name="R"
 	val num_type = 1
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
@@ -189,7 +189,7 @@ with Id_creation with Horizontal_Vertical{
 class Knight(color:Char,pos:(Int,Int),partie:Partie) extends Piece(color,pos,partie) 
 with Id_creation with Jump{
 	val name="Kn"
-	val PNG_name="N"
+	val PGN_name="N"
 	val num_type = 2
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
@@ -203,7 +203,7 @@ with Id_creation with Jump{
 class Bishop(color:Char,position:(Int,Int),partie:Partie) extends Piece(color,position,partie) 
 with Id_creation with Diagonal{
 	val name="Bi"
-	val PNG_name="B"
+	val PGN_name="B"
 	val num_type = 3
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
@@ -220,7 +220,7 @@ class Queen(color:Char,pos:(Int,Int),partie:Partie) extends Piece(color,pos,part
 with Id_creation with Diagonal with Horizontal_Vertical{ 
 	//si jamais on remet "position" et pas un autre nom soit "pos" position est considéré constante
 	val name = "Qu"
-	val PNG_name="Q"
+	val PGN_name="Q"
 	val num_type = 4
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive= true
@@ -241,7 +241,7 @@ with Id_creation with Diagonal with Horizontal_Vertical{
 class King(color:Char,pos:(Int,Int),partie:Partie) extends Piece(color,pos,partie) 
 with Id_creation with King_move{
 	val name="Ki"
-	val PNG_name="K"
+	val PGN_name="K"
 	val num_type = 5
 	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
 	var is_alive=true
