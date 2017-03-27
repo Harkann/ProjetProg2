@@ -19,9 +19,12 @@ object Interface extends SimpleSwingApplication{
 			interface_partie.spawn_game()
 		}
 	}
-	class QuitButton(window:MainWindow) extends Button{
+	class QuitButton(window:MainWindow,partie:Partie) extends Button{
 		action = Action("Quit Game"){
 			window.closeOperation()
+			if (partie != null){
+				partie.stop()
+			}
 		}
 	}
 	/**Menu principal*/
@@ -36,7 +39,7 @@ object Interface extends SimpleSwingApplication{
 		/**bouton qui lance une partie avec deux ia*/
 		val game_two_ia = new PartieButton("IA vs. IA",2,'0',window)
 		/**bouton qui ferme l'interface*/
-		val quit_program = new QuitButton(window)
+		val quit_program = new QuitButton(window,null)
 		/**affiche le menu principal*/
 		def set_menu():Unit = {
 			contents.clear()
@@ -167,8 +170,6 @@ object Interface extends SimpleSwingApplication{
 			partie.waiting = false
 			partie.next_turn()
 			notif.initial()
-			//notif.revalidate()
-			//notif.repaint()
 		}
 	}
 
@@ -216,8 +217,7 @@ object Interface extends SimpleSwingApplication{
 		this.revalidate()
 		this.repaint()
 	}
-	class Notification(window:MainWindow,partie:Partie) extends GridPanel(1,3){
-
+	class Notification(partie:Partie) extends GridPanel(3,1){
 		def initial() = {
 			this.contents.clear()
 			if (Config.return_allowed){
@@ -229,14 +229,29 @@ object Interface extends SimpleSwingApplication{
 				this.contents+= retour
 				retour.maximumSize = new Dimension(Config.res_x/3,Config.res_y/10)
 			}
-			if (Config.timer){
-
-			}
 			this.preferredSize = new Dimension(Config.res_x,Config.res_y/10)
 			this.revalidate()
 			this.repaint()
 		}
 		initial()
+		val notif = this
+		if (Config.timer){
+			var start_time = new Button(){
+				action = Action("Start Timer"){
+					partie.is_interface = true
+					partie.start()
+					partie.white_timer.interrupt()
+					notif.initial()
+				}
+			}
+			this.contents+=start_time
+			this.revalidate()
+			this.repaint()
+		}
+		else {
+			partie.is_interface = true
+			partie.start()
+		}
 		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
 			partie.waiting = true
 			this.contents+= new PiecePanel(posi,color,piece,this,partie)
@@ -251,18 +266,44 @@ object Interface extends SimpleSwingApplication{
 		}
 
 	}
+	class TimerDisplay(color:Char) extends Label {
+		def set(time:(Int,Int,Int)) = {
+			var (hour,min,sec) = time
+			this.text = color+": "+hour+":"+min+":"+sec
+			this.revalidate()
+			this.repaint()
+		}
+	}
+	class HeadUpBar(partie:Partie) extends GridPanel(1,3) {
+		var white_timer = new TimerDisplay('W')
+		this.contents+= white_timer
+		var notif = new Notification(partie)
+		this.contents+= notif
+		var black_timer = new TimerDisplay('B')
+		this.contents+= black_timer
+		this.revalidate()
+		this.repaint()
+
+		def edit_timer(color:Char,time:(Int,Int,Int)) = {
+			color match {
+				case 'W' => white_timer.set(time)
+				case 'B' => black_timer.set(time)
+			}
+		}
+	}
 	/**Ecran de jeu contenant l'échiquier de taille i,j*/
 	class EcranPartie(i:Int,j:Int,window:MainWindow,partie:Partie) extends BoxPanel(Orientation.Vertical){
-		var notif = new Notification(window,partie)
+		var head_up_bar = new HeadUpBar(partie)
 		var plateau = new Echiquier(i,j,window,partie)
 		val back_menu = new Button{
 			action = Action("Back to main menu"){
+				partie.stop()
 				window.init_menu()
 
 			}
 		}
 
-		val quit_program = new QuitButton(window)
+		val quit_program = new QuitButton(window,partie)
 		def spawn_game():Unit = {
 			is_button_clicked = false
 			button_clicked_i = 0
@@ -271,10 +312,10 @@ object Interface extends SimpleSwingApplication{
 			piece_allowed_move = List()
 			piece_allowed_take = List()
 			partie.partie_init()
-			partie.start()
+			//partie.start()
 			plateau.reset_all()
 			window.contents = this
-			this.contents+=notif
+			this.contents+=head_up_bar
 			this.contents+=plateau
 			this.contents+= new GridPanel(1,2){
 				contents+= back_menu

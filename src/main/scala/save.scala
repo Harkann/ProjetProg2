@@ -41,6 +41,8 @@ trait Save {
 
 	}
 	partie.nb_turn -=2
+	partie.is_running = true
+	partie.game_window.head_up_bar.notif.initial()
 	partie.next_turn()
 	partie.game_window.plateau.reset_all()
 	}

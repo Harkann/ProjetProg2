@@ -6,8 +6,15 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
 	var game_window:Interface.EcranPartie = null
+	var white_timer:Thread = null
+	var black_timer:Thread = null
 
-
+	def get_timer(color:Char) = {
+		color match {
+			case 'W' => white_timer
+			case 'B' => black_timer
+		}
+	}
 
 	/* *************************************** Sauvegarde / var globale pour la partir 2 ********************************* */
 	var pieces_B = ofDim[Int](6)
@@ -33,7 +40,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	/**la partie est en cours ou non */
 	var is_running = true
 	/**l'interface peut deplacer des pieces*/
-	var is_interface= true
+	var is_interface= false
 	/**renvoie si la partie est finie*/
 	def stop() ={
 		is_running = false
@@ -52,10 +59,14 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		if (is_running){is_pat(other_player(player))}
 		if (is_running){
 			if (nb_ia == 0){
+				get_timer(player).interrupt
 				player = other_player(player)
+				get_timer(player).interrupt
 			}
 			else if (nb_ia == 1){
+				get_timer(player).interrupt
 				player = other_player(player)
+				get_timer(player).interrupt
 				if (player == color_ia){
 					is_interface = false
 					new Thread(new IA(color_ia,this)).start
@@ -63,8 +74,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 				} 
 			}
 			else {
-
+				get_timer(player).interrupt
 				player = other_player(player)
+				get_timer(player).interrupt
 				new Thread(new IA(player,this)).start
 
 			}
@@ -138,7 +150,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 
 	def pat(motif:String){
 		this.stop()
-		game_window.notif.text_end(player,"PAT",motif)
+		game_window.head_up_bar.notif.text_end(player,"PAT",motif)
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -172,10 +184,11 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 			var piece= matrix(i)(j)
 			if (piece == null){}
 			else{
-			var id_piece=piece.id
-			if (id_piece.substring(0,3)==player+"Ki"){
-				return true
-			}}
+				var id_piece=piece.id
+				if (id_piece.substring(0,3)==player+"Ki"){
+					return true
+				}
+			}
 		}
 		return false
 
@@ -211,7 +224,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 
 	def perdu(color:Char,motif:String) = {
 		this.stop()
-		game_window.notif.text_end(color,"MAT",motif)
+		game_window.head_up_bar.notif.text_end(color,"MAT",motif)
 	}
 
 	def partie_nb_ia(nbIA:Int,colorIA:Char,ecran:Interface.EcranPartie) = {
@@ -221,10 +234,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	}
 	/**compte le nombre de tours*/
 	var nb_turn = 0
-	
+
 	/**démarre la partie*/
 	def start() = {
-		//new Thread(new Timer(10000,'W',this)).start
 		if (nb_ia == 1 && color_ia == 'W'){
 			new Thread(new IA('W',this)).start
 		}
@@ -235,7 +247,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	}
 	/**initialise la partie*/
 	def partie_init() = {
-		is_running = true
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
 				matrix(i)(j) = null
@@ -243,6 +254,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		}
 		player = 'W'
 		nb_turn = 0
+		is_running = true
 		matrix(2)(1) = new Peon('W',(2,1),this)
 		matrix(2)(2) = new Peon('W',(2,2),this)
 		matrix(2)(3) = new Peon('W',(2,3),this)
@@ -279,6 +291,12 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		matrix(8)(5) = new King('B',(8,5),this)
 
 		matrix_save = copy_of(matrix)
+		if (Config.timer) {
+			white_timer = new Thread(new TimerClock(Config.init_time,'W',this))
+			white_timer.start()
+			black_timer = new Thread(new TimerClock(Config.init_time,'B',this))
+			black_timer.start()
+		}
 	}
 
 }
