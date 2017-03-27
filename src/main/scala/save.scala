@@ -7,6 +7,7 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 	val piece = partie.matrix(i)(j)
 	val piece_met = partie.matrix(x)(y)
 	var optional_other_dpct : Dpct = null
+	var is_roque = ""
 
 	def do_dpct(matrix:Array[Array[Piece]]){
 		matrix(i)(j) = null
@@ -41,6 +42,8 @@ trait Save {
 
 	}
 	partie.nb_turn -=2
+	//partie.is_running = true
+	//partie.game_window.head_up_bar.notif.initial()
 	partie.next_turn()
 	partie.game_window.plateau.reset_all()
 	}
@@ -83,13 +86,20 @@ trait Repetions_3 extends Standard {
 	
 }
 
-trait Convesion_to_PNG {
+trait Convesion_to_PGN {
 	val lettre = Array('z','a','b','c','d','e','f','g','h')
-	def save_to_PNG(partie:Partie){
+	def save_to_PGN(partie:Partie){
 		for( i <- 0 to partie.dplct_save.length-1) {
+			if (i%2 == 0) {println((i/2)+". ")}
 			val dpct = partie.dplct_save(i)
-			println((i+1)+". "+dpct.piece.PNG_name+lettre(dpct.i)+dpct.j+lettre(dpct.x)+dpct.y)
-			//gerere la fin de ligne qui dois pas sautée et le fais qu'un tour c'est les deux mouvements !
+			if (dpct.is_roque != ""){
+				println(dpct.is_roque)
+			}
+			else {
+				println(dpct.piece.PGN_name)
+			}
+			
 		}
 	}
+	//def load
 }

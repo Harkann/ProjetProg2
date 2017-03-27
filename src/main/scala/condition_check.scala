@@ -9,6 +9,7 @@ trait condition_check {
 
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==7)) {
 			dpct.optional_other_dpct = new Dpct((i,8),(i,6),partie)
+			dpct.is_roque = "O-O"
 			val T = partie.matrix(i)(8)
 			T.position = (i,6)
 			partie.matrix(i)(6) = T
@@ -17,6 +18,7 @@ trait condition_check {
 		}
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==3)) {
 			dpct.optional_other_dpct = new Dpct((i,8),(i,4),partie)
+			dpct.is_roque = "O-O-O"
 			val T = partie.matrix(i)(1)
 			T.position=(i,4)
 			T.nb_turn+=1
@@ -33,7 +35,7 @@ trait condition_check {
 		val piece = partie.matrix(x)(y)
 		if ((piece != null) && (piece.name == "Pe") && ((x == 8) || (x == 1))){
 			if (partie.nb_ia == 0 || (partie.nb_ia == 1 && partie.player != partie.color_ia)){
-				partie.game_window.notif.promote(dpct.posi_end,piece.color,piece)
+				partie.game_window.head_up_bar.notif.promote(dpct.posi_end,piece.color,piece)
 			}
 			else {
 				IA_promote.promote(dpct.posi_end,piece,partie)
