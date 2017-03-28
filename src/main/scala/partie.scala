@@ -27,8 +27,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		else if (color == 'W'){pieces_W(num) += modif}
 	}
 	def modif_lost_piece(color:Char,num:Int,modif:Int){
-		if (color == 'B') {pieces_B(num) -= modif}
-		else if (color == 'W'){pieces_W(num) -= modif}
+		if (color == 'B') {lost_pieces_B(num) -= modif}
+		else if (color == 'W'){lost_pieces_W(num) -= modif}
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()

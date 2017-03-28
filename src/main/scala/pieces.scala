@@ -44,7 +44,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		/**coordonnées de la destination*/
 		var (x,y)=posi
 		val piece = matrix(position,partie)
-		val piece_met = matrix(posi,partie)
+		val piece_met = partie.matrix(x)(y)
 
 		incremente_cpt_nb_piece(partie,piece_met)
 
@@ -80,6 +80,8 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		//partie.save_to_PGN(partie)
 
 
+		//println( "pieces_B : "+partie.pieces_B.deep+"pieces_W : "+partie.pieces_W.deep)
+		//println( "lost_pieces_B : "+partie.lost_pieces_B.deep+"lost_pieces_W : "+partie.lost_pieces_W.deep)
 		if (partie.waiting == false){
 			partie.next_turn()
 		}
