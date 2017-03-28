@@ -87,16 +87,26 @@ object Interface extends SimpleSwingApplication{
 		}
 
 		class MainWindow() extends MainFrame{
+			var meta_box = new BoxPanel(Orientation.Vertical) 
 			var box = new BoxPanel(Orientation.Horizontal) 
+			var under_box = new BoxPanel(Orientation.Horizontal) 
 			var menu_principal = new MainMenu(this)		
 			def init_menu()={
 				title = "Chess"
-				contents = box
+				contents = meta_box
+				meta_box.contents.clear()
+				meta_box.contents+= box 
+				meta_box.contents+= under_box
+				under_box.contents.clear()
+				under_box.revalidate()
+				under_box.repaint()
 				box.contents.clear()
-				box.contents += menu_principal
+				box.contents+= menu_principal
 				menu_principal.set_menu()
 				box.revalidate()
 				box.repaint()
+				meta_box.revalidate()
+				meta_box.repaint()
 			}
 		}
 
@@ -170,7 +180,7 @@ object Interface extends SimpleSwingApplication{
 
 				}
 			}
-
+			this.maximumSize = new Dimension(50,50)
 		}
 		/**Grille de taille i,j contenant les différentes cases*/
 		class Echiquier(i:Int,j:Int,window:MainWindow,partie:Partie) extends GridPanel(i,j){
@@ -261,6 +271,12 @@ object Interface extends SimpleSwingApplication{
 					}
 					this.contents+= retour
 				}
+				var save_game = new Button(){
+						action = Action("Save_game"){
+							// SAVE FUNCTION
+						}
+					}
+					this.contents+= save_game
 				this.revalidate()
 				this.repaint()
 			}
@@ -279,6 +295,8 @@ object Interface extends SimpleSwingApplication{
 				this.revalidate()
 				this.repaint()
 			}
+
+
 			def promote(posi:(Int,Int),color:Char,piece:Piece) = {
 				partie.waiting = true
 				this.contents+= new PiecePanel(posi,color,piece,this,partie)
@@ -302,7 +320,7 @@ object Interface extends SimpleSwingApplication{
 				this.repaint()
 			}
 		}
-		class HeadUpBar(partie:Partie) extends GridPanel(1,3) {
+		class HeadUpBar(partie:Partie) extends GridPanel(3,1) {
 			var white_timer = new TimerDisplay('W')
 			this.contents+= white_timer
 			var notif = new Notification(partie)
@@ -320,7 +338,7 @@ object Interface extends SimpleSwingApplication{
 			}
 		}
 		/**Ecran de jeu contenant l'échiquier de taille i,j*/
-		class EcranPartie(i:Int,j:Int,window:MainWindow,partie:Partie) extends BoxPanel(Orientation.Vertical){
+		class EcranPartie(i:Int,j:Int,window:MainWindow,partie:Partie) extends FlowPanel(){
 			var head_up_bar = new HeadUpBar(partie)
 			var plateau = new Echiquier(i,j,window,partie)
 			val back_menu = new Button{
@@ -346,12 +364,13 @@ object Interface extends SimpleSwingApplication{
 				}
 				plateau.reset_all()
 				window.box.contents += this
-				this.contents+=head_up_bar
-				this.contents+=plateau
-				this.contents+= new GridPanel(1,2){
+				window.under_box.contents.clear()
+				window.under_box.contents += new GridPanel(1,2){
 					contents+= back_menu
 					contents+= quit_program
 				}
+				this.contents+=head_up_bar
+				this.contents+=plateau
 				revalidate()
 				repaint()
 			}	
