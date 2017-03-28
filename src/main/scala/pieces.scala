@@ -77,11 +77,6 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)		
 		partie.moves_50_check(partie)
 		partie.repetitions_3_check(partie)
-		//partie.save_to_PGN(partie)
-
-
-		//println( "pieces_B : "+partie.pieces_B.deep+"pieces_W : "+partie.pieces_W.deep)
-		//println( "lost_pieces_B : "+partie.lost_pieces_B.deep+"lost_pieces_W : "+partie.lost_pieces_W.deep)
 		if (partie.waiting == false){
 			partie.next_turn()
 		}

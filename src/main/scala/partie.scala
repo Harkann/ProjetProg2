@@ -5,6 +5,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
+	/**la partie de l'interface contenant l'echiquier*/
 	var game_window:Interface.EcranPartie = null
 	var white_timer:Thread = null
 	var black_timer:Thread = null

@@ -18,7 +18,6 @@ class TimerClock(color:Char,partie:Partie) extends Runnable(){
 			current_time_left = current_duration
 		}
 		else {
-			println("fin au temps")
 			is_running = false
 			partie.perdu(color,"temps")
 		}

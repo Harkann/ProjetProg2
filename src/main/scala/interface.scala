@@ -3,26 +3,36 @@ import Array._
 import java.awt.Color
 
 object Interface extends SimpleSwingApplication{
+	/**un bouton a été actionné*/
 	var is_button_clicked = false
+	/**coordonnées du bouton actionné, ou 0*/
 	var button_clicked_i = 0
+	/**coordonnées du bouton actionné, ou 0*/
 	var button_clicked_j = 0
+	/**Objet piece sélectionnée, ou null*/
 	var piece_selected:Piece = null
+	/**Mouvements possibles de l'objet pièce*/
 	var piece_allowed_move:List[(Int,Int)] = List()
+	/**Prises possibles de l'objet pièce*/
 	var piece_allowed_take:List[(Int,Int)] = List()
+	/**Partie 1 dans le cas d'un Ba4 */
 	var partie1:Partie = null
+	/**Partie 1 dans le cas d'un Ba4 */
 	var partie2:Partie = null
-	/**Boutons permettant de lancer la partie*/
+	/**Boutons permettant de lancer la partie classique*/
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
 			Current_Config.type_partie = ""
 			window.box.contents.clear()
+			/**Partie crée*/
 			var partie = new Partie()
+			/**Interface de la partie crée*/
 			var interface_partie = new EcranPartie(8,8,window,partie)
 			partie.partie_nb_ia(nbIA,colorIA,interface_partie)
 			interface_partie.spawn_game()
 		}
 	}
-
+	/**Boutons permettant de lancer la partie de Ba4*/
 	class VarPartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
 			Current_Config.type_partie = "var"
@@ -31,7 +41,9 @@ object Interface extends SimpleSwingApplication{
 			partie1.numero = 1
 			partie2 = new Partie()
 			partie2.numero = 2
+			/**Interface de la partie1 crée*/
 			var interface_partie1 = new EcranPartie(8,8,window,partie1)
+			/**Interface de la partie2 crée*/
 			var interface_partie2 = new EcranPartie(8,8,window,partie2)
 			partie1.partie_nb_ia(nbIA,colorIA,interface_partie1)
 			partie2.partie_nb_ia(nbIA,colorIA,interface_partie2)
@@ -39,6 +51,7 @@ object Interface extends SimpleSwingApplication{
 			interface_partie2.spawn_game()
 		}
 	}
+	/**Bouton quittant la fenetre @window et stoppant @partie */
 	class QuitButton(window:MainWindow,partie:Partie) extends Button{
 		action = Action("Quit Game"){
 			window.closeOperation()
@@ -47,7 +60,7 @@ object Interface extends SimpleSwingApplication{
 			}
 		}
 	}
-
+	/**NOT_IMPLEMENTED*/
 	class SettingsButton(window:MainWindow) extends Button{
 		action = Action("Settings"){}
 	}
@@ -62,9 +75,9 @@ object Interface extends SimpleSwingApplication{
 		val game_two_players = new PartieButton("Player vs. Player",0,'0',window)
 		/**bouton qui lance une partie avec deux ia*/
 		val game_two_ia = new PartieButton("IA vs. IA",2,'0',window)
-
-		val game_var = new VarPartieButton("VAR",2,'0',window)
-		/** */
+		/**bouton qui lance une partie de Blitz à 4 */
+		val game_var = new VarPartieButton("VAR",0,'0',window)
+		/**bouton qui permet d'accéder aux paramètre NOT_IMPLEMENTED*/
 		val settings_butt = new SettingsButton(window)
 		/**bouton qui ferme l'interface*/
 		val quit_program = new QuitButton(window,null)
@@ -82,17 +95,23 @@ object Interface extends SimpleSwingApplication{
 			repaint()
 		}
 	}
-
+	/**NOT IMPLEMENTED */
 	class SettingsMenu(window:MainWindow) extends BoxPanel(Orientation.Vertical){
 
 	}
-
+	/**Ecran principal (contiendra l'integralité de l'interface) */
 	class MainWindow() extends MainFrame{
+		/**contient la totalité de l'interface */
 		var meta_box = new BoxPanel(Orientation.Vertical) 
+		/**contient le menu ou l'ecran de partie */
 		var box = new BoxPanel(Orientation.Horizontal) 
+		/**contient les boutons inferieurs en partie */
 		var under_box = new BoxPanel(Orientation.Horizontal) 
+		/**contient les notifications en partie */
 		var upper_box = new BoxPanel(Orientation.Horizontal) 
+		/**menu/ecran d'accueil */
 		var menu_principal = new MainMenu(this)		
+		/**affiche le menu principal*/
 		def init_menu()={
 			title = "Chess"
 			contents = meta_box
@@ -118,23 +137,24 @@ object Interface extends SimpleSwingApplication{
 
 	/**Case de l'échiquier*/
 	class Case(i:Int,j:Int,plateau:Echiquier,partie:Partie) extends Button{
+		/**couleur piece selectionnée*/
 		val myGreen = new Color (48, 163, 115)
+		/**couleur dpct possible*/
 		val myBlue = new Color (0, 3, 112)
+		/**couleur prise possible*/
 		val myRed = new Color (112, 0, 0)
+		/**objet piece a la position i,j*/
 		var piece = partie.matrix(i)(j)
+		/**bouton actionné*/
 		var is_clicked = false
-
-		def set_is_clicked(value:Boolean){
-			is_clicked = value
-		}
-
+		/**clic sur la case*/
 		def clic(){
 			button_clicked_i = i
 			button_clicked_j = j
 			is_clicked = true
 			is_button_clicked = true
 		}
-
+		/**recupere l'image de la piece sur la case*/
 		def get_image(){
 			piece = partie.matrix(i)(j)
 			if (piece != null){icon = piece.image}
@@ -142,7 +162,7 @@ object Interface extends SimpleSwingApplication{
 			this.revalidate()
 			this.repaint()
 		}
-
+		/**selectionne l'objet piece sur la case*/
 		def select_piece(){
 			piece_selected = partie.get_piece(i,j)
 			colorie("green")
@@ -152,11 +172,12 @@ object Interface extends SimpleSwingApplication{
 			for ((a,b) <- piece_allowed_move){ plateau.Cells(a)(b).colorie("blue") }
 			for ((a,b) <- piece_allowed_take){ plateau.Cells(a)(b).colorie("red") }
 		}
-
+		/**initialise la couleur de la case(noir ou blanc)*/
 		def init_colors() = {
 			if((i+j)%2 == 0){ background = java.awt.Color.BLACK }
 			else{ background = java.awt.Color.WHITE }
 		}
+		/**set la couleur de la case*/
 		def colorie(couleur:String) ={
 			if (couleur == "green"){ background = myGreen }
 			else if (couleur == "red"){ background = myRed }
@@ -188,6 +209,7 @@ object Interface extends SimpleSwingApplication{
 	}
 	/**Grille de taille i,j contenant les différentes cases*/
 	class Echiquier(i:Int,j:Int,window:MainWindow,partie:Partie) extends GridPanel(i,j){
+		/**matrice des cases*/
 		var Cells = ofDim[Case](9,9)
 		for (i <- 8 to 1 by -1){
 			for( j <- 1 to 8){
@@ -196,6 +218,7 @@ object Interface extends SimpleSwingApplication{
 			}
 		}
 		reset_all()
+		/**reinitialise les couleurs/images/selections*/
 		def reset_all() = {
 			for( i <- 8 to 1 by -1) {
 				for( j <- 1 to 8) {
@@ -210,7 +233,7 @@ object Interface extends SimpleSwingApplication{
 		}
 		this.maximumSize = new Dimension(Current_Config.res_x,Current_Config.res_y)
 	}
-
+	/**bouton pour promotion*/
 	class PieceButton(posi:(Int,Int),color:Char,piece:Piece,piece_type:String,notif:Notification,partie:Partie) extends Button {
 		this.action = Action(""){
 			piece.asInstanceOf[Peon].promo(posi,piece_type,partie)
@@ -219,23 +242,28 @@ object Interface extends SimpleSwingApplication{
 			notif.initial()
 		}
 	}
-
+	/**interface pour la promotion*/
 	class PiecePanel(posi:(Int,Int),color:Char,piece:Piece,notif:Notification,partie:Partie) extends GridPanel(1,4) {
+		/**promotion en reine*/
 		val queen = new PieceButton(posi,color,piece,"Qu",notif,partie)
 		this.contents+= queen
 		queen.icon = Tools.icon_resized(color+"Qu.PNG",Tools.min_size/20,Tools.min_size/20)
+		/**promotion en fou*/
 		val bishop = new PieceButton(posi,color,piece,"Bi",notif,partie)
 		this.contents+=bishop
 		bishop.icon = Tools.icon_resized(color+"Bi.PNG",Tools.min_size/20,Tools.min_size/20)
+		/**promotion en cavalier*/
 		val knight = new PieceButton(posi,color,piece,"Kn",notif,partie)
 		this.contents+=knight
 		knight.icon = Tools.icon_resized(color+"Kn.PNG",Tools.min_size/20,Tools.min_size/20)
+		/**promotion en tour*/
 		val tower = new PieceButton(posi,color,piece,"To",notif,partie)
 		this.contents+=tower
 		tower.icon = Tools.icon_resized(color+"To.PNG",Tools.min_size/20,Tools.min_size/20)
 		this.revalidate()
 		this.repaint()
 	}
+	/**notification de fin de partie*/
 	class TextAreaEnd(color:Char,type_end:String,complement:String,numero:Int) extends GridPanel(3,1){
 		type_end match {
 			case "MAT" => {
@@ -267,21 +295,52 @@ object Interface extends SimpleSwingApplication{
 		this.revalidate()
 		this.repaint()
 	}
+	/**NOT IMPLEMENTED*/
+	class DispoButton(color:Char,piece_type:String,partie:Partie) extends Button {
+		
+	}
+	/**NOT IMPLEMENTED*/
+	class Pieces_dispo(partie:Partie,color:Char) extends GridPanel(5,1){
+		val queen = new DispoButton(color,"Qu",partie)
+		this.contents+= queen
+		queen.icon = Tools.icon_resized(color+"Qu.PNG",Tools.min_size/20,Tools.min_size/20)
+		val bishop = new DispoButton(color,"Bi",partie)
+		this.contents+=bishop
+		bishop.icon = Tools.icon_resized(color+"Bi.PNG",Tools.min_size/20,Tools.min_size/20)
+		val knight = new DispoButton(color,"Kn",partie)
+		this.contents+=knight
+		knight.icon = Tools.icon_resized(color+"Kn.PNG",Tools.min_size/20,Tools.min_size/20)
+		val tower = new DispoButton(color,"To",partie)
+		this.contents+=tower
+		tower.icon = Tools.icon_resized(color+"To.PNG",Tools.min_size/20,Tools.min_size/20)
+		val peon = new DispoButton(color,"Pe",partie)
+		this.contents+=peon
+		tower.icon = Tools.icon_resized(color+"Pe.PNG",Tools.min_size/20,Tools.min_size/20)
+		this.revalidate()
+		this.repaint()
+	}
+	/**Notifications*/
 	class Notification(partie:Partie) extends BoxPanel(Orientation.Vertical){
+		/**le timer est-il activé ?*/
 		var timer = true
+		/**this*/
+		var notif = this
+		/**initialise les notifications et les boutons en fonction des parametres*/
 		def initial():Unit = {
 			this.contents.clear()
 			if (Current_Config.type_partie != "var"){
+				/**annule le dernier mouvement*/
 				var retour = new Button(){
 					action = Action("Return"){partie.return_back(partie)}
 					enabled = Current_Config.return_allowed
 				}
 				this.contents+= new FlowPanel(retour)
+				/**sauvegarde la partie au format PGN*/
 				var save_game = new Button(){
 					action = Action("Save_game"){partie.save_to_PGN(partie,"*",partie.player)}
 				}
 				this.contents+= new FlowPanel(save_game)
-				val notif = this
+				/**demarre le timer*/
 				var start_time = new Button(){
 					action = Action("Start Timer"){
 						partie.is_interface = true
@@ -297,7 +356,7 @@ object Interface extends SimpleSwingApplication{
 				this.contents+= new FlowPanel(start_time)
 			}
 			else{
-				val notif = this
+				/**demarre le timer (partie de Ba4)*/
 				var start_time = new Button(){
 					action = Action("Start Timer"){
 						partie1.is_interface = true
@@ -319,18 +378,21 @@ object Interface extends SimpleSwingApplication{
 		initial()
 		this.revalidate()
 		this.repaint()
-
+		/**affiche l'interface de promotion*/
 		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
 			partie.waiting = true
 			this.contents+= new FlowPanel(new PiecePanel(posi,color,piece,this,partie))
 			this.revalidate()
 			this.repaint()
 		}
+		/**affiche le texte de fin de partie 
+			- @type_end : "MAT" ou "PAT"
+			- @complement : raison de la fin de partie
+		*/
 		def text_end(color:Char,type_end:String,complement:String,num:Int):Unit = {
 			initial()
 			partie.type_end = (type_end,color)
 			partie.save_to_PGN(partie,type_end,color)
-			println(partie.type_end)
 			if (Current_Config.type_partie != "var"){this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement,0))}
 			else {
 				if (partie.numero == 1){partie2.game_window.head_up_bar.notif.text_end(color,type_end,complement,1)}
@@ -344,24 +406,33 @@ object Interface extends SimpleSwingApplication{
 			this.repaint()
 		}
 	}
+	/**affichage du temps restant*/
 	class TimerDisplay(color:Char) extends Label {
 		def set(time:(Int,Int,Int)) = {
+			/**temps restant*/
 			var (hour,min,sec) = time
-			this.text = color+": "+hour+":"+min+":"+sec
+			color match {
+				case 'W' => this.text = "Blanc : "+hour+":"+min+":"+sec
+				case 'B' => this.text = "Noir : "+hour+":"+min+":"+sec
+			}
 			this.revalidate()
 			this.repaint()
 		}
 	}
+	/**contient boutons + notifs + timers*/
 	class HeadUpBar(partie:Partie) extends BoxPanel(Orientation.Horizontal) {
+		/**timer blanc*/
 		var white_timer = new TimerDisplay('W')
 		this.contents+= new FlowPanel(white_timer)
+		/**notifications*/
 		var notif = new Notification(partie)
 		this.contents+= new FlowPanel(notif)
+		/**timer noir*/
 		var black_timer = new TimerDisplay('B')
 		this.contents+= new FlowPanel(black_timer)
 		this.revalidate()
 		this.repaint()
-
+		/**met a jour le temps d'un timer*/
 		def edit_timer(color:Char,time:(Int,Int,Int)) = {
 			color match {
 				case 'W' => white_timer.set(time)
@@ -379,8 +450,8 @@ object Interface extends SimpleSwingApplication{
 				window.init_menu()
 			}
 		}
-
 		val quit_program = new QuitButton(window,partie)
+		/**initialise l'interface, la partie et lance la partie*/
 		def spawn_game():Unit = {
 			is_button_clicked = false
 			button_clicked_i = 0
@@ -407,6 +478,7 @@ object Interface extends SimpleSwingApplication{
 			repaint()
 		}	
 	}
+
 	var RootWindow = new MainWindow()
 	def top = RootWindow
 	Current_Config.init_config()
