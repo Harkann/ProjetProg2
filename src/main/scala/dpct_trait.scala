@@ -251,8 +251,7 @@ trait Promotion extends Standard {
 
 trait Prise_en_passant {
 	def prise_en_passant(position:(Int,Int),partie:Partie,c:Int) : List[(Int,Int)] = {
-		
-		if (partie.nb_turn >= partie.dplct_save.length) {return List ()}
+		if (partie.dplct_save.length == 0) {return List ()}
 		val dpct = partie.last_move(partie)
 		val (i,j)=position
 		if ((Math.abs(dpct.j-j) == 1) &&
