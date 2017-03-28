@@ -1,16 +1,24 @@
 object Config {
-	val delai_ia = 1
-	val res_x = 700
-	val res_y = 1000
+	val delai_ia = 1 //milisecondes
+	val res_x = 700 //pixels
+	val res_y = 1000 //pixels
 	val possible_proms = List("Qu","Bi","Kn","To")
 	val return_allowed = true
-
+	
 	// Gestion du temps 
-	val timer = true
+	val timer = false
 	val nb_periods = 1
 	val nb_coups = List(0) //0 -> KO
 	val temps_cadences = List(3663000) //milisecondes
 	val increment_cadences = List(30000)
+
+
+	/** NOT IMPLEMENTED*/
+	var nb_ia = 2
+	/** NOT IMPLEMENTED*/	
+	var color_ia = '0'
+	/** NOT IMPLEMENTED*/
+	var type_partie = '0'
 }
 
 

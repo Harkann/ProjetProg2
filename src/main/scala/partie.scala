@@ -29,8 +29,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	var waiting = false
 	var matrix_save = ofDim[Piece](9,9);
 	var last_important_change = 0
-
-
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/

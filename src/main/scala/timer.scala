@@ -11,7 +11,7 @@ class TimerClock(color:Char,partie:Partie) extends Runnable(){
 	}
 	def next_period() = {
 		current_period+=1
-		if (current_period <= Config.nb_periods){
+		if (current_coups < partie.nb_turn/2 && current_period <= Config.nb_periods){
 			current_duration = Config.temps_cadences(current_period-1)
 			current_coups = Config.nb_coups(current_period-1)
 			current_increment = Config.increment_cadences(current_period-1)
@@ -32,7 +32,6 @@ class TimerClock(color:Char,partie:Partie) extends Runnable(){
 	def running():Unit = {
 		while (is_running && partie.is_running){
 			if (current_time_left > 0){
-				println(current_time_left)
 				try {
 					partie.game_window.head_up_bar.edit_timer(color,display(current_time_left))
 					Thread.sleep(10)
@@ -52,21 +51,14 @@ class TimerClock(color:Char,partie:Partie) extends Runnable(){
 	}
 	def waiting():Unit = {
 		while (!is_running && partie.is_running){
-			if(Thread.interrupted){
-				//println("interrupted")
-				running()
-			}
+			if(Thread.interrupted){running()}
 			else {
-				try {
-					Thread.sleep(100)
-					//println("wait "+color)
-				}
+				try {Thread.sleep(100)}
 				catch {
 					case e :InterruptedException => {
 						is_running = !is_running
 						running()
 					}
-
 				}
 			}
 		}
