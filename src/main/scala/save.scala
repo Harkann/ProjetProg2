@@ -1,4 +1,7 @@
 
+import scala.collection.mutable.ArrayBuffer
+
+
 class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 	val posi_begin = p_begin
 	val posi_end = p_end
@@ -8,6 +11,8 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 	val piece_met = partie.matrix(x)(y)
 	var optional_other_dpct : Dpct = null
 	var is_roque = ""
+	var promotion = ""
+	var echec_other_player = ""
 
 	def do_dpct(matrix:Array[Array[Piece]]){
 		matrix(i)(j) = null
@@ -54,52 +59,201 @@ trait Save {
 	
 }
 
-trait Moves_50 {
-	def moves_50_check(partie: Partie) {
-		if (partie.nb_turn-partie.last_important_change > 50) {
-			partie.pat("50")
-		}
-	}
-}
 
-trait Repetions_3 extends Standard {
-	def repetitions_3_check(partie:Partie) {
-		var matrix_intermediate = copy_of(partie.matrix_save)
-		var nb_repetition = 0
-		if ((partie.last_important_change == 0) && (equal(partie.matrix,matrix_intermediate))){
-				nb_repetition +=1
-				//println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
-			}
-		for( i <- partie.last_important_change+1 to partie.dplct_save.length) {
-			var dpct = partie.dplct_save(i-1)
-			//println(dpct.piece+" "+dpct.posi_begin+" "+dpct.posi_end)
-			dpct.do_dpct(matrix_intermediate)
-			if (equal(partie.matrix,matrix_intermediate)){
-				nb_repetition +=1
-				//println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
-			}
-		}
-		if(nb_repetition >= 3){
-			partie.pat("3")
-		}
-	}
-	
-}
-
-trait Convesion_to_PGN {
+trait Conversion_to_PGN {
 	val lettre = Array('z','a','b','c','d','e','f','g','h')
-	def save_to_PGN(partie:Partie){
+	def save_to_PGN(partie:Partie):String = {
+		var texte = ""
 		for( i <- 0 to partie.dplct_save.length-1) {
-			if (i%2 == 0) {println((i/2)+". ")}
+			if (i%2 == 0) { texte+=((i/2+1)+". ")}
 			val dpct = partie.dplct_save(i)
 			if (dpct.is_roque != ""){
-				println(dpct.is_roque)
+				texte += dpct.is_roque
+			}
+			else if (dpct.promotion != ""){
+				texte += lettre(dpct.x)+dpct.y+"="+dpct.promotion
 			}
 			else {
-				println(dpct.piece.PGN_name)
+				texte += dpct.piece.PGN_name
+				if (dpct.piece_met != null) {
+					texte += "x"
+				}
+				texte += ""+(lettre(dpct.i))+dpct.j+(lettre(dpct.x))+dpct.y
 			}
-			
+			texte+=" "
+			if (dpct.echec_other_player != "") {
+				texte += dpct.echec_other_player+ " "
+			}
+
+		}
+		return texte
+	}
+	
+	def load(texte:String):scala.collection.mutable.ArrayBuffer[Dpct] = {
+		val len = texte.length
+		var index = 0
+		var dpct :Dpct = null 
+		var nb_turn = 0
+		var partie = new Partie
+		var dpct_List : ArrayBuffer[Dpct]= ArrayBuffer()
+		var is_comment = false
+		while (index < len) {
+			texte(index) match {
+				case '[' => {
+					is_comment = true
+					index +=1
+				}
+				case ']' => {
+					is_comment = false
+					index +=1
+				}
+				case _ if (is_comment) => { index += 1 }
+
+				case '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9' =>{
+					dpct_List += dpct
+					var (new_index,new_nb_turn) = get_nb_turn(texte,index)
+					index = new_index
+					nb_turn = new_nb_turn
+				}
+
+			}
+		}
+		return dpct_List
+	}
+
+	def get_nb_turn(texte:String,beginning_nbturn:Int):(Int,Int) ={
+		var index = beginning_nbturn
+		var res = 0
+		while (texte(index) !='.'){
+			res = res*10 + texte(index).toInt -48
+			index+=1
+		}
+		return (index+2,res)
+	}
+
+def read_dcpt(texte:String,index:Int) : (Int,Int,Int,Int,Int) = {
+		texte(index) match {
+			case  '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8' =>{
+				var i = 0
+				var j = texte(index).toInt-48
+				var x = line_to_int(texte(index+1))
+				var y = texte(index+2).toInt-48
+				var new_index = index+3
+				return (i,j,x,y,new_index)
+			}
+			case  'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h' =>{
+				texte(index+1) match {
+					case 'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h' => {
+						var i = line_to_int(texte(index))
+						var j = 0
+						var x = line_to_int(texte(index+1))
+						var y = texte(index+2).toInt-48
+						var new_index = index+3
+						return (i,j,x,y,new_index)
+					}
+					case '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8' =>{
+						texte(index+2) match {
+							case 'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h' =>{
+								var i = line_to_int(texte(index))
+								var j = texte(index+1).toInt-48
+								var x = line_to_int(texte(index+3))
+								var y = texte(index+3).toInt-48
+								var new_index = index+4
+								return (i,j,x,y,new_index)
+							}
+							case ' ' =>{
+								var i = 0
+								var j = 0
+								var x = line_to_int(texte(index))
+								var y = texte(index+1).toInt-48
+								var new_index = index+2
+								return (i,j,x,y,new_index)
+
+							} 
+							case '=' => {
+								var i = 0
+								var j = 0
+								var x = line_to_int(texte(index))
+								var y = texte(index+1).toInt-48
+								var new_index = index+2
+								return (i,j,x,y,new_index)
+							}
+						}
+						
+					} 
+
+				}
+			} 
 		}
 	}
-	//def load
-}
+
+/*
+	def read_move(texte:String,index:Int,player:Char,partie:Partie) : (Dcpt,Int) = {
+		texte(index) match {
+			case 'O' => {
+				return read_roque(texte,index,player,partie)
+			} 
+			case 'K'|'Q'|'B'|'N'|'R' => {
+				var (i,j,x,y,new_index) = read_dpct(texte,index+1)
+				var piece = read_find(texte(index),i,j,x,y,partie)
+				var dpct= new Dpct(piece,piece.position,(x,y))
+			}
+			case  'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h' =>{
+				var (i,j,x,y,new_index) = read_dpct(texte,index)
+				var piece = read_find(texte(index),i,j,x,y,partie)
+				var dpct= new Dpct(piece,piece.position,(x,y))
+				if (texte(new_index != ' ')){
+					// dcpt.optional_other_dpct ICI Il faut gérer la question de la promotion 
+				}
+			}
+			case _ =>read_move(texte,index+1,player,partie) 
+		}
+		
+	}*/
+
+	def read_roque(texte:String,i:Int,player:Char,partie:Partie):(Dpct,Int) = {
+		var ligne = 0
+		if (player == 'B') {ligne = 8} else {ligne=1}
+		var dpct : Dpct = null
+		var new_index = i
+		if (texte(i+3) == '-'){
+			dpct = new Dpct((ligne,5),(ligne,3),partie)
+			dpct.optional_other_dpct = new Dpct((i,1),(i,4),partie)
+			dpct.is_roque = "O-O-O"
+			new_index = i+5
+		}
+		else {
+			dpct = new Dpct((ligne,5),(ligne,7),partie)
+			dpct.optional_other_dpct = new Dpct((i,8),(i,6),partie)
+			dpct.is_roque = "O-O"
+			new_index = i+3
+		}
+		return (dpct,new_index)
+	}
+
+
+	def int_to_line(i:Int) : Char = {
+		return (97+i-1).toChar
+	}
+
+	def line_to_int(line:Char) : Int = {
+		return line.toInt-96
+	}
+
+	def read_find(piece_type:Char,i:Int,j:Int,x:Int,y:Int,partie:Partie) : Piece = {
+		for (ligne <- 1 to 8 ){
+			for (colonne <- 1 to 8){
+				var piece = partie.matrix(ligne)(colonne)
+				var (moves,attacks) = piece.move_piece_check((ligne,colonne))
+				if ((piece.PGN_name == piece_type) &&
+					((i==0)||(ligne==i))&&
+					((j==0)||(colonne==j))&&
+					(moves.contains((x,y)))){
+					return piece
+				}
+
+			}
+		}
+		return null
+	}
+} 

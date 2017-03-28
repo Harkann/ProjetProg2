@@ -214,6 +214,7 @@ object Interface extends SimpleSwingApplication{
 			case "Pat" =>this.contents+= new Label(){text = "Cause : plus aucun mouvements possibles"}
 			case _ => {}
 		}
+		//println(partie.load(partie.dplct_save))
 		this.revalidate()
 		this.repaint()
 	}

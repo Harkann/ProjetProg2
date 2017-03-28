@@ -232,13 +232,13 @@ trait Promotion extends Standard {
 		val piece = matrix(position,partie)
 		//val new_type = "Queen" // TEMPORAIRE
 		partie.modif_piece(piece.color,0,-1)
-		if (new_type == "Qu") {
+		if ((new_type == "Qu") || (new_type == "Q")) {
 			partie.matrix(i)(j) = new Queen (piece.color, position,partie)
 		}
-		else if (new_type == "To") {
+		else if ((new_type == "To")||(new_type == "R")) {
 			partie.matrix(i)(j) = new Tower (piece.color, position,partie)
 		}
-		else if (new_type == "Kn") {
+		else if ((new_type == "Kn")||(new_type == "N")) {
 			partie.matrix(i)(j) = new Knight (piece.color, position,partie)
 		}
 		else {

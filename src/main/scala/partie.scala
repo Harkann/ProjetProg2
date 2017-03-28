@@ -1,7 +1,7 @@
 import Array._
 import scala.collection.mutable.ArrayBuffer
 
-class Partie() extends Save with Moves_50 with Repetions_3 {
+class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PGN {
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
@@ -186,6 +186,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 			else{
 				var id_piece=piece.id
 				if (id_piece.substring(0,3)==player+"Ki"){
+					dplct_save(nb_turn-1).echec_other_player = "+"
 					return true
 				}
 			}
@@ -217,6 +218,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		/***/
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
+			dplct_save(nb_turn-1).echec_other_player = "#"
 			perdu(player,"")
 		}
 

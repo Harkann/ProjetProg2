@@ -14,7 +14,7 @@ class TimerClock(duration:Int,color:Char,partie:Partie) extends Runnable(){
 	def running():Unit = {
 		while (is_running && partie.is_running){
 			if (System.currentTimeMillis < end_time){
-				println(System.currentTimeMillis+" "+end_time)
+				//println(System.currentTimeMillis+" "+end_time)
 				try {
 					partie.game_window.head_up_bar.edit_timer(color,display(end_time.toInt-System.currentTimeMillis.toInt))
 					Thread.sleep(100)
@@ -27,7 +27,7 @@ class TimerClock(duration:Int,color:Char,partie:Partie) extends Runnable(){
 				}
 			}
 			else {
-				println("fin au temps")
+				//println("fin au temps")
 				is_running = false
 				partie.perdu(color,"temps")
 			}
@@ -37,13 +37,13 @@ class TimerClock(duration:Int,color:Char,partie:Partie) extends Runnable(){
 	def waiting():Unit = {
 		while (!is_running && partie.is_running){
 			if(Thread.interrupted){
-				println("interrupted")
+				//println("interrupted")
 				running()
 			}
 			else {
 				try {
 					Thread.sleep(100)
-					println("wait "+color)
+					//println("wait "+color)
 				}
 				catch {
 					case e :InterruptedException => {
