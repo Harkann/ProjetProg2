@@ -60,6 +60,13 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 			partie.last_important_change=partie.nb_turn
 			partie.matrix_save = copy_of(partie.matrix)
 		}
+		if(partie.is_mat(partie.other_player(piece.color))) {
+			dpct.echec_other_player = "#"
+		}
+		else if(partie.is_check(partie.other_player(piece.color))) {
+			dpct.echec_other_player = "+"
+		}
+		
 
 
 		promotion_check(dpct,partie)
@@ -69,7 +76,8 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)		
 		partie.moves_50_check(partie)
 		partie.repetitions_3_check(partie)
-		partie.save_to_PGN(partie)
+		//partie.save_to_PGN(partie)
+
 
 		if (partie.waiting == false){
 			partie.next_turn()

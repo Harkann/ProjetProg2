@@ -65,7 +65,7 @@ trait Save {
 
 trait Conversion_to_PGN {
 	val lettre = Array('z','a','b','c','d','e','f','g','h')
-	def save_to_PGN(partie:Partie) = {
+	def save_to_PGN(partie:Partie,type_end:String,color:Char) = {
 		val writer = new PrintWriter(new File("save.txt" ))
 			var texte = ""
 		for( i <- 0 to partie.dplct_save.length-1) {
@@ -90,6 +90,7 @@ trait Conversion_to_PGN {
 			}
 
 		}
+		//texte += raison
 		writer.write(texte)
 		writer.close()
 		println(texte)
