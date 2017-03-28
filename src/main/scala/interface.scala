@@ -273,7 +273,7 @@ object Interface extends SimpleSwingApplication{
 				}
 				var save_game = new Button(){
 						action = Action("Save_game"){
-							// SAVE FUNCTION
+							partie.save_to_PGN(partie,"*",partie.player)
 						}
 					}
 					this.contents+= save_game

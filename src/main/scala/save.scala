@@ -75,7 +75,8 @@ trait Conversion_to_PGN {
 				texte += dpct.is_roque
 			}
 			else if (dpct.promotion != ""){
-				texte += lettre(dpct.x)+dpct.y+"="+dpct.promotion
+				//println((lettre(dpct.x))+""+dpct.y+"="+dpct.promotion)
+				texte += (lettre(dpct.x))+""+dpct.y+"="+dpct.promotion
 			}
 			else {
 				texte += dpct.piece.PGN_name
@@ -88,12 +89,22 @@ trait Conversion_to_PGN {
 			if (dpct.echec_other_player != "") {
 				texte += dpct.echec_other_player+ " "
 			}
-
 		}
-		//texte += raison
+		type_end match {
+				case "MAT" => {
+					color match {
+						case 'W' => {texte += " 0-1 " } 
+						case 'B' => {texte += " 1-0 " } 
+					}
+				}
+				case "PAT" => {
+					texte += " 1/2-1/2 "
+				}
+				case _ =>  {texte+=" * "}
+			}
 		writer.write(texte)
 		writer.close()
-		println(texte)
+		//println(texte)
 	}
 	
 	def load(texte:String):scala.collection.mutable.ArrayBuffer[Dpct] = {
