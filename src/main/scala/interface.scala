@@ -90,13 +90,13 @@ object Interface extends SimpleSwingApplication{
 			title = "Chess"
 			contents = meta_box
 			meta_box.contents.clear()
-			meta_box.contents+= box 
+			meta_box.contents+= new FlowPanel(box) 
 			meta_box.contents+= under_box
 			under_box.contents.clear()
 			under_box.revalidate()
 			under_box.repaint()
 			box.contents.clear()
-			box.contents+= menu_principal
+			box.contents+= new FlowPanel(menu_principal)
 			menu_principal.set_menu()
 			box.revalidate()
 			box.repaint()
@@ -215,16 +215,16 @@ object Interface extends SimpleSwingApplication{
 	class PiecePanel(posi:(Int,Int),color:Char,piece:Piece,notif:Notification,partie:Partie) extends GridPanel(1,4) {
 		val queen = new PieceButton(posi,color,piece,"Qu",notif,partie)
 		this.contents+= queen
-		queen.icon = Tools.icon_resized(color+"Qu.PNG",30,30)
+		queen.icon = Tools.icon_resized(color+"Qu.PNG",Tools.min_size/20,Tools.min_size/20)
 		val bishop = new PieceButton(posi,color,piece,"Bi",notif,partie)
 		this.contents+=bishop
-		bishop.icon = Tools.icon_resized(color+"Bi.PNG",30,30)
+		bishop.icon = Tools.icon_resized(color+"Bi.PNG",Tools.min_size/20,Tools.min_size/20)
 		val knight = new PieceButton(posi,color,piece,"Kn",notif,partie)
 		this.contents+=knight
-		knight.icon = Tools.icon_resized(color+"Kn.PNG",30,30)
+		knight.icon = Tools.icon_resized(color+"Kn.PNG",Tools.min_size/20,Tools.min_size/20)
 		val tower = new PieceButton(posi,color,piece,"To",notif,partie)
 		this.contents+=tower
-		tower.icon = Tools.icon_resized(color+"To.PNG",30,30)
+		tower.icon = Tools.icon_resized(color+"To.PNG",Tools.min_size/20,Tools.min_size/20)
 		this.revalidate()
 		this.repaint()
 	}
@@ -257,34 +257,40 @@ object Interface extends SimpleSwingApplication{
 		this.repaint()
 	}
 	class Notification(partie:Partie) extends GridPanel(4,1){
+		var timer = true
 		def initial():Unit = {
 			this.contents.clear()
-			var retour = new Button(){
-				action = Action("Return"){
-					partie.return_back(partie)
+			if (Config.type_partie != "var"){
+				var retour = new Button(){
+					action = Action("Return"){
+						partie.return_back(partie)
+					}
+					enabled = Config.return_allowed
 				}
-				enabled = Config.return_allowed
-			}
-			this.contents+= new FlowPanel(retour)
-			var save_game = new Button(){
-				action = Action("Save_game"){
-					partie.save_to_PGN(partie,"*",partie.player)
+				this.contents+= new FlowPanel(retour)
+				var save_game = new Button(){
+					action = Action("Save_game"){
+						partie.save_to_PGN(partie,"*",partie.player)
+					}
 				}
+				this.contents+= new FlowPanel(save_game)
 			}
-			this.contents+= new FlowPanel(save_game)
+			
 			val notif = this
 			var start_time = new Button(){
 				action = Action("Start Timer"){
 					partie.is_interface = true
 					partie.start()
 					partie.white_timer.interrupt()
+					timer = false
 					notif.initial()
+					notif.text_init()
+					notif.revalidate()
+		notif.repaint()
 				}
-				enabled = Config.timer
+				enabled = Config.timer && notif.timer
 			}
 			this.contents+= new FlowPanel(start_time)
-			this.revalidate()
-			this.repaint()
 		}
 		initial()
 		text_init()
@@ -309,7 +315,6 @@ object Interface extends SimpleSwingApplication{
 			println(partie.type_end)
 			this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement))
 			partie.save_to_PGN(partie,type_end,color)
-
 			this.revalidate()
 			this.repaint()
 		}
@@ -323,7 +328,7 @@ object Interface extends SimpleSwingApplication{
 			this.repaint()
 		}
 	}
-	class HeadUpBar(partie:Partie) extends GridPanel(1,3) {
+	class HeadUpBar(partie:Partie) extends BoxPanel(Orientation.Horizontal) {
 		var white_timer = new TimerDisplay('W')
 		this.contents+= new FlowPanel(white_timer)
 		var notif = new Notification(partie)
@@ -372,8 +377,8 @@ object Interface extends SimpleSwingApplication{
 				contents+= back_menu
 				contents+= quit_program
 			}
-			this.contents+= new FlowPanel(new GridPanel(2,1){
-				contents+= head_up_bar
+			this.contents+= new FlowPanel(new BoxPanel(Orientation.Vertical){
+				contents+= new FlowPanel(head_up_bar)
 				contents+= new FlowPanel(plateau)
 				})
 			revalidate()

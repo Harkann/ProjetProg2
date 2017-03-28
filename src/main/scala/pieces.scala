@@ -162,7 +162,7 @@ with Id_creation with Peon_move with Promotion {
 	val num_type = 0
 	val name="Pe"
 	val PGN_name=""
-	val image = Tools.icon_resized(color+name+".PNG",50,50)
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -181,7 +181,7 @@ with Id_creation with Horizontal_Vertical{
 	val name = "To"
 	val PGN_name="R"
 	val num_type = 1
-	val image = Tools.icon_resized(color+name+".PNG",50,50)
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -197,7 +197,7 @@ with Id_creation with Jump{
 	val name="Kn"
 	val PGN_name="N"
 	val num_type = 2
-	val image = Tools.icon_resized(color+name+".PNG",50,50)
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = jump(position,partie)
@@ -211,7 +211,7 @@ with Id_creation with Diagonal{
 	val name="Bi"
 	val PGN_name="B"
 	val num_type = 3
-	val image = Tools.icon_resized(color+name+".PNG",50,50)
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -228,7 +228,7 @@ with Id_creation with Diagonal with Horizontal_Vertical{
 	val name = "Qu"
 	val PGN_name="Q"
 	val num_type = 4
-	val image = Tools.icon_resized(color+name+".PNG",50,50)
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive= true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -249,7 +249,7 @@ with Id_creation with King_move{
 	val name="Ki"
 	val PGN_name="K"
 	val num_type = 5
-	val image = Tools.icon_resized(color+name+".PNG",50,50)
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	partie.modif_piece(color,num_type,1)
