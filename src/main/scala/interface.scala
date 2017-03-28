@@ -9,9 +9,12 @@ object Interface extends SimpleSwingApplication{
 	var piece_selected:Piece = null
 	var piece_allowed_move:List[(Int,Int)] = List()
 	var piece_allowed_take:List[(Int,Int)] = List()
+	var partie1:Partie = null
+	var partie2:Partie = null
 	/**Boutons permettant de lancer la partie*/
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
+			Config.type_partie = ""
 			window.box.contents.clear()
 			var partie = new Partie()
 			var interface_partie = new EcranPartie(8,8,window,partie)
@@ -22,9 +25,12 @@ object Interface extends SimpleSwingApplication{
 
 	class VarPartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
+			Config.type_partie = "var"
 			window.box.contents.clear()
-			var partie1 = new Partie()
-			var partie2 = new Partie()
+			partie1 = new Partie()
+			partie1.numero = 1
+			partie2 = new Partie()
+			partie2.numero = 2
 			var interface_partie1 = new EcranPartie(8,8,window,partie1)
 			var interface_partie2 = new EcranPartie(8,8,window,partie2)
 			partie1.partie_nb_ia(nbIA,colorIA,interface_partie1)
@@ -43,7 +49,6 @@ object Interface extends SimpleSwingApplication{
 	}
 
 	class SettingsButton(window:MainWindow) extends Button{
-
 		action = Action("Settings"){}
 	}
 	/**Menu principal*/
@@ -86,16 +91,21 @@ object Interface extends SimpleSwingApplication{
 		var meta_box = new BoxPanel(Orientation.Vertical) 
 		var box = new BoxPanel(Orientation.Horizontal) 
 		var under_box = new BoxPanel(Orientation.Horizontal) 
+		var upper_box = new BoxPanel(Orientation.Horizontal) 
 		var menu_principal = new MainMenu(this)		
 		def init_menu()={
 			title = "Chess"
 			contents = meta_box
 			meta_box.contents.clear()
+			meta_box.contents+= upper_box
 			meta_box.contents+= new FlowPanel(box) 
 			meta_box.contents+= under_box
 			under_box.contents.clear()
 			under_box.revalidate()
 			under_box.repaint()
+			upper_box.contents.clear()
+			upper_box.revalidate()
+			upper_box.repaint()
 			box.contents.clear()
 			box.contents+= new FlowPanel(menu_principal)
 			menu_principal.set_menu()
@@ -229,7 +239,7 @@ object Interface extends SimpleSwingApplication{
 		this.revalidate()
 		this.repaint()
 	}
-	class TextAreaEnd(color:Char,type_end:String,complement:String) extends GridPanel(2,1){
+	class TextAreaEnd(color:Char,type_end:String,complement:String,numero:Int) extends GridPanel(3,1){
 		type_end match {
 			case "MAT" => {
 				this.background = java.awt.Color.RED
@@ -254,6 +264,12 @@ object Interface extends SimpleSwingApplication{
 			case "Pat" =>this.contents+= new Label(){text = "Cause : plus aucun mouvements possibles"}
 			case _ => this.contents+= new Label(){text = " "}
 		}
+
+		numero match {
+			case 1 => this.contents+= new Label(){text = "Echiquier : 1"}
+			case 0 => this.contents+= new Label(){text = "Echiquier : 2"}
+			case _ => this.contents+= new Label(){text = " "}
+		}
 		this.revalidate()
 		this.repaint()
 	}
@@ -275,26 +291,43 @@ object Interface extends SimpleSwingApplication{
 					}
 				}
 				this.contents+= new FlowPanel(save_game)
-			}
-			
-			val notif = this
-			var start_time = new Button(){
-				action = Action("Start Timer"){
-					partie.is_interface = true
-					partie.start()
-					partie.white_timer.interrupt()
-					timer = false
-					notif.initial()
-					notif.text_init()
-					notif.revalidate()
-		notif.repaint()
+
+				val notif = this
+				var start_time = new Button(){
+					action = Action("Start Timer"){
+						partie.is_interface = true
+						partie.start()
+						partie.white_timer.interrupt()
+						timer = false
+						notif.initial()
+						notif.revalidate()
+						notif.repaint()
+					}
+					enabled = Config.timer && notif.timer
 				}
-				enabled = Config.timer && notif.timer
+				this.contents+= new FlowPanel(start_time)
 			}
-			this.contents+= new FlowPanel(start_time)
+			else{
+				val notif = this
+				var start_time = new Button(){
+					action = Action("Start Timer"){
+						partie1.is_interface = true
+						partie2.is_interface = true
+						partie1.start()
+						partie2.start()
+						partie1.white_timer.interrupt()
+						partie2.white_timer.interrupt()
+						timer = false
+						notif.initial()
+						notif.revalidate()
+						notif.repaint()
+					}
+					enabled = Config.timer && notif.timer
+				}
+				this.contents+= new FlowPanel(start_time)
+			}
 		}
 		initial()
-		text_init()
 		this.revalidate()
 		this.repaint()
 
@@ -305,19 +338,29 @@ object Interface extends SimpleSwingApplication{
 			this.revalidate()
 			this.repaint()
 		}
-		def text_init():Unit = {
-			this.contents+= new FlowPanel(new TextAreaEnd('0',"",""))
-			this.revalidate()
-			this.repaint()
-		}
-		def text_end(color:Char,type_end:String,complement:String):Unit = {
+		def text_end(color:Char,type_end:String,complement:String,num:Int):Unit = {
 			initial()
 			partie.type_end = (type_end,color)
-			println(partie.type_end)
-			this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement))
 			partie.save_to_PGN(partie,type_end,color)
+			println(partie.type_end)
+			if (Config.type_partie != "var"){this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement,0))}
+			else {
+				
+				if (partie.numero == 1){
+					partie2.game_window.head_up_bar.notif.text_end(color,type_end,complement,1)
+				}
+				else{
+					this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement,num))
+				}
+				this.revalidate()
+				this.repaint()
+				partie1.stop()
+				partie2.stop()
+
+			}
 			this.revalidate()
 			this.repaint()
+
 		}
 
 	}
@@ -373,22 +416,20 @@ object Interface extends SimpleSwingApplication{
 			}
 			plateau.reset_all()
 			window.box.contents += this
+			window.upper_box.contents.clear() 
+			window.upper_box.contents += new FlowPanel(head_up_bar)
 			window.under_box.contents.clear()
 			window.under_box.contents += new GridPanel(1,2){
 				contents+= back_menu
 				contents+= quit_program
 			}
-			this.contents+= new FlowPanel(new BoxPanel(Orientation.Vertical){
-				contents+= new FlowPanel(head_up_bar)
-				contents+= new FlowPanel(plateau)
-				})
+			this.contents+= new FlowPanel(plateau)
 			revalidate()
 			repaint()
 		}	
 	}
 	var RootWindow = new MainWindow()
 	def top = RootWindow
-	//il faudrait tester la resolution minimale sur d'autres ordis...
 	top.preferredSize = new Dimension(Config.res_x,Config.res_y) //schwoon 1300*700
 	RootWindow.init_menu()
 }
