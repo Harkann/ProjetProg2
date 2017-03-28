@@ -223,7 +223,7 @@ object Interface extends SimpleSwingApplication{
 			this.repaint()
 		}
 		class TextAreaEnd(color:Char,type_end:String,complement:String) extends GridPanel(2,1){
-			println(color+" "+type_end+" "+complement)
+			//println(color+" "+type_end+" "+complement)
 			type_end match {
 				case "MAT" => {
 					this.background = java.awt.Color.RED
@@ -288,6 +288,7 @@ object Interface extends SimpleSwingApplication{
 			def text_end(color:Char,type_end:String,complement:String) = {
 				initial()
 				this.contents+= new TextAreaEnd(color,type_end,complement)
+				partie.save_to_PGN(partie,type_end,color)
 				this.revalidate()
 				this.repaint()
 			}

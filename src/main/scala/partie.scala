@@ -184,7 +184,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 			else{
 				var id_piece=piece.id
 				if (id_piece.substring(0,3)==player+"Ki"){
-					dplct_save(nb_turn-1).echec_other_player = "+"
 					return true
 				}
 			}
@@ -194,7 +193,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	}
 
 	/**renvoie si le joueur "player" est mat*/
-	def is_mat(player: Char) : Unit = {
+	def is_mat(player: Char) : Boolean = {
 		/**id du roi*/
 		val id_king=player+"Ki"+0
 		/**position du roi*/
@@ -216,9 +215,11 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		/***/
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
-			dplct_save(nb_turn-1).echec_other_player = "#"
+			//dplct_save(nb_turn-1).echec_other_player = "#"
 			perdu(player,"")
+			return true
 		}
+		return false
 
 	}
 
