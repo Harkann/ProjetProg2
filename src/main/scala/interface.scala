@@ -14,7 +14,7 @@ object Interface extends SimpleSwingApplication{
 	/**Boutons permettant de lancer la partie*/
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
-			Config.type_partie = ""
+			Current_Config.type_partie = ""
 			window.box.contents.clear()
 			var partie = new Partie()
 			var interface_partie = new EcranPartie(8,8,window,partie)
@@ -25,7 +25,7 @@ object Interface extends SimpleSwingApplication{
 
 	class VarPartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
-			Config.type_partie = "var"
+			Current_Config.type_partie = "var"
 			window.box.contents.clear()
 			partie1 = new Partie()
 			partie1.numero = 1
@@ -166,9 +166,7 @@ object Interface extends SimpleSwingApplication{
 		get_image()
 		action = Action(""){
 			if (partie.is_running && partie.is_interface){
-				if (is_clicked){ 
-					plateau.reset_all()
-				}
+				if (is_clicked){plateau.reset_all()}
 				else if (is_button_clicked){
 					if (piece_allowed_move.contains(i,j)){
 						piece_selected.move((i,j))
@@ -190,7 +188,6 @@ object Interface extends SimpleSwingApplication{
 	}
 	/**Grille de taille i,j contenant les différentes cases*/
 	class Echiquier(i:Int,j:Int,window:MainWindow,partie:Partie) extends GridPanel(i,j){
-
 		var Cells = ofDim[Case](9,9)
 		for (i <- 8 to 1 by -1){
 			for( j <- 1 to 8){
@@ -211,7 +208,7 @@ object Interface extends SimpleSwingApplication{
 			button_clicked_j = 0
 			is_button_clicked = false
 		}
-		this.maximumSize = new Dimension(Config.res_x,Config.res_y)
+		this.maximumSize = new Dimension(Current_Config.res_x,Current_Config.res_y)
 	}
 
 	class PieceButton(posi:(Int,Int),color:Char,piece:Piece,piece_type:String,notif:Notification,partie:Partie) extends Button {
@@ -254,9 +251,7 @@ object Interface extends SimpleSwingApplication{
 			}
 			case _ => this.contents+= new Label(){text = " "}
 		}
-
 		complement match {
-
 			case "50" => this.contents+= new Label(){text = "Cause : règle des 50 coups" }  
 			case "3" => this.contents+= new Label(){text = "Cause : 3 fois la même position" }  
 			case "temps" => this.contents+= new Label(){text = "Cause : temps écoulé" }
@@ -264,7 +259,6 @@ object Interface extends SimpleSwingApplication{
 			case "Pat" =>this.contents+= new Label(){text = "Cause : plus aucun mouvements possibles"}
 			case _ => this.contents+= new Label(){text = " "}
 		}
-
 		numero match {
 			case 1 => this.contents+= new Label(){text = "Echiquier : 1"}
 			case 0 => this.contents+= new Label(){text = "Echiquier : 2"}
@@ -273,25 +267,20 @@ object Interface extends SimpleSwingApplication{
 		this.revalidate()
 		this.repaint()
 	}
-	class Notification(partie:Partie) extends GridPanel(4,1){
+	class Notification(partie:Partie) extends BoxPanel(Orientation.Vertical){
 		var timer = true
 		def initial():Unit = {
 			this.contents.clear()
-			if (Config.type_partie != "var"){
+			if (Current_Config.type_partie != "var"){
 				var retour = new Button(){
-					action = Action("Return"){
-						partie.return_back(partie)
-					}
-					enabled = Config.return_allowed
+					action = Action("Return"){partie.return_back(partie)}
+					enabled = Current_Config.return_allowed
 				}
 				this.contents+= new FlowPanel(retour)
 				var save_game = new Button(){
-					action = Action("Save_game"){
-						partie.save_to_PGN(partie,"*",partie.player)
-					}
+					action = Action("Save_game"){partie.save_to_PGN(partie,"*",partie.player)}
 				}
 				this.contents+= new FlowPanel(save_game)
-
 				val notif = this
 				var start_time = new Button(){
 					action = Action("Start Timer"){
@@ -303,7 +292,7 @@ object Interface extends SimpleSwingApplication{
 						notif.revalidate()
 						notif.repaint()
 					}
-					enabled = Config.timer && notif.timer
+					enabled = Current_Config.timer && notif.timer
 				}
 				this.contents+= new FlowPanel(start_time)
 			}
@@ -322,7 +311,7 @@ object Interface extends SimpleSwingApplication{
 						notif.revalidate()
 						notif.repaint()
 					}
-					enabled = Config.timer && notif.timer
+					enabled = Current_Config.timer && notif.timer
 				}
 				this.contents+= new FlowPanel(start_time)
 			}
@@ -330,7 +319,6 @@ object Interface extends SimpleSwingApplication{
 		initial()
 		this.revalidate()
 		this.repaint()
-
 
 		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
 			partie.waiting = true
@@ -343,26 +331,18 @@ object Interface extends SimpleSwingApplication{
 			partie.type_end = (type_end,color)
 			partie.save_to_PGN(partie,type_end,color)
 			println(partie.type_end)
-			if (Config.type_partie != "var"){this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement,0))}
+			if (Current_Config.type_partie != "var"){this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement,0))}
 			else {
-				
-				if (partie.numero == 1){
-					partie2.game_window.head_up_bar.notif.text_end(color,type_end,complement,1)
-				}
-				else{
-					this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement,num))
-				}
+				if (partie.numero == 1){partie2.game_window.head_up_bar.notif.text_end(color,type_end,complement,1)}
+				else{this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement,num))}
 				this.revalidate()
 				this.repaint()
 				partie1.stop()
 				partie2.stop()
-
 			}
 			this.revalidate()
 			this.repaint()
-
 		}
-
 	}
 	class TimerDisplay(color:Char) extends Label {
 		def set(time:(Int,Int,Int)) = {
@@ -397,7 +377,6 @@ object Interface extends SimpleSwingApplication{
 			action = Action("Back to main menu"){
 				partie.stop()
 				window.init_menu()
-
 			}
 		}
 
@@ -410,7 +389,7 @@ object Interface extends SimpleSwingApplication{
 			piece_allowed_move = List()
 			piece_allowed_take = List()
 			partie.partie_init()
-			if (!Config.timer){
+			if (!Current_Config.timer){
 				partie.is_interface = true
 				partie.start()
 			}
@@ -430,6 +409,7 @@ object Interface extends SimpleSwingApplication{
 	}
 	var RootWindow = new MainWindow()
 	def top = RootWindow
-	top.preferredSize = new Dimension(Config.res_x,Config.res_y) //schwoon 1300*700
+	Current_Config.init_config()
+	top.preferredSize = new Dimension(Current_Config.res_x,Current_Config.res_y) //schwoon 1300*700
 	RootWindow.init_menu()
 }

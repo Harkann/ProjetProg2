@@ -3,7 +3,7 @@ class IA(color:Char,partie:Partie) extends Runnable{
 	/**lance le thread du tour de l'ia*/
 	override def run = {
 		var moves_ia = partie.allowed_moves(color)
-		Thread.sleep(Config.delai_ia)
+		Thread.sleep(Current_Config.delai_ia)
 		/**objet random*/
 		var random_move = scala.util.Random
 		/**entier random permettant de choisir un mouvement*/
@@ -25,8 +25,8 @@ object IA_promote {
 	def promote(posi:(Int,Int),piece:Piece,partie:Partie) = {
 		partie.waiting = true
 		var random_prom = scala.util.Random
-		var random_promInt = random_prom.nextInt(Config.possible_proms.length)
-		piece.asInstanceOf[Peon].promo(posi,Config.possible_proms(random_promInt),partie)
+		var random_promInt = random_prom.nextInt(Current_Config.possible_proms.length)
+		piece.asInstanceOf[Peon].promo(posi,Current_Config.possible_proms(random_promInt),partie)
 		partie.waiting = false
 	}
 }

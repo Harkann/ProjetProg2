@@ -16,7 +16,7 @@ object Tools {
 	}
 
 	def min_size = {
-		if (Config.res_x < Config.res_y){Config.res_x}
-		else {Config.res_y}
+		if (Current_Config.res_x < Current_Config.res_y){Current_Config.res_x}
+		else {Current_Config.res_y}
 	}
 }
