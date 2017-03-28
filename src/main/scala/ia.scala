@@ -2,7 +2,6 @@
 class IA(color:Char,partie:Partie) extends Runnable{
 	/**lance le thread du tour de l'ia*/
 	override def run = {
-		println("I'm robot")
 		var moves_ia = partie.allowed_moves(color)
 		Thread.sleep(Config.delai_ia)
 		/**objet random*/
