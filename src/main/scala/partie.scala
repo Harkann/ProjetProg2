@@ -59,14 +59,14 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		if (is_running){is_pat(other_player(player))}
 		if (is_running){
 			if (nb_ia == 0){
-				get_timer(player).interrupt
+				if (Config.timer) {get_timer(player).interrupt}
 				player = other_player(player)
-				get_timer(player).interrupt
+				if (Config.timer) {get_timer(player).interrupt}	
 			}
 			else if (nb_ia == 1){
-				get_timer(player).interrupt
+				if (Config.timer) {get_timer(player).interrupt}
 				player = other_player(player)
-				get_timer(player).interrupt
+				if (Config.timer) {get_timer(player).interrupt}
 				if (player == color_ia){
 					is_interface = false
 					new Thread(new IA(color_ia,this)).start
@@ -74,9 +74,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				} 
 			}
 			else {
-				get_timer(player).interrupt
+				if (Config.timer) {get_timer(player).interrupt}		
 				player = other_player(player)
-				get_timer(player).interrupt
+				if (Config.timer) {get_timer(player).interrupt}
 				new Thread(new IA(player,this)).start
 
 			}
@@ -294,9 +294,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 
 		matrix_save = copy_of(matrix)
 		if (Config.timer) {
-			white_timer = new Thread(new TimerClock(Config.init_time,'W',this))
+			white_timer = new Thread(new TimerClock('W',this))
 			white_timer.start()
-			black_timer = new Thread(new TimerClock(Config.init_time,'B',this))
+			black_timer = new Thread(new TimerClock('B',this))
 			black_timer.start()
 		}
 	}

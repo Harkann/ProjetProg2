@@ -27,8 +27,17 @@ object Interface extends SimpleSwingApplication{
 			}
 		}
 	}
+
+	class SettingsButton(window:MainWindow) extends Button{
+		action = Action("Settings"){
+			window.closeOperation()
+			//if (partie != null){
+			//	partie.stop()
+			//}
+		}
+	}
 	/**Menu principal*/
-	class MainMenu(i:Int,j:Int,window:MainWindow) extends GridPanel(i,j){
+	class MainMenu(window:MainWindow) extends GridPanel(6,1){
 
 		/**bouton qui lance une partie avec un seul joueur blanc*/
 		val game_one_player_white = new PartieButton("Player White vs. IA Black",1,'B',window)
@@ -38,6 +47,8 @@ object Interface extends SimpleSwingApplication{
 		val game_two_players = new PartieButton("Player vs. Player",0,'0',window)
 		/**bouton qui lance une partie avec deux ia*/
 		val game_two_ia = new PartieButton("IA vs. IA",2,'0',window)
+		/** */
+		val settings_butt = new SettingsButton(window)
 		/**bouton qui ferme l'interface*/
 		val quit_program = new QuitButton(window,null)
 		/**affiche le menu principal*/
@@ -47,15 +58,20 @@ object Interface extends SimpleSwingApplication{
 			contents+= game_one_player_black
 			contents+= game_one_player_white
 			contents+= game_two_ia
+			contents+= settings_butt
 			contents+= quit_program
 			revalidate()
 			repaint()
 		}
 	}
 
+	class SettingsMenu(window:MainWindow) extends BoxPanel(Orientation.Vertical){
+		
+	}
+
 	class MainWindow() extends MainFrame{
 		var box = new BoxPanel(Orientation.Vertical) 
-		var menu_principal = new MainMenu(5,1,this)		
+		var menu_principal = new MainMenu(this)		
 		def init_menu()={
 			title = "Chess"
 			contents = box
@@ -249,10 +265,6 @@ object Interface extends SimpleSwingApplication{
 			this.revalidate()
 			this.repaint()
 		}
-		else {println("plop")
-			partie.is_interface = true
-			partie.start()
-		}
 		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
 			partie.waiting = true
 			this.contents+= new PiecePanel(posi,color,piece,this,partie)
@@ -314,7 +326,10 @@ object Interface extends SimpleSwingApplication{
 			piece_allowed_move = List()
 			piece_allowed_take = List()
 			partie.partie_init()
-			//partie.start()
+			if (!Config.timer){
+				partie.is_interface = true
+				partie.start()
+			}
 			plateau.reset_all()
 			window.contents = this
 			this.contents+=head_up_bar
@@ -330,6 +345,6 @@ object Interface extends SimpleSwingApplication{
 	var RootWindow = new MainWindow()
 	def top = RootWindow
 	//il faudrait tester la resolution minimale sur d'autres ordis...
-	top.minimumSize = new Dimension(Config.res_x,Config.res_y) //schwoon 1300*700
+	top.preferredSize = new Dimension(Config.res_x,Config.res_y) //schwoon 1300*700
 	RootWindow.init_menu()
 }
