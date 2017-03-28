@@ -1,10 +1,10 @@
-
+import java.io._
 import scala.collection.mutable.ArrayBuffer
 
 
 class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 	val posi_begin = p_begin
-	val posi_end = p_end
+	var posi_end = p_end
 	var (i,j) = p_begin
 	var (x,y) = p_end
 	val piece = partie.matrix(i)(j)
@@ -40,10 +40,13 @@ trait Save {
 	partie.matrix(dpct.x)(dpct.y)= dpct.piece_met
 	if (dpct.optional_other_dpct != null){
 		val other_dpct = dpct.optional_other_dpct
-		other_dpct.piece.position = other_dpct.posi_begin
-		other_dpct.piece.nb_turn -=1
-		partie.matrix(other_dpct.i)(other_dpct.j)= other_dpct.piece
-		partie.matrix(other_dpct.x)(other_dpct.y)= other_dpct.piece_met
+		if (other_dpct.piece != null){
+			other_dpct.piece.position = other_dpct.posi_begin
+			other_dpct.piece.nb_turn -=1}
+		if(other_dpct.piece_met != null){
+			partie.matrix(other_dpct.i)(other_dpct.j)= other_dpct.piece
+			partie.matrix(other_dpct.x)(other_dpct.y)= other_dpct.piece_met
+		}
 
 	}
 	partie.nb_turn -=2
@@ -62,8 +65,9 @@ trait Save {
 
 trait Conversion_to_PGN {
 	val lettre = Array('z','a','b','c','d','e','f','g','h')
-	def save_to_PGN(partie:Partie):String = {
-		var texte = ""
+	def save_to_PGN(partie:Partie) = {
+		val writer = new PrintWriter(new File("save.txt" ))
+			var texte = ""
 		for( i <- 0 to partie.dplct_save.length-1) {
 			if (i%2 == 0) { texte+=((i/2+1)+". ")}
 			val dpct = partie.dplct_save(i)
@@ -86,7 +90,9 @@ trait Conversion_to_PGN {
 			}
 
 		}
-		return texte
+		writer.write(texte)
+		writer.close()
+		println(texte)
 	}
 	
 	def load(texte:String):scala.collection.mutable.ArrayBuffer[Dpct] = {
