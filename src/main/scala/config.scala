@@ -1,7 +1,7 @@
 object Config {
 	val delai_ia = 1 //milisecondes
-	val res_x = 1920 //pixels
-	val res_y = 1080 //pixels
+	val res_x = 1300 //pixels
+	val res_y = 700 //pixels
 	val possible_proms = List("Qu","Bi","Kn","To")
 	val return_allowed = true
 	
