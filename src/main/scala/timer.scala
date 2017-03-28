@@ -48,19 +48,18 @@ class TimerClock(color:Char,partie:Partie) extends Runnable(){
 				}
 			}
 			else {next_period()}
-
 		}
 	}
 	def waiting():Unit = {
 		while (!is_running && partie.is_running){
 			if(Thread.interrupted){
-				println("interrupted")
+				//println("interrupted")
 				running()
 			}
 			else {
 				try {
 					Thread.sleep(100)
-					println("wait "+color)
+					//println("wait "+color)
 				}
 				catch {
 					case e :InterruptedException => {

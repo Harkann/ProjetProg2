@@ -9,6 +9,7 @@ trait condition_check {
 
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==7)) {
 			dpct.optional_other_dpct = new Dpct((i,8),(i,6),partie)
+			dpct.is_roque = "O-O"
 			val T = partie.matrix(i)(8)
 			T.position = (i,6)
 			partie.matrix(i)(6) = T
@@ -16,7 +17,8 @@ trait condition_check {
 			T.nb_turn+=1
 		}
 		if ((piece != null) && (piece.name == "Ki") && (piece.nb_turn==0) && (y==3)) {
-			dpct.optional_other_dpct = new Dpct((i,8),(i,4),partie)
+			dpct.optional_other_dpct = new Dpct((i,1),(i,4),partie)
+			dpct.is_roque = "O-O-O"
 			val T = partie.matrix(i)(1)
 			T.position=(i,4)
 			T.nb_turn+=1
@@ -38,6 +40,7 @@ trait condition_check {
 			else {
 				IA_promote.promote(dpct.posi_end,piece,partie)
 			}
+			dpct.promotion = partie.matrix(x)(y).PGN_name
 		}
 	}
 
@@ -63,4 +66,37 @@ trait condition_check {
 			partie.pat("nulle")
 		}
 	}
+}
+
+
+trait Moves_50 {
+	def moves_50_check(partie: Partie) {
+		if (partie.nb_turn-partie.last_important_change > 50) {
+			partie.pat("50")
+		}
+	}
+}
+
+trait Repetions_3 extends Standard {
+	def repetitions_3_check(partie:Partie) {
+		var matrix_intermediate = copy_of(partie.matrix_save)
+		var nb_repetition = 0
+		if ((partie.last_important_change == 0) && (equal(partie.matrix,matrix_intermediate))){
+				nb_repetition +=1
+				//println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
+			}
+		for( i <- partie.last_important_change+1 to partie.dplct_save.length) {
+			var dpct = partie.dplct_save(i-1)
+			//println(dpct.piece+" "+dpct.posi_begin+" "+dpct.posi_end)
+			dpct.do_dpct(matrix_intermediate)
+			if (equal(partie.matrix,matrix_intermediate)){
+				nb_repetition +=1
+				//println("egalité numero : " + nb_repetition + "\n" + matrix_intermediate.deep.mkString("\n"))
+			}
+		}
+		if(nb_repetition >= 3){
+			partie.pat("3")
+		}
+	}
+	
 }
