@@ -48,7 +48,7 @@ object Interface extends SimpleSwingApplication{
 			//if (partie != null){
 				//	partie.stop()
 				//}
-			}
+			//}
 		}
 		/**Menu principal*/
 		class MainMenu(window:MainWindow) extends GridPanel(7,1){

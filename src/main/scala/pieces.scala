@@ -18,11 +18,14 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 	val color = col;
 	/**nom de la pièce*/
 	val name:String; 
+	/**nom au format PGN de la piece**/
 	val PGN_name:String; 
 	/** un numreo attribué a chaque type de piece **/
 	val num_type:Int;
 	/**statut en vie ou non de la pièce*/
 	var is_alive:Boolean;
+	/** **/
+	var is_promotion= false;
 	/**id de la pièce, l'id "0" désigne une case vide*/
 	val id:String;
 	val image:ImageIcon; 
@@ -43,9 +46,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		val piece = matrix(position,partie)
 		val piece_met = matrix(posi,partie)
 
-		// prise d'une piece
-		if (piece_met != null) {
-			partie.modif_piece(piece_met.color,piece_met.num_type,-1)}
+		incremente_cpt_nb_piece(partie,piece_met)
 
 
 		var dpct= new Dpct(position,posi,partie)

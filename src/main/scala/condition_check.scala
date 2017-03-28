@@ -1,5 +1,16 @@
 
 trait condition_check {
+	def incremente_cpt_nb_piece(partie:Partie,piece_met:Piece){
+		// prise d'une piece
+		if ((piece_met != null) &&  (piece_met.is_promotion)) {
+			partie.modif_piece(piece_met.color,0,-1)
+			partie.modif_lost_piece(piece_met.color,piece_met.num_type,-1)
+		}
+		else if (piece_met != null){
+			partie.modif_piece(piece_met.color,piece_met.num_type,-1)
+			partie.modif_lost_piece(piece_met.color,piece_met.num_type,-1)
+		}
+	} 
 
 	def roque_check(dpct:Dpct,partie:Partie){
 
@@ -40,7 +51,8 @@ trait condition_check {
 			else {
 				IA_promote.promote(dpct.posi_end,piece,partie)
 			}
-			dpct.promotion = partie.matrix(x)(y).PGN_name
+			dpct.promotion = piece.PGN_name
+			piece.is_promotion = true
 		}
 	}
 
