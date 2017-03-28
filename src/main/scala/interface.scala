@@ -268,7 +268,7 @@ object Interface extends SimpleSwingApplication{
 			this.contents+= new FlowPanel(retour)
 			var save_game = new Button(){
 				action = Action("Save_game"){
-					// SAVE FUNCTION
+					partie.save_to_PGN(partie,"*",partie.player)
 				}
 			}
 			this.contents+= new FlowPanel(save_game)
