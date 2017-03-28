@@ -8,7 +8,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	var game_window:Interface.EcranPartie = null
 	var white_timer:Thread = null
 	var black_timer:Thread = null
-
+	var type_end:(String,Char) = ("*",'*')
 	def get_timer(color:Char) = {
 		color match {
 			case 'W' => white_timer
