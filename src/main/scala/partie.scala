@@ -36,7 +36,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	var matrix_save = ofDim[Piece](9,9);
 	var last_important_change = 0
 
-
+	var numero = 0
 
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
@@ -157,7 +157,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 
 	def pat(motif:String){
 		this.stop()
-		game_window.head_up_bar.notif.text_end(player,"PAT",motif)
+		game_window.head_up_bar.notif.text_end(player,"PAT",motif,0)
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -234,7 +234,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 
 	def perdu(color:Char,motif:String) = {
 		this.stop()
-		game_window.head_up_bar.notif.text_end(color,"MAT",motif)
+		game_window.head_up_bar.notif.text_end(color,"MAT",motif,0)
 	}
 
 	def partie_nb_ia(nbIA:Int,colorIA:Char,ecran:Interface.EcranPartie) = {
@@ -308,6 +308,5 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 			black_timer.start()
 		}
 	}
-
 }
 

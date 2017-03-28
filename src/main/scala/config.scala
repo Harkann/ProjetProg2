@@ -18,7 +18,7 @@ object Config {
 	/** NOT IMPLEMENTED*/	
 	var color_ia = '0'
 	/** NOT IMPLEMENTED*/
-	var type_partie = "var "
+	var type_partie = " "
 }
 
 
