@@ -180,7 +180,7 @@ object Interface extends SimpleSwingApplication{
 
 				}
 			}
-			this.maximumSize = new Dimension(50,50)
+			this.maximumSize = new Dimension(100,100)
 		}
 		/**Grille de taille i,j contenant les différentes cases*/
 		class Echiquier(i:Int,j:Int,window:MainWindow,partie:Partie) extends GridPanel(i,j){
@@ -246,6 +246,7 @@ object Interface extends SimpleSwingApplication{
 					this.background = java.awt.Color.PINK
 					this.contents+= new Label(){text = "PAT\n" } 
 				}
+				case _ => {"\n"}
 			}
 
 			complement match {
@@ -255,13 +256,13 @@ object Interface extends SimpleSwingApplication{
 				case "temps" => this.contents+= new Label(){text = "Cause : temps écoulé" }
 				case "nulle" => this.contents+= new Label(){text = "Cause : impossibilité de mater"}
 				case "Pat" =>this.contents+= new Label(){text = "Cause : plus aucun mouvements possibles"}
-				case _ => {}
+				case _ => {" "}
 			}
 			this.revalidate()
 			this.repaint()
 		}
 		class Notification(partie:Partie) extends GridPanel(3,1){
-			def initial() = {
+			def initial():Unit = {
 				this.contents.clear()
 				if (Config.return_allowed){
 					var retour = new Button(){
@@ -269,14 +270,16 @@ object Interface extends SimpleSwingApplication{
 							partie.return_back(partie)
 						}
 					}
-					this.contents+= retour
+					this.contents+= new FlowPanel(retour)
 				}
 				var save_game = new Button(){
 						action = Action("Save_game"){
 							partie.save_to_PGN(partie,"*",partie.player)
 						}
 					}
-					this.contents+= save_game
+				}
+				this.contents+= new FlowPanel(save_game)
+				text_init()
 				this.revalidate()
 				this.repaint()
 			}
@@ -299,14 +302,22 @@ object Interface extends SimpleSwingApplication{
 
 			def promote(posi:(Int,Int),color:Char,piece:Piece) = {
 				partie.waiting = true
-				this.contents+= new PiecePanel(posi,color,piece,this,partie)
+				this.contents+= new FlowPanel(new PiecePanel(posi,color,piece,this,partie))
 				this.revalidate()
 				this.repaint()
 			}
-			def text_end(color:Char,type_end:String,complement:String) = {
+			def text_init():Unit = {
+				this.contents+= new FlowPanel(new TextAreaEnd('0',"",""))
+				this.revalidate()
+				this.repaint()
+			}
+			def text_end(color:Char,type_end:String,complement:String):Unit = {
 				initial()
-				this.contents+= new TextAreaEnd(color,type_end,complement)
+				partie.type_end = (type_end,color)
+				println(partie.type_end)
+				this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement))
 				partie.save_to_PGN(partie,type_end,color)
+
 				this.revalidate()
 				this.repaint()
 			}
@@ -369,8 +380,10 @@ object Interface extends SimpleSwingApplication{
 					contents+= back_menu
 					contents+= quit_program
 				}
-				this.contents+=head_up_bar
-				this.contents+=plateau
+				this.contents+= new BoxPanel(Orientation.Vertical){
+					contents+= new FlowPanel(head_up_bar)
+					contents+= new FlowPanel(plateau)
+				}
 				revalidate()
 				repaint()
 			}	
