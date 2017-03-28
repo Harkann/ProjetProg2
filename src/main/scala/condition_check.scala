@@ -3,8 +3,8 @@ trait condition_check {
 	def incremente_cpt_nb_piece(partie:Partie,piece_met:Piece){
 		// prise d'une piece
 		if ((piece_met != null) &&  (piece_met.is_promotion)) {
-			partie.modif_piece(piece_met.color,0,-1)
-			partie.modif_lost_piece(piece_met.color,piece_met.num_type,-1)
+			partie.modif_piece(piece_met.color,piece_met.num_type,-1)
+			partie.modif_lost_piece(piece_met.color,0,-1)
 		}
 		else if (piece_met != null){
 			partie.modif_piece(piece_met.color,piece_met.num_type,-1)
@@ -47,12 +47,13 @@ trait condition_check {
 		if ((piece != null) && (piece.name == "Pe") && ((x == 8) || (x == 1))){
 			if (partie.nb_ia == 0 || (partie.nb_ia == 1 && partie.player != partie.color_ia)){
 				partie.game_window.head_up_bar.notif.promote(dpct.posi_end,piece.color,piece)
+				partie.modif_piece(piece.color,0,-1)
 			}
 			else {
 				IA_promote.promote(dpct.posi_end,piece,partie)
 			}
 			dpct.promotion = piece.PGN_name
-			piece.is_promotion = true
+			partie.matrix(x)(y).is_promotion = true
 		}
 	}
 
@@ -63,7 +64,10 @@ trait condition_check {
 		val piece_met = dpct.piece_met
 		if ((piece != null) && (piece.name == "Pe") && (j != y) && (piece_met == null)){
 			dpct.optional_other_dpct = new Dpct((0,0),(i,y),partie)
+			val color = partie.matrix(i)(y).color
 			partie.matrix(i)(y)=null
+			partie.modif_piece(color,0,-1)
+			partie.modif_lost_piece(color,0,-1)
 		}
 	}
 	
