@@ -19,16 +19,25 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	/* *************************************** Sauvegarde / var globale pour la partir 2 ********************************* */
 	var pieces_B = ofDim[Int](6)
 	var pieces_W = ofDim[Int](6)
+	var lost_pieces_B = ofDim[Int](6)
+	var lost_pieces_W = ofDim[Int](6)
 
 	def modif_piece(color:Char,num:Int,modif:Int){
 		if (color == 'B') {pieces_B(num) += modif}
-		else if (color == 'W'){pieces_W(num) +=modif}
+		else if (color == 'W'){pieces_W(num) += modif}
+	}
+	def modif_lost_piece(color:Char,num:Int,modif:Int){
+		if (color == 'B') {pieces_B(num) -= modif}
+		else if (color == 'W'){pieces_W(num) -= modif}
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
 	var waiting = false
 	var matrix_save = ofDim[Piece](9,9);
 	var last_important_change = 0
+
+
+
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/

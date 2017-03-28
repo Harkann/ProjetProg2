@@ -43,6 +43,7 @@ object Interface extends SimpleSwingApplication{
 	}
 
 	class SettingsButton(window:MainWindow) extends Button{
+
 		action = Action("Settings"){}
 	}
 	/**Menu principal*/
