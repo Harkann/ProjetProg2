@@ -1,8 +1,8 @@
 class TimerClock(color:Char,partie:Partie) extends Runnable(){
 	var current_period = 1
-	var current_duration = Config.temps_cadences(current_period-1)
-	var current_coups = Config.nb_coups(current_period-1)
-	var current_increment = Config.increment_cadences(current_period-1)
+	var current_duration = Current_Config.temps_cadences(current_period-1)
+	var current_coups = Current_Config.nb_coups(current_period-1)
+	var current_increment = Current_Config.increment_cadences(current_period-1)
 	var current_time_left = current_duration
 	var is_running = false 
 	override def run() = {
@@ -11,14 +11,13 @@ class TimerClock(color:Char,partie:Partie) extends Runnable(){
 	}
 	def next_period() = {
 		current_period+=1
-		if (current_coups < partie.nb_turn/2 && current_period <= Config.nb_periods){
-			current_duration = Config.temps_cadences(current_period-1)
-			current_coups = Config.nb_coups(current_period-1)
-			current_increment = Config.increment_cadences(current_period-1)
+		if (current_coups < partie.nb_turn/2 && current_period <= Current_Config.nb_periods){
+			current_duration = Current_Config.temps_cadences(current_period-1)
+			current_coups = Current_Config.nb_coups(current_period-1)
+			current_increment = Current_Config.increment_cadences(current_period-1)
 			current_time_left = current_duration
 		}
 		else {
-			println("fin au temps")
 			is_running = false
 			partie.perdu(color,"temps")
 		}

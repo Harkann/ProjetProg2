@@ -197,12 +197,10 @@ trait Roque extends Standard {
 		val T = matrix(pos_T,partie)
 		if (T == null) return false
 		if ((K.nb_turn != 0) || (T.nb_turn != 0)) {
-			//println("prolème de nombre de tour")
 			return false
 		}
 		for ( j <- ((j_K min j_T)+1) to ((j_K max j_T))-1){
 			if (partie.matrix(i_K)(j) != null) {
-				//println("prolème d'une case non vide")
 				return false
 			}
 		}
@@ -212,11 +210,9 @@ trait Roque extends Standard {
 		var (i,j) = pos
 		var res : List[(Int,Int)] = List()
 		if (roque_line(pos,(i,8),partie)) {
-			//println("il y a un roque!")
 			res = res:+(i,7)
 		}
 		if (roque_line(pos,(i,1),partie)) {
-			//println("il y a un roque!")
 			res = res:+(i,3)
 		}
 		return res

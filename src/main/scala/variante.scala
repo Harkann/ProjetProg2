@@ -1,7 +1,5 @@
 
-class Blitz_4(){
-	var partie_G = new Partie
-	var partie_D = new Partie
+class Blitz_4(partie_G:Partie,partie_D:Partie){
 	var dispo_G_W = partie_D.lost_pieces_W
 	var dispo_G_B = partie_D.lost_pieces_B
 	var dispo_D_W = partie_G.lost_pieces_W

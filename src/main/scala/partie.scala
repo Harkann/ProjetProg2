@@ -5,6 +5,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
+	/**la partie de l'interface contenant l'echiquier*/
 	var game_window:Interface.EcranPartie = null
 	var white_timer:Thread = null
 	var black_timer:Thread = null
@@ -66,14 +67,14 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		if (is_running){is_pat(other_player(player))}
 		if (is_running){
 			if (nb_ia == 0){
-				if (Config.timer) {get_timer(player).interrupt}
+				if (Current_Config.timer) {get_timer(player).interrupt}
 				player = other_player(player)
-				if (Config.timer) {get_timer(player).interrupt}	
+				if (Current_Config.timer) {get_timer(player).interrupt}	
 			}
 			else if (nb_ia == 1){
-				if (Config.timer) {get_timer(player).interrupt}
+				if (Current_Config.timer) {get_timer(player).interrupt}
 				player = other_player(player)
-				if (Config.timer) {get_timer(player).interrupt}
+				if (Current_Config.timer) {get_timer(player).interrupt}
 				if (player == color_ia){
 					is_interface = false
 					new Thread(new IA(color_ia,this)).start
@@ -81,9 +82,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				} 
 			}
 			else {
-				if (Config.timer) {get_timer(player).interrupt}		
+				if (Current_Config.timer) {get_timer(player).interrupt}		
 				player = other_player(player)
-				if (Config.timer) {get_timer(player).interrupt}
+				if (Current_Config.timer) {get_timer(player).interrupt}
 				new Thread(new IA(player,this)).start
 
 			}
@@ -301,7 +302,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		matrix(8)(5) = new King('B',(8,5),this)
 
 		matrix_save = copy_of(matrix)
-		if (Config.timer) {
+		if (Current_Config.timer) {
 			white_timer = new Thread(new TimerClock('W',this))
 			white_timer.start()
 			black_timer = new Thread(new TimerClock('B',this))

@@ -86,7 +86,6 @@ trait Conversion_to_PGN {
 				texte += dpct.is_roque
 			}
 			else if (dpct.promotion != ""){
-				//println((lettre(dpct.x))+""+dpct.y+"="+dpct.promotion)
 				texte += (lettre(dpct.x))+""+dpct.y+"="+dpct.promotion
 			}
 			else {
@@ -115,7 +114,6 @@ trait Conversion_to_PGN {
 			}
 		writer.write(texte)
 		writer.close()
-		//println(texte)
 	}
 	
 	def load(texte:String):scala.collection.mutable.ArrayBuffer[Dpct] = {
