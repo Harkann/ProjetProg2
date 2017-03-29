@@ -51,8 +51,7 @@ trait condition_check {
 			else {
 				IA_promote.promote(dpct.posi_end,piece,partie)
 			}
-			dpct.promotion = piece.PGN_name
-			partie.matrix(x)(y).is_promotion = true
+			dpct.promotion=partie.matrix(x)(y).PGN_name
 		}
 	}
 

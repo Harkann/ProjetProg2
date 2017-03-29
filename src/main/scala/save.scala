@@ -32,6 +32,16 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 }
 
 trait Save {
+	val pgn = Array("","R","N","B","Q","K")
+	def pgn_to_num(promotion:String):Int = {
+		for(i<-0 to 5){
+			if (pgn(i) == promotion){
+				return i
+			}
+		}
+		return 6
+	}
+
 	def return_back(partie:Partie) = {
 	val dpct = partie.dplct_save.remove(partie.nb_turn-1)
 	dpct.piece.nb_turn -=1
@@ -39,9 +49,11 @@ trait Save {
 	val piece = partie.matrix(dpct.x)(dpct.y)
 	partie.matrix(dpct.i)(dpct.j)= dpct.piece
 	partie.matrix(dpct.x)(dpct.y)= dpct.piece_met
-	if ((dpct.piece_met != null) &&  (dpct.promotion != "")) {
-		partie.modif_piece(dpct.piece_met.color,piece.num_type,1)
-		partie.modif_lost_piece(dpct.piece_met.color,0,1)
+	//println("piece = "+piece.name)
+	if (dpct.promotion != "") {
+		//println("promotion")
+		partie.modif_piece(dpct.piece.color,pgn_to_num(dpct.promotion),-1)
+		partie.modif_piece(dpct.piece.color,0,1)
 	}
 	else if (dpct.piece_met != null){
 		partie.modif_piece(dpct.piece_met.color,dpct.piece_met.num_type,1)
