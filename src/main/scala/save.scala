@@ -36,8 +36,17 @@ trait Save {
 	val dpct = partie.dplct_save.remove(partie.nb_turn-1)
 	dpct.piece.nb_turn -=1
 	dpct.piece.position = dpct.posi_begin
+	val piece = partie.matrix(dpct.x)(dpct.y)
 	partie.matrix(dpct.i)(dpct.j)= dpct.piece
 	partie.matrix(dpct.x)(dpct.y)= dpct.piece_met
+	if ((dpct.piece_met != null) &&  (dpct.promotion != "")) {
+		partie.modif_piece(dpct.piece_met.color,piece.num_type,1)
+		partie.modif_lost_piece(dpct.piece_met.color,0,1)
+	}
+	else if (dpct.piece_met != null){
+		partie.modif_piece(dpct.piece_met.color,dpct.piece_met.num_type,1)
+		partie.modif_lost_piece(dpct.piece_met.color,dpct.piece_met.num_type,1)
+	}
 	if (dpct.optional_other_dpct != null){
 		val other_dpct = dpct.optional_other_dpct
 		if (other_dpct.piece != null){
@@ -46,6 +55,8 @@ trait Save {
 		if(other_dpct.piece_met != null){
 			partie.matrix(other_dpct.i)(other_dpct.j)= other_dpct.piece
 			partie.matrix(other_dpct.x)(other_dpct.y)= other_dpct.piece_met
+			partie.modif_piece(other_dpct.piece_met.color,other_dpct.piece_met.num_type,1)
+			partie.modif_lost_piece(other_dpct.piece_met.color,other_dpct.piece_met.num_type,1)
 		}
 
 	}
