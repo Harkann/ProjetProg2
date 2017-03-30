@@ -46,13 +46,12 @@ trait condition_check {
 		if ((piece != null) && (piece.name == "Pe") && ((x == 8) || (x == 1))){
 			if (partie.nb_ia == 0 || (partie.nb_ia == 1 && partie.player != partie.color_ia)){
 				partie.game_window.head_up_bar.notif.promote(dpct.posi_end,piece.color,piece)
-				partie.modif_piece(piece.color,0,-1)
+				//partie.modif_piece(piece.color,0,-1)
 			}
 			else {
 				IA_promote.promote(dpct.posi_end,piece,partie)
 			}
-			dpct.promotion = piece.PGN_name
-			partie.matrix(x)(y).is_promotion = true
+			dpct.promotion=partie.matrix(x)(y).PGN_name
 		}
 	}
 

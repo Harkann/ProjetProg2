@@ -240,6 +240,9 @@ trait Promotion extends Standard {
 		else {
 			partie.matrix(i)(j) = new Bishop (piece.color, position,partie)
 		}
+		partie.matrix(i)(j).is_promotion = true
+		if (partie.nb_turn < partie.dplct_save.length){
+		partie.dplct_save(partie.nb_turn).promotion = partie.matrix(i)(j).PGN_name}
 		partie.game_window.plateau.reset_all()
 
 	}
