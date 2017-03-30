@@ -23,7 +23,7 @@ object Interface extends SimpleSwingApplication{
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
 			Current_Config.type_partie = ""
-			window.box.contents.clear()
+			window.middle_box.contents.clear()
 			/**Partie crée*/
 			var partie = new Partie()
 			/**Interface de la partie crée*/
@@ -36,7 +36,7 @@ object Interface extends SimpleSwingApplication{
 	class VarPartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
 			Current_Config.type_partie = "var"
-			window.box.contents.clear()
+			window.middle_box.contents.clear()
 			partie1 = new Partie()
 			partie1.numero = 1
 			partie2 = new Partie()
@@ -57,6 +57,10 @@ object Interface extends SimpleSwingApplication{
 			window.closeOperation()
 			if (partie != null){
 				partie.stop()
+			}
+			if (partie1 != null && partie2 != null){
+				partie1.stop
+				partie2.stop
 			}
 		}
 	}
@@ -104,11 +108,27 @@ object Interface extends SimpleSwingApplication{
 		/**contient la totalité de l'interface */
 		var meta_box = new BoxPanel(Orientation.Vertical) 
 		/**contient le menu ou l'ecran de partie */
-		var box = new BoxPanel(Orientation.Horizontal) 
+		var box = new BoxPanel(Orientation.Horizontal)
+		var middle_box = new BoxPanel(Orientation.Horizontal)
+		var left_box = new BoxPanel(Orientation.Vertical) 
+		var right_box = new BoxPanel(Orientation.Vertical)
+		box.contents+=left_box
+		box.contents+=middle_box
+		box.contents+=right_box
+		box.revalidate
+		box.repaint
 		/**contient les boutons inferieurs en partie */
 		var under_box = new BoxPanel(Orientation.Horizontal) 
 		/**contient les notifications en partie */
 		var upper_box = new BoxPanel(Orientation.Horizontal) 
+		var mup_box = new BoxPanel(Orientation.Horizontal) 
+		var lup_box = new BoxPanel(Orientation.Horizontal) 
+		var rup_box = new BoxPanel(Orientation.Horizontal) 
+		upper_box.contents+=lup_box
+		upper_box.contents+=mup_box
+		upper_box.contents+=rup_box
+		upper_box.revalidate
+		upper_box.repaint
 		/**menu/ecran d'accueil */
 		var menu_principal = new MainMenu(this)		
 		/**affiche le menu principal*/
@@ -122,14 +142,18 @@ object Interface extends SimpleSwingApplication{
 			under_box.contents.clear()
 			under_box.revalidate()
 			under_box.repaint()
-			upper_box.contents.clear()
+			lup_box.contents.clear()
+			rup_box.contents.clear
+			mup_box.contents.clear
 			upper_box.revalidate()
 			upper_box.repaint()
-			box.contents.clear()
-			box.contents+= new FlowPanel(menu_principal)
+			middle_box.contents.clear()
+			right_box.contents.clear()
+			left_box.contents.clear()
+			middle_box.contents+= new FlowPanel(menu_principal)
 			menu_principal.set_menu()
-			box.revalidate()
-			box.repaint()
+			middle_box.revalidate()
+			middle_box.repaint()
 			meta_box.revalidate()
 			meta_box.repaint()
 		}
@@ -385,10 +409,7 @@ object Interface extends SimpleSwingApplication{
 			this.revalidate()
 			this.repaint()
 		}
-		/**affiche le texte de fin de partie 
-			- @type_end : "MAT" ou "PAT"
-			- @complement : raison de la fin de partie
-		*/
+		/**affiche le texte de fin de partie @type_end : "MAT" ou "PAT", @complement : raison de la fin de partie*/
 		def text_end(color:Char,type_end:String,complement:String,num:Int):Unit = {
 			initial()
 			partie.type_end = (type_end,color)
@@ -425,8 +446,11 @@ object Interface extends SimpleSwingApplication{
 		var white_timer = new TimerDisplay('W')
 		this.contents+= new FlowPanel(white_timer)
 		/**notifications*/
+		
 		var notif = new Notification(partie)
-		this.contents+= new FlowPanel(notif)
+		if (Current_Config.type_partie != "var"){
+			this.contents+= new FlowPanel(notif)
+		}
 		/**timer noir*/
 		var black_timer = new TimerDisplay('B')
 		this.contents+= new FlowPanel(black_timer)
@@ -465,9 +489,37 @@ object Interface extends SimpleSwingApplication{
 				partie.start()
 			}
 			plateau.reset_all()
-			window.box.contents += this
-			window.upper_box.contents.clear() 
-			window.upper_box.contents += new FlowPanel(head_up_bar)
+			window.middle_box.contents += this
+			window.mup_box.contents.clear()
+			window.lup_box.contents.clear
+			window.rup_box.contents.clear
+			if (Current_Config.type_partie == "var"){
+				window.lup_box.contents += new FlowPanel(partie1.game_window.head_up_bar)
+				window.lup_box.revalidate
+				window.lup_box.repaint
+				window.rup_box.contents += new FlowPanel(partie2.game_window.head_up_bar)
+				window.rup_box.revalidate
+				window.rup_box.repaint
+				window.mup_box.contents += new FlowPanel(partie2.game_window.head_up_bar.notif)
+				window.mup_box.revalidate
+				window.mup_box.repaint
+				partie.numero match {
+					case 1 => {
+						window.left_box.contents.clear
+						window.left_box.contents += new FlowPanel(new Pieces_dispo(partie1,'W'))
+						window.left_box.contents += new FlowPanel(new Pieces_dispo(partie1,'B'))
+					}
+					case 2 => {
+						window.right_box.contents.clear
+						window.right_box.contents += new FlowPanel(new Pieces_dispo(partie2,'W'))
+						window.right_box.contents += new FlowPanel(new Pieces_dispo(partie2,'B'))
+					}
+				}
+			}
+			else {
+				window.mup_box.contents += new FlowPanel(head_up_bar)
+			}
+
 			window.under_box.contents.clear()
 			window.under_box.contents += new GridPanel(1,2){
 				contents+= back_menu
