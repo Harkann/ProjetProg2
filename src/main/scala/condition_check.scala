@@ -60,7 +60,7 @@ trait condition_check {
 		val (x,y) = dpct.posi_end
 		val piece = dpct.piece
 		val piece_met = dpct.piece_met
-		if ((piece != null) && (piece.name == "Pe") && (j != y) && (piece_met == null)){
+		if ((piece != null) && (piece.name == "Pe") && (j != y) && (piece_met == null)&&(partie.matrix(i)(y) != null)){
 			dpct.optional_other_dpct = new Dpct((0,0),(i,y),partie)
 			val color = partie.matrix(i)(y).color
 			partie.matrix(i)(y)=null
@@ -70,7 +70,7 @@ trait condition_check {
 	}
 	
 	def nothing_but_pat_check(partie:Partie,tab_color:Array[Int],tab_other_color:Array[Int]) {
-		if (
+		/*if (
 			((tab_color.deep == Array(0,0,0,0,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
 			((tab_color.deep == Array(0,0,0,1,0,1).deep) && (tab_other_color.deep == Array(0,0,0,0,0,1).deep)) ||
 			((tab_color.deep == Array(0,0,0,1,0,1).deep) && (tab_other_color.deep == Array(0,0,0,1,0,1).deep)) ||		
@@ -78,7 +78,17 @@ trait condition_check {
 
 			){
 			partie.pat("nulle")
+		}*/
+		if (
+			((tab_color.deep == Array(8,2,2,2,1,0).deep) && (tab_other_color.deep == Array(8,2,2,2,1,0).deep)) ||
+			((tab_color.deep == Array(8,2,2,1,1,0).deep) && (tab_other_color.deep == Array(8,2,2,2,1,0).deep)) ||
+			((tab_color.deep == Array(8,2,2,1,1,0).deep) && (tab_other_color.deep == Array(8,2,2,1,1,0).deep)) ||		
+			((tab_color.deep == Array(8,2,2,2,1,0).deep) && (tab_other_color.deep == Array(8,2,1,2,1,0).deep)) 
+
+			){
+			partie.pat("nulle")
 		}
+
 	}
 }
 
