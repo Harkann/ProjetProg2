@@ -309,6 +309,10 @@ object Interface extends SimpleSwingApplication{
 			partie.waiting = false
 			partie.is_interface = true
 			partie.next_turn()
+			if (Current_Config.type_partie == "var"){
+				partie.game_window.head_up_bar.contents_reset
+			}
+			
 			notif.initial()
 		}
 	}
@@ -332,6 +336,16 @@ object Interface extends SimpleSwingApplication{
 		tower.icon = Tools.icon_resized(color+"To.PNG",Tools.min_size/20,Tools.min_size/20)
 		this.revalidate()
 		this.repaint()
+
+		/**affiche l'interface de promotion*/
+		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
+			partie.waiting = true
+			partie.is_interface = false
+			partie.game_window.head_up_bar.notif.prom_panel = new PiecePanel(posi,color,piece,partie.game_window.head_up_bar.notif,partie)
+			partie.game_window.head_up_bar.notif.contents+= new FlowPanel(partie.game_window.head_up_bar.notif.prom_panel)
+			partie.game_window.head_up_bar.notif.revalidate()
+			partie.game_window.head_up_bar.notif.repaint()
+		}
 	}
 	/**notification de fin de partie*/
 	class TextAreaEnd(color:Char,type_end:String,complement:String,numero:Int) extends GridPanel(3,1){
@@ -465,6 +479,7 @@ object Interface extends SimpleSwingApplication{
 		var timer = true
 		/**this*/
 		var notif = this
+		var prom_panel:PiecePanel = null
 		/**initialise les notifications et les boutons en fonction des parametres*/
 		def initial():Unit = {
 			this.contents.clear()
@@ -518,13 +533,12 @@ object Interface extends SimpleSwingApplication{
 		initial()
 		this.revalidate()
 		this.repaint()
-		/**affiche l'interface de promotion*/
 		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
-			partie.waiting = true
-			partie.is_interface = false
-			this.contents+= new FlowPanel(new PiecePanel(posi,color,piece,this,partie))
-			this.revalidate()
-			this.repaint()
+			prom_panel = new PiecePanel(posi,color,piece,partie.game_window.head_up_bar.notif,partie)
+			prom_panel.promote(posi,color,piece)
+			if (Current_Config.type_partie == "var"){
+				partie.game_window.head_up_bar.contents+= prom_panel
+			}
 		}
 		/**affiche le texte de fin de partie @type_end : "MAT" ou "PAT", @complement : raison de la fin de partie*/
 		def text_end(color:Char,type_end:String,complement:String,num:Int):Unit = {
@@ -551,13 +565,13 @@ object Interface extends SimpleSwingApplication{
 			case 'B' => this.contents+= new FlowPanel(new Label(){text = "Noir"})
 		}
 		var temps = new Label()
-		this.contents+=new FlowPanel(temps)
+		this.contents+=temps
 		def set(time:(Int,Int,Int)) = {
 			/**temps restant*/
 			var (hour,min,sec) = time
 			color match {
-				case 'W' => temps.text = hour+":"+min+":"+sec
-				case 'B' => temps.text = hour+":"+min+":"+sec
+				case 'W' => temps.text = hour+":"+min+":"+sec+" "
+				case 'B' => temps.text = hour+":"+min+":"+sec+" "
 			}
 
 			temps.revalidate
@@ -565,23 +579,29 @@ object Interface extends SimpleSwingApplication{
 		}
 	}
 	/**contient boutons + notifs + timers*/
-	class HeadUpBar(partie:Partie) extends BoxPanel(Orientation.Horizontal) {
+	class HeadUpBar(partie:Partie) extends GridPanel(1,3) {
 		/**timer blanc*/
+		this.contents.clear
 		var white_timer = new TimerDisplay('W',this)
-		this.contents+= new FlowPanel(white_timer)
+		this.contents+= white_timer
 		/**notifications*/
 		var notif = new Notification(partie)
 		var promotion:PiecePanel = null
 		if (Current_Config.type_partie != "var"){this.contents+= new FlowPanel(notif)}
 		/**timer noir*/
 		var black_timer = new TimerDisplay('B',this)
-		this.contents+= new FlowPanel(black_timer)
+		this.contents+= black_timer
 		/**met a jour le temps d'un timer*/
 		def edit_timer(color:Char,time:(Int,Int,Int)) = {
 			color match {
 				case 'W' => white_timer.set(time)
 				case 'B' => black_timer.set(time)
 			}
+		}
+		def contents_reset = {
+			this.contents.clear()
+			this.contents+= white_timer
+			this.contents+= black_timer
 		}
 	}
 	/**Ecran de jeu contenant l'échiquier de taille i,j*/

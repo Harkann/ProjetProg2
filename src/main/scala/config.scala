@@ -6,10 +6,10 @@ object Config {
 	val return_allowed = true
 	
 	// Gestion du temps 
-	val timer = false
+	val timer = true
 	val nb_periods = 1
 	val nb_coups = List(0) //0 -> KO
-	val temps_cadences = List(15*60*1000) //milisecondes
+	val temps_cadences = List((0*3600+15*60+0)*1000) //milisecondes
 	val increment_cadences = List(0)
 
 
