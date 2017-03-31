@@ -1,4 +1,5 @@
 save.txt
+*.pdf
 # Scala files 
 *.class
 *.log

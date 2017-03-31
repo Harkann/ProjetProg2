@@ -263,7 +263,6 @@ object Interface extends SimpleSwingApplication{
 					//il ne se passe rien
 				}
 				if (Current_Config.type_partie == "var"){
-					println("plop")
 					partie1.game_window.pieces_W.update_numbers
 					partie1.game_window.pieces_B.update_numbers
 					partie2.game_window.pieces_W.update_numbers
@@ -388,7 +387,7 @@ object Interface extends SimpleSwingApplication{
 		this.background = java.awt.Color.WHITE
 		action = Action("") {
 			if (partie.is_running){
-				if (partie.is_interface && partie.player == color){
+				if (partie.is_interface && partie.player == color && is_button_clicked == false){
 					if (is_clicked == false){
 						is_clicked = true
 						is_ba4_button = true
@@ -401,6 +400,7 @@ object Interface extends SimpleSwingApplication{
 					else {
 						is_clicked = false
 						this.background = java.awt.Color.WHITE
+						partie.game_window.plateau.reset_all()
 					}
 				}
 			}
@@ -408,7 +408,6 @@ object Interface extends SimpleSwingApplication{
 		this.icon = Tools.icon_resized(color+piece_type+".PNG",Tools.min_size/30,Tools.min_size/30)
 		this.text = number.toString()
 		def set_number() = {
-			println("plop3")
 			piece_type match {
 				case "To" => {number = container.liste_pieces(1)} 
 				case "Bi" => {number = container.liste_pieces(3)}
@@ -417,7 +416,6 @@ object Interface extends SimpleSwingApplication{
 				case "Kn" => {number = container.liste_pieces(2)}
 			}
 			this.text = number.toString()
-			println(number)
 			if (number == 0){this.enabled = false}
 			else{this.enabled = true}
 			this.revalidate
@@ -465,7 +463,6 @@ object Interface extends SimpleSwingApplication{
 		def update_numbers() = {
 			ba4.update_listes
 			set_liste
-			println("plop2 "+color+liste_pieces(0)+liste_pieces(1)+liste_pieces(2)+liste_pieces(3)+liste_pieces(4)+liste_pieces(5))
 			queen.set_number
 			bishop.set_number
 			knight.set_number
