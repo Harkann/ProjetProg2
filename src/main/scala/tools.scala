@@ -1,5 +1,4 @@
 import javax.swing.ImageIcon
-import java.time.Instant.now
 /** http://stackoverflow.com/questions/6714045/how-to-resize-jlabel-imageicon
 	Merci à Rémi Dupré pour avoir trouvé ce bout de code*/
 object Tools {
