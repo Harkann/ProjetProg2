@@ -227,6 +227,7 @@ trait Promotion extends Standard {
 		val (i,j) = position
 		val piece = matrix(position,partie)
 		//val new_type = "Queen" // TEMPORAIRE
+		if (piece != null){
 		partie.modif_piece(piece.color,0,-1)
 		if ((new_type == "Qu") || (new_type == "Q")) {
 			partie.matrix(i)(j) = new Queen (piece.color, position,partie)
@@ -242,10 +243,10 @@ trait Promotion extends Standard {
 		}
 		partie.matrix(i)(j).is_promotion = true
 		if (partie.nb_turn < partie.dplct_save.length){
-		partie.dplct_save(partie.nb_turn).promotion = partie.matrix(i)(j).PGN_name}
+		partie.dplct_save(partie.dplct_save.length-1).promotion = partie.matrix(i)(j).PGN_name}
 		partie.game_window.plateau.reset_all()
 
-	}
+	}}
 }
 
 trait Prise_en_passant {

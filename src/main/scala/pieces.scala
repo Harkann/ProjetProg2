@@ -73,8 +73,10 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		promotion_check(dpct,partie)
 		partie.dplct_save += dpct
 		partie.game_window.plateau.reset_all()
-		nothing_but_pat_check(partie,partie.pieces_B,partie.pieces_W)
-		nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)		
+		//nothing_but_pat_check(partie,partie.pieces_B,partie.pieces_W)
+		//nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)
+		nothing_but_pat_check(partie,partie.lost_pieces_B,partie.lost_pieces_W)
+		nothing_but_pat_check(partie,partie.lost_pieces_W,partie.lost_pieces_B)		
 		partie.moves_50_check(partie)
 		partie.repetitions_3_check(partie)
 		//read_test()

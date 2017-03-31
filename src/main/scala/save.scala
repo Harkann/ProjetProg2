@@ -22,7 +22,7 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 		if (optional_other_dpct != null){
 			optional_other_dpct.do_dpct(matrix)
 		}
-		if (promotion != ""){
+		if ((piece != null)&&(promotion != "")&&(piece.name=="Pe")){
 			piece.asInstanceOf[Peon].promo(p_end,promotion,partie)
 		}
 	}
@@ -96,12 +96,12 @@ trait Conversion_to_PGN {
 	def save_to_PGN(partie:Partie,type_end:String,color:Char,file_name:String) = {
 		val writer = new PrintWriter(new File(file_name ))
 		var texte = ""
-		println(partie.dplct_save)
+		//println(partie.dplct_save)
 		for( i <- 0 to partie.dplct_save.length-1) {
 			//println("chips?")
 			if (i%2 == 0) { texte+=((i/2+1)+". ")}
 			val dpct = partie.dplct_save(i)
-			println(dpct)
+			//println(dpct)
 			if (dpct != null){
 			if (dpct.is_roque != ""){
 				texte += dpct.is_roque
@@ -110,9 +110,9 @@ trait Conversion_to_PGN {
 				texte += (lettre(dpct.x))+""+dpct.y+"="+dpct.promotion
 			}
 			else {
-				println("save_to_PGN : "+dpct.piece)
+				//println("save_to_PGN : "+dpct.piece)
 				texte += dpct.piece.PGN_name
-				println("chips?")
+				//println("chips?")
 				if (dpct.piece_met != null) {
 					texte += "x"
 				}
@@ -123,7 +123,7 @@ trait Conversion_to_PGN {
 				texte += dpct.echec_other_player+ " "
 			}}
 		}
-		println("c'est fini!")
+		//println("c'est fini!")
 		type_end match {
 				case "MAT" => {
 					color match {
