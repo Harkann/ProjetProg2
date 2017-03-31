@@ -5,6 +5,10 @@ import java.awt.Color
 object Interface extends SimpleSwingApplication{
 	/**un bouton a été actionné*/
 	var is_button_clicked = false
+	/** */
+	var is_ba4_button = false
+	/** */
+	var type_ba4_button = ""
 	/**coordonnées du bouton actionné, ou 0*/
 	var button_clicked_i = 0
 	/**coordonnées du bouton actionné, ou 0*/
@@ -16,9 +20,12 @@ object Interface extends SimpleSwingApplication{
 	/**Prises possibles de l'objet pièce*/
 	var piece_allowed_take:List[(Int,Int)] = List()
 	/**Partie 1 dans le cas d'un Ba4 */
+	var piece_allowed_arrive:List[(Int,Int)] = List()
 	var partie1:Partie = null
 	/**Partie 1 dans le cas d'un Ba4 */
 	var partie2:Partie = null
+	/** infos sur la variante*/
+	var ba4:Blitz_4 = null
 	/**Boutons permettant de lancer la partie classique*/
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
@@ -41,6 +48,7 @@ object Interface extends SimpleSwingApplication{
 			partie1.numero = 1
 			partie2 = new Partie()
 			partie2.numero = 2
+			ba4 = new Blitz_4(partie1,partie2)
 			/**Interface de la partie1 crée*/
 			var interface_partie1 = new EcranPartie(8,8,window,partie1)
 			/**Interface de la partie2 crée*/
@@ -212,10 +220,37 @@ object Interface extends SimpleSwingApplication{
 		action = Action(""){
 			if (partie.is_running && partie.is_interface){
 				if (is_clicked){plateau.reset_all()}
+				else if (is_ba4_button){
+					if (piece_allowed_arrive.contains(i,j)){
+						ba4.arrive(type_ba4_button,partie.player,(i,j),partie)
+						partie.numero match {
+							case 1 => {
+								type_ba4_button match {
+									case "To" => {partie2.modif_lost_piece(partie.player,1,1)} 
+									case "Bi" => {partie2.modif_lost_piece(partie.player,3,1)}
+									case "Qu" => {partie2.modif_lost_piece(partie.player,4,1)}
+									case "Pe" => {partie2.modif_lost_piece(partie.player,0,1)}
+									case "Kn" => {partie2.modif_lost_piece(partie.player,2,1)}
+								}
+							}
+							case 2 => {
+								type_ba4_button match {
+									case "To" => {partie1.modif_lost_piece(partie.player,1,1)} 
+									case "Bi" => {partie1.modif_lost_piece(partie.player,3,1)}
+									case "Qu" => {partie1.modif_lost_piece(partie.player,4,1)}
+									case "Pe" => {partie1.modif_lost_piece(partie.player,0,1)}
+									case "Kn" => {partie1.modif_lost_piece(partie.player,2,1)}
+								}
+							}
+						}
+						plateau.reset_all()
+						partie.game_window.pieces_W.reset_buttons
+						partie.game_window.pieces_B.reset_buttons
+					}
+				}
 				else if (is_button_clicked){
 					if (piece_allowed_move.contains(i,j)){
 						piece_selected.move((i,j))
-						//partie.next_turn()
 						plateau.reset_all()
 					}
 				}
@@ -226,10 +261,17 @@ object Interface extends SimpleSwingApplication{
 				else {
 					//il ne se passe rien
 				}
+				if (Current_Config.type_partie == "var"){
+					println("plop")
+					partie1.game_window.pieces_W.update_numbers
+					partie1.game_window.pieces_B.update_numbers
+					partie2.game_window.pieces_W.update_numbers
+					partie2.game_window.pieces_B.update_numbers
+				}
 
 			}
 		}
-		
+
 	}
 	/**Grille de taille i,j contenant les différentes cases*/
 	class Echiquier(i:Int,j:Int,window:MainWindow,partie:Partie) extends GridPanel(i,j){
@@ -251,6 +293,8 @@ object Interface extends SimpleSwingApplication{
 					Cells(i)(j).get_image()
 				}
 			}
+			is_ba4_button = false
+			type_ba4_button = ""
 			button_clicked_i = 0
 			button_clicked_j = 0
 			is_button_clicked = false
@@ -262,6 +306,7 @@ object Interface extends SimpleSwingApplication{
 		this.action = Action(""){
 			piece.asInstanceOf[Peon].promo(posi,piece_type,partie)
 			partie.waiting = false
+			partie.is_interface = true
 			partie.next_turn()
 			notif.initial()
 		}
@@ -311,37 +356,107 @@ object Interface extends SimpleSwingApplication{
 			case "Pat" =>this.contents+= new Label(){text = "Cause : plus aucun mouvements possibles"}
 			case _ => this.contents+= new Label(){text = " "}
 		}
-		numero match {
-			case 1 => this.contents+= new Label(){text = "Echiquier : 1"}
-			case 0 => this.contents+= new Label(){text = "Echiquier : 2"}
-			case _ => this.contents+= new Label(){text = " "}
+		if (Current_Config.type_partie == "var"){
+			numero match {
+				case 1 => this.contents+= new Label(){text = "Echiquier : 1"}
+				case 0 => this.contents+= new Label(){text = "Echiquier : 2"}
+				case _ => this.contents+= new Label(){text = " "}
+			}
 		}
 		this.revalidate()
 		this.repaint()
 	}
 	/**NOT IMPLEMENTED*/
-	class DispoButton(color:Char,piece_type:String,partie:Partie) extends Button {
-		
+	class DispoButton(color:Char,piece_type:String,container:Pieces_dispo,partie:Partie) extends Button {
+		var number = 0
+		var is_clicked = false
+		this.background = java.awt.Color.WHITE
+		action = Action("") {
+			if (partie.is_running){
+				if (partie.is_interface && partie.player == color){
+					if (is_clicked == false){
+						is_clicked = true
+						is_ba4_button = true
+						this.background = new Color (48, 163, 115)
+						type_ba4_button = piece_type
+						piece_allowed_arrive = ba4.arrive_possible(piece_type,partie)
+						for ((x,y) <- piece_allowed_arrive) {partie.game_window.plateau.Cells(x)(y).colorie("blue")} 
+						set_number
+					}
+					else {
+						is_clicked = false
+						this.background = java.awt.Color.WHITE
+					}
+				}
+			}
+		}
+		this.icon = Tools.icon_resized(color+piece_type+".PNG",Tools.min_size/30,Tools.min_size/30)
+		this.text = number.toString()
+		def set_number() = {
+			println("plop3")
+			piece_type match {
+				case "To" => {number = container.liste_pieces(1)} 
+				case "Bi" => {number = container.liste_pieces(3)}
+				case "Qu" => {number = container.liste_pieces(4)}
+				case "Pe" => {number = container.liste_pieces(0)}
+				case "Kn" => {number = container.liste_pieces(2)}
+			}
+			this.text = number.toString()
+			println(number)
+			if (number == 0){this.enabled = false}
+			else{this.enabled = true}
+			this.revalidate
+			this.repaint
+		}
+		set_number
+
 	}
-	/**NOT IMPLEMENTED*/
+	/**Pieces disponibles sur l'echiquier*/
 	class Pieces_dispo(partie:Partie,color:Char) extends GridPanel(5,1){
-		val queen = new DispoButton(color,"Qu",partie)
+		var liste_pieces:Array[Int] = null
+		def set_liste() = {
+			(partie.numero,color) match {
+				case (1,'W') =>{liste_pieces = ba4.dispo_G_W}
+				case (1,'B') =>{liste_pieces = ba4.dispo_G_B}
+				case (2,'W') =>{liste_pieces = ba4.dispo_D_W}
+				case (2,'B') =>{liste_pieces = ba4.dispo_D_B}
+			}
+		}
+		set_liste
+		val queen = new DispoButton(color,"Qu",this,partie)
 		this.contents+= queen
-		queen.icon = Tools.icon_resized(color+"Qu.PNG",Tools.min_size/20,Tools.min_size/20)
-		val bishop = new DispoButton(color,"Bi",partie)
+		val bishop = new DispoButton(color,"Bi",this,partie)
 		this.contents+=bishop
-		bishop.icon = Tools.icon_resized(color+"Bi.PNG",Tools.min_size/20,Tools.min_size/20)
-		val knight = new DispoButton(color,"Kn",partie)
+		val knight = new DispoButton(color,"Kn",this,partie)
 		this.contents+=knight
-		knight.icon = Tools.icon_resized(color+"Kn.PNG",Tools.min_size/20,Tools.min_size/20)
-		val tower = new DispoButton(color,"To",partie)
+		val tower = new DispoButton(color,"To",this,partie)
 		this.contents+=tower
-		tower.icon = Tools.icon_resized(color+"To.PNG",Tools.min_size/20,Tools.min_size/20)
-		val peon = new DispoButton(color,"Pe",partie)
+		val peon = new DispoButton(color,"Pe",this,partie)
 		this.contents+=peon
-		tower.icon = Tools.icon_resized(color+"Pe.PNG",Tools.min_size/20,Tools.min_size/20)
 		this.revalidate()
 		this.repaint()
+		def reset_buttons = {
+			queen.is_clicked = false
+			bishop.is_clicked = false
+			knight.is_clicked = false
+			tower.is_clicked = false
+			peon.is_clicked = false
+			queen.background = java.awt.Color.WHITE
+			bishop.background = java.awt.Color.WHITE
+			knight.background = java.awt.Color.WHITE
+			tower.background = java.awt.Color.WHITE
+			peon.background = java.awt.Color.WHITE
+		}
+		def update_numbers() = {
+			ba4.update_listes
+			set_liste
+			println("plop2 "+color+liste_pieces(0)+liste_pieces(1)+liste_pieces(2)+liste_pieces(3)+liste_pieces(4)+liste_pieces(5))
+			queen.set_number
+			bishop.set_number
+			knight.set_number
+			tower.set_number
+			peon.set_number
+		}
 	}
 	/**Notifications*/
 	class Notification(partie:Partie) extends BoxPanel(Orientation.Vertical){
@@ -405,6 +520,7 @@ object Interface extends SimpleSwingApplication{
 		/**affiche l'interface de promotion*/
 		def promote(posi:(Int,Int),color:Char,piece:Piece) = {
 			partie.waiting = true
+			partie.is_interface = false
 			this.contents+= new FlowPanel(new PiecePanel(posi,color,piece,this,partie))
 			this.revalidate()
 			this.repaint()
@@ -428,34 +544,36 @@ object Interface extends SimpleSwingApplication{
 		}
 	}
 	/**affichage du temps restant*/
-	class TimerDisplay(color:Char) extends Label {
+	class TimerDisplay(color:Char,bar:HeadUpBar) extends GridPanel(2,1) {
+		color match {
+			case 'W' => this.contents+= new FlowPanel(new Label(){text = "Blanc"})
+			case 'B' => this.contents+= new FlowPanel(new Label(){text = "Noir"})
+		}
+		var temps = new Label()
+		this.contents+=new FlowPanel(temps)
 		def set(time:(Int,Int,Int)) = {
 			/**temps restant*/
 			var (hour,min,sec) = time
 			color match {
-				case 'W' => this.text = "Blanc : "+hour+":"+min+":"+sec
-				case 'B' => this.text = "Noir : "+hour+":"+min+":"+sec
+				case 'W' => temps.text = hour+":"+min+":"+sec
+				case 'B' => temps.text = hour+":"+min+":"+sec
 			}
-			this.revalidate()
-			this.repaint()
+
+			temps.revalidate
+			temps.repaint
 		}
 	}
 	/**contient boutons + notifs + timers*/
 	class HeadUpBar(partie:Partie) extends BoxPanel(Orientation.Horizontal) {
 		/**timer blanc*/
-		var white_timer = new TimerDisplay('W')
+		var white_timer = new TimerDisplay('W',this)
 		this.contents+= new FlowPanel(white_timer)
 		/**notifications*/
-		
 		var notif = new Notification(partie)
-		if (Current_Config.type_partie != "var"){
-			this.contents+= new FlowPanel(notif)
-		}
+		if (Current_Config.type_partie != "var"){this.contents+= new FlowPanel(notif)}
 		/**timer noir*/
-		var black_timer = new TimerDisplay('B')
+		var black_timer = new TimerDisplay('B',this)
 		this.contents+= new FlowPanel(black_timer)
-		this.revalidate()
-		this.repaint()
 		/**met a jour le temps d'un timer*/
 		def edit_timer(color:Char,time:(Int,Int,Int)) = {
 			color match {
@@ -466,13 +584,23 @@ object Interface extends SimpleSwingApplication{
 	}
 	/**Ecran de jeu contenant l'échiquier de taille i,j*/
 	class EcranPartie(i:Int,j:Int,window:MainWindow,partie:Partie) extends FlowPanel(){
+		var pieces_W:Pieces_dispo = null
+		var pieces_B:Pieces_dispo = null
 		var head_up_bar = new HeadUpBar(partie)
 		var plateau = new Echiquier(i,j,window,partie)
 		val back_menu = new Button{
 			action = Action("Back to main menu"){
 				partie.stop()
+				if (partie1 != null && partie2 != null){
+					partie1.stop
+					partie2.stop
+				}
 				window.init_menu()
 			}
+		}
+		if (Current_Config.type_partie == "var"){
+			pieces_W = new Pieces_dispo(partie,'W')
+			pieces_B = new Pieces_dispo(partie,'B')
 		}
 		val quit_program = new QuitButton(window,partie)
 		/**initialise l'interface, la partie et lance la partie*/
@@ -506,13 +634,13 @@ object Interface extends SimpleSwingApplication{
 				partie.numero match {
 					case 1 => {
 						window.left_box.contents.clear
-						window.left_box.contents += new FlowPanel(new Pieces_dispo(partie1,'W'))
-						window.left_box.contents += new FlowPanel(new Pieces_dispo(partie1,'B'))
+						window.left_box.contents += new FlowPanel(pieces_W)
+						window.left_box.contents += new FlowPanel(pieces_B)
 					}
 					case 2 => {
 						window.right_box.contents.clear
-						window.right_box.contents += new FlowPanel(new Pieces_dispo(partie2,'W'))
-						window.right_box.contents += new FlowPanel(new Pieces_dispo(partie2,'B'))
+						window.right_box.contents += new FlowPanel(pieces_W)
+						window.right_box.contents += new FlowPanel(pieces_B)
 					}
 				}
 			}

@@ -266,6 +266,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		player = 'W'
 		nb_turn = 0
 		is_running = true
+		lost_pieces_W = Array(0,0,0,0,0,0)
+		lost_pieces_B = Array(0,0,0,0,0,0)
 		matrix(2)(1) = new Peon('W',(2,1),this)
 		matrix(2)(2) = new Peon('W',(2,2),this)
 		matrix(2)(3) = new Peon('W',(2,3),this)

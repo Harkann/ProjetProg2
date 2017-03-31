@@ -4,7 +4,12 @@ class Blitz_4(partie_G:Partie,partie_D:Partie){
 	var dispo_G_B = partie_D.lost_pieces_B
 	var dispo_D_W = partie_G.lost_pieces_W
 	var dispo_D_B = partie_G.lost_pieces_B
-	
+	def update_listes = {
+		dispo_G_W = partie_D.lost_pieces_W
+		dispo_G_B = partie_D.lost_pieces_B
+		dispo_D_W = partie_G.lost_pieces_W
+		dispo_D_B = partie_G.lost_pieces_B
+	}
 	def arrive_possible(type_piece:String,partie:Partie):List[(Int,Int)] = {
 		var res:List[(Int,Int)]= List()
 		if (type_piece == "Pe"){
@@ -40,5 +45,6 @@ class Blitz_4(partie_G:Partie,partie_D:Partie){
 		
 		var (i,j) = position
 		partie.matrix(i)(j) = piece
+		partie.next_turn
 	}
 }
