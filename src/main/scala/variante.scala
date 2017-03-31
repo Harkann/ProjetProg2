@@ -45,6 +45,6 @@ class Blitz_4(partie_G:Partie,partie_D:Partie){
 		
 		var (i,j) = position
 		partie.matrix(i)(j) = piece
-		partie.next_turn
+		partie.player = partie.other_player(partie.player)
 	}
 }

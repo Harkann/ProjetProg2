@@ -222,7 +222,7 @@ object Interface extends SimpleSwingApplication{
 				if (is_clicked){plateau.reset_all()}
 				else if (is_ba4_button){
 					if (piece_allowed_arrive.contains(i,j)){
-						ba4.arrive(type_ba4_button,partie.player,(i,j),partie)
+						
 						partie.numero match {
 							case 1 => {
 								type_ba4_button match {
@@ -243,6 +243,7 @@ object Interface extends SimpleSwingApplication{
 								}
 							}
 						}
+						ba4.arrive(type_ba4_button,partie.player,(i,j),partie)
 						plateau.reset_all()
 						partie.game_window.pieces_W.reset_buttons
 						partie.game_window.pieces_B.reset_buttons
@@ -570,6 +571,7 @@ object Interface extends SimpleSwingApplication{
 		this.contents+= new FlowPanel(white_timer)
 		/**notifications*/
 		var notif = new Notification(partie)
+		var promotion:PiecePanel = null
 		if (Current_Config.type_partie != "var"){this.contents+= new FlowPanel(notif)}
 		/**timer noir*/
 		var black_timer = new TimerDisplay('B',this)
