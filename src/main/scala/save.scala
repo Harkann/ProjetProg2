@@ -18,7 +18,7 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 	def do_dpct(matrix:Array[Array[Piece]]){
 		matrix(i)(j) = null
 		matrix(x)(y) = piece
-		piece.position =(x,y)
+		if (piece != null){piece.position =(x,y)}
 		if (optional_other_dpct != null){
 			optional_other_dpct.do_dpct(matrix)
 		}
