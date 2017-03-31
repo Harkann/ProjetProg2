@@ -477,7 +477,7 @@ object Interface extends SimpleSwingApplication{
 				this.contents+= new FlowPanel(retour)
 				/**sauvegarde la partie au format PGN*/
 				var save_game = new Button(){
-					action = Action("Save_game"){partie.save_to_PGN(partie,"*",partie.player)}
+					action = Action("Save_game"){partie.save_to_PGN(partie,"*",partie.player,"save.txt")}
 				}
 				this.contents+= new FlowPanel(save_game)
 				/**demarre le timer*/
@@ -530,7 +530,7 @@ object Interface extends SimpleSwingApplication{
 		def text_end(color:Char,type_end:String,complement:String,num:Int):Unit = {
 			initial()
 			partie.type_end = (type_end,color)
-			partie.save_to_PGN(partie,type_end,color)
+			partie.save_to_PGN(partie,type_end,color,"save.txt")
 			if (Current_Config.type_partie != "var"){this.contents+= new FlowPanel(new TextAreaEnd(color,type_end,complement,0))}
 			else {
 				if (partie.numero == 1){partie2.game_window.head_up_bar.notif.text_end(color,type_end,complement,1)}
