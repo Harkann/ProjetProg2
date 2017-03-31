@@ -641,10 +641,10 @@ object Interface extends SimpleSwingApplication{
 			window.lup_box.contents.clear
 			window.rup_box.contents.clear
 			if (Current_Config.type_partie == "var"){
-				window.lup_box.contents += new FlowPanel(partie1.game_window.head_up_bar)
+				window.lup_box.contents += partie1.game_window.head_up_bar
 				window.lup_box.revalidate
 				window.lup_box.repaint
-				window.rup_box.contents += new FlowPanel(partie2.game_window.head_up_bar)
+				window.rup_box.contents += partie2.game_window.head_up_bar
 				window.rup_box.revalidate
 				window.rup_box.repaint
 				window.mup_box.contents += new FlowPanel(partie2.game_window.head_up_bar.notif)
