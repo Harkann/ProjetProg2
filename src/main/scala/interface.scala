@@ -88,7 +88,7 @@ object Interface extends SimpleSwingApplication{
 		/**bouton qui lance une partie avec deux ia*/
 		val game_two_ia = new PartieButton("IA vs. IA",2,'0',window)
 		/**bouton qui lance une partie de Blitz à 4 */
-		val game_var = new VarPartieButton("VAR",0,'0',window)
+		val game_var = new VarPartieButton("4 players Blitz",0,'0',window)
 		/**bouton qui permet d'accéder aux paramètre NOT_IMPLEMENTED*/
 		val settings_butt = new SettingsButton(window)
 		/**bouton qui ferme l'interface*/
@@ -489,7 +489,7 @@ object Interface extends SimpleSwingApplication{
 				this.contents+= new FlowPanel(retour)
 				/**sauvegarde la partie au format PGN*/
 				var save_game = new Button(){
-					action = Action("Save_game"){partie.save_to_PGN(partie,"*",partie.player,"save.txt")}
+					action = Action("Save Game"){partie.save_to_PGN(partie,"*",partie.player,"save.txt")}
 				}
 				this.contents+= new FlowPanel(save_game)
 				/**demarre le timer*/
