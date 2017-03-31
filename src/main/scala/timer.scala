@@ -30,6 +30,7 @@ class TimerClock(color:Char,partie:Partie) extends Runnable(){
 	}
 	def running():Unit = {
 		while (is_running && partie.is_running){
+			println("run")
 			if (current_time_left > 0){
 				try {
 					partie.game_window.head_up_bar.edit_timer(color,display(current_time_left))
@@ -49,6 +50,7 @@ class TimerClock(color:Char,partie:Partie) extends Runnable(){
 		}
 	}
 	def waiting():Unit = {
+		println("wait "+color)
 		while (!is_running && partie.is_running){
 			if(Thread.interrupted){running()}
 			else {
