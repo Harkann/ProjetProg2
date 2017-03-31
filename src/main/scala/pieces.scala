@@ -14,7 +14,7 @@ ______________________________DÉFINITION DE LA CLASSE ABSTRAITE PIECE  ________
 //color de type char car la comparaison string char est fausse
 /**Superclasse abstraite contenant toutes les pièces,
 color : 'W' ou 'B'*/
-abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extends Standard with condition_check {
+abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extends Standard with condition_check with Conversion_to_PGN {
 	val color = col;
 	/**nom de la pièce*/
 	val name:String; 
@@ -77,6 +77,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)		
 		partie.moves_50_check(partie)
 		partie.repetitions_3_check(partie)
+		//read_test()
 
 		//println("pieces_B: "+partie.pieces_B.deep+" pieces_W: "+partie.pieces_W.deep)
 		//println("lost_pieces_B: "+partie.lost_pieces_B.deep+" lost_pieces_W: "+partie.lost_pieces_W.deep)
@@ -211,7 +212,7 @@ class Bishop(color:Char,position:(Int,Int),partie:Partie) extends Piece(color,po
 with Id_creation with Diagonal{
 	val name="Bi"
 	val PGN_name="B"
-	val num_type = 3
+	val num_type = 3 // Pink Fluffy unicorns Dancing on Rainbooows
 	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)

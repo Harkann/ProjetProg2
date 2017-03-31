@@ -1,5 +1,6 @@
 import java.io._
 import scala.collection.mutable.ArrayBuffer
+import scala.io.Source
 
 
 class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
@@ -17,8 +18,12 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 	def do_dpct(matrix:Array[Array[Piece]]){
 		matrix(i)(j) = null
 		matrix(x)(y) = piece
+		piece.position =(x,y)
 		if (optional_other_dpct != null){
 			optional_other_dpct.do_dpct(matrix)
+		}
+		if (promotion != ""){
+			piece.asInstanceOf[Peon].promo(p_end,promotion,partie)
 		}
 	}
 
@@ -80,7 +85,7 @@ trait Save {
 	}
 
 	def last_move(partie:Partie) : Dpct = {
-		return partie.dplct_save(partie.nb_turn-1)
+		return partie.dplct_save(partie.dplct_save.length-1)
 	}
 	
 }
@@ -88,12 +93,16 @@ trait Save {
 
 trait Conversion_to_PGN {
 	val lettre = Array('z','a','b','c','d','e','f','g','h')
-	def save_to_PGN(partie:Partie,type_end:String,color:Char) = {
-		val writer = new PrintWriter(new File("save.txt" ))
-			var texte = ""
+	def save_to_PGN(partie:Partie,type_end:String,color:Char,file_name:String) = {
+		val writer = new PrintWriter(new File(file_name ))
+		var texte = ""
+		println(partie.dplct_save)
 		for( i <- 0 to partie.dplct_save.length-1) {
+			//println("chips?")
 			if (i%2 == 0) { texte+=((i/2+1)+". ")}
 			val dpct = partie.dplct_save(i)
+			println(dpct)
+			if (dpct != null){
 			if (dpct.is_roque != ""){
 				texte += dpct.is_roque
 			}
@@ -101,7 +110,9 @@ trait Conversion_to_PGN {
 				texte += (lettre(dpct.x))+""+dpct.y+"="+dpct.promotion
 			}
 			else {
+				println("save_to_PGN : "+dpct.piece)
 				texte += dpct.piece.PGN_name
+				println("chips?")
 				if (dpct.piece_met != null) {
 					texte += "x"
 				}
@@ -110,8 +121,9 @@ trait Conversion_to_PGN {
 			texte+=" "
 			if (dpct.echec_other_player != "") {
 				texte += dpct.echec_other_player+ " "
-			}
+			}}
 		}
+		println("c'est fini!")
 		type_end match {
 				case "MAT" => {
 					color match {
@@ -128,36 +140,40 @@ trait Conversion_to_PGN {
 		writer.close()
 	}
 	
-	def load(texte:String):scala.collection.mutable.ArrayBuffer[Dpct] = {
+	def load(partie:Partie,texte:String) = {
 		val len = texte.length
 		var index = 0
 		var dpct :Dpct = null 
-		var nb_turn = 0
-		var partie = new Partie
-		var dpct_List : ArrayBuffer[Dpct]= ArrayBuffer()
 		var is_comment = false
 		while (index < len) {
 			texte(index) match {
-				case '[' => {
+				case '[' | '{' => {
 					is_comment = true
 					index +=1
 				}
-				case ']' => {
+				case ']' | '}' => {
 					is_comment = false
 					index +=1
 				}
 				case _ if (is_comment) => { index += 1 }
 
 				case '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9' =>{
-					dpct_List += dpct
-					var (new_index,new_nb_turn) = get_nb_turn(texte,index)
-					index = new_index
-					nb_turn = new_nb_turn
+					var (new_index1,new_nb_turn) = get_nb_turn(texte,index)
+					partie.nb_turn = 2*new_nb_turn
+					var (dpct_W,new_index2) = read_move(texte,new_index1,'W',partie)
+					dpct_W.do_dpct(partie.matrix)
+					partie.dplct_save += dpct_W
+					partie.nb_turn +=1
+					var (dpct_B,new_index3) = read_move(texte,new_index2,'B',partie)
+					dpct_B.do_dpct(partie.matrix)
+					partie.dplct_save += dpct_B
+					index = new_index3
 				}
+				case '*' => index = len
+				case _ => index+=1 
 
 			}
 		}
-		return dpct_List
 	}
 
 	def get_nb_turn(texte:String,beginning_nbturn:Int):(Int,Int) ={
@@ -170,7 +186,7 @@ trait Conversion_to_PGN {
 		return (index+2,res)
 	}
 
-def read_dcpt(texte:String,index:Int) : (Int,Int,Int,Int,Int) = {
+	def read_dpct(texte:String,index:Int) : (Int,Int,Int,Int,Int) = {
 		texte(index) match {
 			case  '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8' =>{
 				var i = 0
@@ -195,7 +211,7 @@ def read_dcpt(texte:String,index:Int) : (Int,Int,Int,Int,Int) = {
 							case 'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h' =>{
 								var i = line_to_int(texte(index))
 								var j = texte(index+1).toInt-48
-								var x = line_to_int(texte(index+3))
+								var x = line_to_int(texte(index+2))
 								var y = texte(index+3).toInt-48
 								var new_index = index+4
 								return (i,j,x,y,new_index)
@@ -223,32 +239,45 @@ def read_dcpt(texte:String,index:Int) : (Int,Int,Int,Int,Int) = {
 
 				}
 			} 
+			case _ => read_dpct(texte,index+1)
 		}
 	}
 
-/*
-	def read_move(texte:String,index:Int,player:Char,partie:Partie) : (Dcpt,Int) = {
+
+	def read_move(texte:String,index:Int,player:Char,partie:Partie) : (Dpct,Int) = {
+		var dpct : Dpct = null
+		var n_index = 0
 		texte(index) match {
 			case 'O' => {
 				return read_roque(texte,index,player,partie)
 			} 
 			case 'K'|'Q'|'B'|'N'|'R' => {
+				println("chipster")
 				var (i,j,x,y,new_index) = read_dpct(texte,index+1)
-				var piece = read_find(texte(index),i,j,x,y,partie)
-				var dpct= new Dpct(piece,piece.position,(x,y))
+				var piece = read_find(texte(index).toString,i,j,x,y,partie)
+				dpct= new Dpct(piece.position,(x,y),partie)
+				println("read_move : "+dpct.piece)
+				n_index = new_index
+
+				return (dpct,n_index)
+
 			}
 			case  'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h' =>{
 				var (i,j,x,y,new_index) = read_dpct(texte,index)
-				var piece = read_find(texte(index),i,j,x,y,partie)
-				var dpct= new Dpct(piece,piece.position,(x,y))
-				if (texte(new_index != ' ')){
-					// dcpt.optional_other_dpct ICI Il faut gérer la question de la promotion 
+				var piece = read_find("",i,j,x,y,partie)
+				println(piece)
+				dpct= new Dpct(piece.position,(x,y),partie)
+				println("read_move : "+dpct.piece)
+				if (texte(new_index) == '='){
+					dpct.promotion=texte(new_index+1).toString
 				}
+				n_index = new_index+2
+
+				return (dpct,n_index)
 			}
-			case _ =>read_move(texte,index+1,player,partie) 
+			case _ =>return read_move(texte,index+1,player,partie) 
 		}
-		
-	}*/
+	}
 
 	def read_roque(texte:String,i:Int,player:Char,partie:Partie):(Dpct,Int) = {
 		var ligne = 0
@@ -279,20 +308,43 @@ def read_dcpt(texte:String,index:Int) : (Int,Int,Int,Int,Int) = {
 		return line.toInt-96
 	}
 
-	def read_find(piece_type:Char,i:Int,j:Int,x:Int,y:Int,partie:Partie) : Piece = {
+	def read_find(piece_type:String,i:Int,j:Int,x:Int,y:Int,partie:Partie) : Piece = {
+		println("i: "+i+" j: "+j+" x:"+x+" y: "+y)
+		println(piece_type)
 		for (ligne <- 1 to 8 ){
 			for (colonne <- 1 to 8){
 				var piece = partie.matrix(ligne)(colonne)
+				//println(piece)
+				if (piece != null){
 				var (moves,attacks) = piece.move_piece_check((ligne,colonne))
+				//println("ligne "+ligne+" colonne "+colonne)
+				//println("i "+i+" j "+j)
+				//println(piece.PGN_name+"|"+piece_type)
+				println(moves)
 				if ((piece.PGN_name == piece_type) &&
 					((i==0)||(ligne==i))&&
 					((j==0)||(colonne==j))&&
 					(moves.contains((x,y)))){
+					println("J'ai trouvé la piece")
 					return piece
+				}
 				}
 
 			}
 		}
 		return null
 	}
+
+	def read_test() {
+
+	var partie = new Partie
+	partie.partie_init()
+    
+    for (line <- Source.fromFile("load.txt").getLines){
+    	load(partie,line)
+    }
+    save_to_PGN(partie,"*",'W',"save_load.txt")
+	}
 } 
+
+

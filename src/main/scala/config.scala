@@ -6,7 +6,7 @@ object Config {
 	val return_allowed = true
 	
 	// Gestion du temps 
-	val timer = true
+	val timer = false
 	val nb_periods = 1
 	val nb_coups = List(0) //0 -> KO
 	val temps_cadences = List(3663000) //milisecondes

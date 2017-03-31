@@ -252,6 +252,7 @@ trait Prise_en_passant {
 	def prise_en_passant(position:(Int,Int),partie:Partie,c:Int) : List[(Int,Int)] = {
 		if (partie.dplct_save.length == 0) {return List ()}
 		val dpct = partie.last_move(partie)
+		if (dpct != null){
 		val (i,j)=position
 		if ((Math.abs(dpct.j-j) == 1) &&
 			(dpct.x == i) && (dpct.i == i+c*2) &&
@@ -261,6 +262,11 @@ trait Prise_en_passant {
 		else{
 			return List()
 		}
+		}
+		else{
+			return List()
+		}
+
 	}
 }
 
