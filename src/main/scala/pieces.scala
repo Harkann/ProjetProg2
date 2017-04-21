@@ -1,6 +1,8 @@
 import javax.swing.ImageIcon
 
 
+/* roque meillleurs regles configuration de pendule sauvegarde de partie  chargement sauvegarde mettre une classe joueur bien def */
+
 /*
 ***************************************************************************************************************
 ______________________________DÉFINITION DE LA CLASSE ABSTRAITE PIECE  _______________________________________
