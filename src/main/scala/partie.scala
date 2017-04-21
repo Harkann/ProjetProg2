@@ -1,14 +1,15 @@
 import Array._
 import scala.collection.mutable.ArrayBuffer
 
-class Partie() extends Save with Moves_50 with Repetions_3 {
+class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PGN {
 	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
 	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
 	var matrix = ofDim[Piece](9,9); 
+	/**la partie de l'interface contenant l'echiquier*/
 	var game_window:Interface.EcranPartie = null
 	var white_timer:Thread = null
 	var black_timer:Thread = null
-
+	var type_end:(String,Char) = ("*",'*')
 	def get_timer(color:Char) = {
 		color match {
 			case 'W' => white_timer
@@ -19,10 +20,16 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	/* *************************************** Sauvegarde / var globale pour la partir 2 ********************************* */
 	var pieces_B = ofDim[Int](6)
 	var pieces_W = ofDim[Int](6)
+	var lost_pieces_B = ofDim[Int](6)
+	var lost_pieces_W = ofDim[Int](6)
 
 	def modif_piece(color:Char,num:Int,modif:Int){
 		if (color == 'B') {pieces_B(num) += modif}
-		else if (color == 'W'){pieces_W(num) +=modif}
+		else if (color == 'W'){pieces_W(num) += modif}
+	}
+	def modif_lost_piece(color:Char,num:Int,modif:Int){
+		if (color == 'B') {lost_pieces_B(num) -= modif}
+		else if (color == 'W'){lost_pieces_W(num) -= modif}
 	}
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
@@ -30,6 +37,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	var matrix_save = ofDim[Piece](9,9);
 	var last_important_change = 0
 
+	var numero = 0
 
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
@@ -59,14 +67,14 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		if (is_running){is_pat(other_player(player))}
 		if (is_running){
 			if (nb_ia == 0){
-				get_timer(player).interrupt
+				if (Current_Config.timer) {get_timer(player).interrupt}
 				player = other_player(player)
-				get_timer(player).interrupt
+				if (Current_Config.timer) {get_timer(player).interrupt}	
 			}
 			else if (nb_ia == 1){
-				get_timer(player).interrupt
+				if (Current_Config.timer) {get_timer(player).interrupt}
 				player = other_player(player)
-				get_timer(player).interrupt
+				if (Current_Config.timer) {get_timer(player).interrupt}
 				if (player == color_ia){
 					is_interface = false
 					new Thread(new IA(color_ia,this)).start
@@ -74,9 +82,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 				} 
 			}
 			else {
-				get_timer(player).interrupt
+				if (Current_Config.timer) {get_timer(player).interrupt}		
 				player = other_player(player)
-				get_timer(player).interrupt
+				if (Current_Config.timer) {get_timer(player).interrupt}
 				new Thread(new IA(player,this)).start
 
 			}
@@ -150,7 +158,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 
 	def pat(motif:String){
 		this.stop()
-		game_window.head_up_bar.notif.text_end(player,"PAT",motif)
+		game_window.head_up_bar.notif.text_end(player,"PAT",motif,0)
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -195,7 +203,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 	}
 
 	/**renvoie si le joueur "player" est mat*/
-	def is_mat(player: Char) : Unit = {
+	def is_mat(player: Char) : Boolean = {
 		/**id du roi*/
 		val id_king=player+"Ki"+0
 		/**position du roi*/
@@ -217,14 +225,17 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		/***/
 		var (moves,attacks) =king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
+			//dplct_save(nb_turn-1).echec_other_player = "#"
 			perdu(player,"")
+			return true
 		}
+		return false
 
 	}
 
 	def perdu(color:Char,motif:String) = {
 		this.stop()
-		game_window.head_up_bar.notif.text_end(color,"MAT",motif)
+		game_window.head_up_bar.notif.text_end(color,"MAT",motif,0)
 	}
 
 	def partie_nb_ia(nbIA:Int,colorIA:Char,ecran:Interface.EcranPartie) = {
@@ -255,6 +266,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		player = 'W'
 		nb_turn = 0
 		is_running = true
+		lost_pieces_W = Array(0,0,0,0,0,0)
+		lost_pieces_B = Array(0,0,0,0,0,0)
 		matrix(2)(1) = new Peon('W',(2,1),this)
 		matrix(2)(2) = new Peon('W',(2,2),this)
 		matrix(2)(3) = new Peon('W',(2,3),this)
@@ -291,13 +304,12 @@ class Partie() extends Save with Moves_50 with Repetions_3 {
 		matrix(8)(5) = new King('B',(8,5),this)
 
 		matrix_save = copy_of(matrix)
-		if (Config.timer) {
-			white_timer = new Thread(new TimerClock(Config.init_time,'W',this))
+		if (Current_Config.timer) {
+			white_timer = new Thread(new TimerClock('W',this))
 			white_timer.start()
-			black_timer = new Thread(new TimerClock(Config.init_time,'B',this))
+			black_timer = new Thread(new TimerClock('B',this))
 			black_timer.start()
 		}
 	}
-
 }
 

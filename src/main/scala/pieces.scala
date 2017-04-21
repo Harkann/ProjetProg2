@@ -16,15 +16,18 @@ ______________________________DÉFINITION DE LA CLASSE ABSTRAITE PIECE  ________
 //color de type char car la comparaison string char est fausse
 /**Superclasse abstraite contenant toutes les pièces,
 color : 'W' ou 'B'*/
-abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extends Standard with condition_check {
+abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extends Standard with condition_check with Conversion_to_PGN {
 	val color = col;
 	/**nom de la pièce*/
 	val name:String; 
+	/**nom au format PGN de la piece**/
 	val PGN_name:String; 
 	/** un numreo attribué a chaque type de piece **/
 	val num_type:Int;
 	/**statut en vie ou non de la pièce*/
 	var is_alive:Boolean;
+	/** **/
+	var is_promotion= false;
 	/**id de la pièce, l'id "0" désigne une case vide*/
 	val id:String;
 	val image:ImageIcon; 
@@ -36,9 +39,6 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 	/**nombre de déplacements de la pièce*/
 	var nb_turn = 0
 	/** permet la prise en compte de la nouvelle piece dans les tableaux pieces_W et pieces_B **/
-	
-
-
 	/**déplace la pièce vers "posi"*/
 	def move(posi:(Int,Int)) = {
 		/**coordonnées actuelles de la pièce*/
@@ -46,11 +46,9 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		/**coordonnées de la destination*/
 		var (x,y)=posi
 		val piece = matrix(position,partie)
-		val piece_met = matrix(posi,partie)
+		val piece_met = partie.matrix(x)(y)
 
-		// prise d'une piece
-		if (piece_met != null) {
-			partie.modif_piece(piece_met.color,piece_met.num_type,-1)}
+		incremente_cpt_nb_piece(partie,piece_met)
 
 
 		var dpct= new Dpct(position,posi,partie)
@@ -65,16 +63,28 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 			partie.last_important_change=partie.nb_turn
 			partie.matrix_save = copy_of(partie.matrix)
 		}
+		if(partie.is_mat(partie.other_player(piece.color))) {
+			dpct.echec_other_player = "#"
+		}
+		else if(partie.is_check(partie.other_player(piece.color))) {
+			dpct.echec_other_player = "+"
+		}
+		
 
 
 		promotion_check(dpct,partie)
 		partie.dplct_save += dpct
 		partie.game_window.plateau.reset_all()
-		nothing_but_pat_check(partie,partie.pieces_B,partie.pieces_W)
-		nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)		
+		//nothing_but_pat_check(partie,partie.pieces_B,partie.pieces_W)
+		//nothing_but_pat_check(partie,partie.pieces_W,partie.pieces_B)
+		nothing_but_pat_check(partie,partie.lost_pieces_B,partie.lost_pieces_W)
+		nothing_but_pat_check(partie,partie.lost_pieces_W,partie.lost_pieces_B)		
 		partie.moves_50_check(partie)
 		partie.repetitions_3_check(partie)
+		//read_test()
 
+		//println("pieces_B: "+partie.pieces_B.deep+" pieces_W: "+partie.pieces_W.deep)
+		//println("lost_pieces_B: "+partie.lost_pieces_B.deep+" lost_pieces_W: "+partie.lost_pieces_W.deep)
 		if (partie.waiting == false){
 			partie.next_turn()
 		}
@@ -158,7 +168,7 @@ with Id_creation with Peon_move with Promotion {
 	val num_type = 0
 	val name="Pe"
 	val PGN_name=""
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -177,7 +187,7 @@ with Id_creation with Horizontal_Vertical{
 	val name = "To"
 	val PGN_name="R"
 	val num_type = 1
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -193,7 +203,7 @@ with Id_creation with Jump{
 	val name="Kn"
 	val PGN_name="N"
 	val num_type = 2
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = jump(position,partie)
@@ -206,8 +216,8 @@ class Bishop(color:Char,position:(Int,Int),partie:Partie) extends Piece(color,po
 with Id_creation with Diagonal{
 	val name="Bi"
 	val PGN_name="B"
-	val num_type = 3
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	val num_type = 3 // Pink Fluffy unicorns Dancing on Rainbooows
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -224,7 +234,7 @@ with Id_creation with Diagonal with Horizontal_Vertical{
 	val name = "Qu"
 	val PGN_name="Q"
 	val num_type = 4
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive= true
 	val id=color+name+id_create(color,name,partie)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {
@@ -245,7 +255,7 @@ with Id_creation with King_move{
 	val name="Ki"
 	val PGN_name="K"
 	val num_type = 5
-	val image = new ImageIcon(getClass.getResource(color+name+".PNG"))
+	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
 	val id=color+name+id_create(color,name,partie)
 	partie.modif_piece(color,num_type,1)

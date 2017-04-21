@@ -197,12 +197,10 @@ trait Roque extends Standard {
 		val T = matrix(pos_T,partie)
 		if (T == null) return false
 		if ((K.nb_turn != 0) || (T.nb_turn != 0)) {
-			//println("prolème de nombre de tour")
 			return false
 		}
 		for ( j <- ((j_K min j_T)+1) to ((j_K max j_T))-1){
 			if (partie.matrix(i_K)(j) != null) {
-				//println("prolème d'une case non vide")
 				return false
 			}
 		}
@@ -212,11 +210,9 @@ trait Roque extends Standard {
 		var (i,j) = pos
 		var res : List[(Int,Int)] = List()
 		if (roque_line(pos,(i,8),partie)) {
-			//println("il y a un roque!")
 			res = res:+(i,7)
 		}
 		if (roque_line(pos,(i,1),partie)) {
-			//println("il y a un roque!")
 			res = res:+(i,3)
 		}
 		return res
@@ -231,29 +227,33 @@ trait Promotion extends Standard {
 		val (i,j) = position
 		val piece = matrix(position,partie)
 		//val new_type = "Queen" // TEMPORAIRE
+		if (piece != null){
 		partie.modif_piece(piece.color,0,-1)
-		if (new_type == "Qu") {
+		if ((new_type == "Qu") || (new_type == "Q")) {
 			partie.matrix(i)(j) = new Queen (piece.color, position,partie)
 		}
-		else if (new_type == "To") {
+		else if ((new_type == "To")||(new_type == "R")) {
 			partie.matrix(i)(j) = new Tower (piece.color, position,partie)
 		}
-		else if (new_type == "Kn") {
+		else if ((new_type == "Kn")||(new_type == "N")) {
 			partie.matrix(i)(j) = new Knight (piece.color, position,partie)
 		}
 		else {
 			partie.matrix(i)(j) = new Bishop (piece.color, position,partie)
 		}
+		partie.matrix(i)(j).is_promotion = true
+		if (partie.nb_turn < partie.dplct_save.length){
+		partie.dplct_save(partie.dplct_save.length-1).promotion = partie.matrix(i)(j).PGN_name}
 		partie.game_window.plateau.reset_all()
 
-	}
+	}}
 }
 
 trait Prise_en_passant {
 	def prise_en_passant(position:(Int,Int),partie:Partie,c:Int) : List[(Int,Int)] = {
-		
-		if (partie.nb_turn >= partie.dplct_save.length) {return List ()}
+		if (partie.dplct_save.length == 0) {return List ()}
 		val dpct = partie.last_move(partie)
+		if (dpct != null){
 		val (i,j)=position
 		if ((Math.abs(dpct.j-j) == 1) &&
 			(dpct.x == i) && (dpct.i == i+c*2) &&
@@ -263,6 +263,11 @@ trait Prise_en_passant {
 		else{
 			return List()
 		}
+		}
+		else{
+			return List()
+		}
+
 	}
 }
 
