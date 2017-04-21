@@ -30,3 +30,6 @@ object IA_promote {
 		partie.waiting = false
 	}
 }
+class Smart_IA(color:Char,partie:Partie) extends Runnable{
+	override def run = {}
+}
