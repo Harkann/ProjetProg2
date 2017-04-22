@@ -117,19 +117,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		return matrix(i)(j)
 	}
 
-/*
-	chantier de réflexions :
-	- Imposibilitée de mater : avoir un tableau qui garde le nombre de piece pour chaque couleur : genre en_jeu[0]=nb pion en jeux.
-	- triple repetition de la position : rejouer la partie depuis le début ? :/ je penses que y a moyen d'être plus subtil.
-	- perte au temps : timer
-
-
-	Mika beaucoup d'interface à gerer...
-
-
-
-
-	*/
 
 
 	/**renvoie la liste des mouvements possibles pour le joueur "color"
