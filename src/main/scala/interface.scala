@@ -27,7 +27,7 @@ object Interface extends SimpleSwingApplication{
 	/** infos sur la variante*/
 	var ba4:Blitz_4 = null
 	/**Boutons permettant de lancer la partie classique*/
-	class PartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
+	class PartieButton(text:String,nbIA:Int,colorIA:Char,typeIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
 			Current_Config.type_partie = ""
 			window.middle_box.contents.clear()
@@ -35,7 +35,7 @@ object Interface extends SimpleSwingApplication{
 			var partie = new Partie()
 			/**Interface de la partie crée*/
 			var interface_partie = new EcranPartie(8,8,window,partie)
-			partie.partie_nb_ia(nbIA,colorIA,interface_partie)
+			partie.partie_nb_ia(nbIA,colorIA,typeIA,interface_partie)
 			interface_partie.spawn_game()
 		}
 	}
@@ -53,8 +53,8 @@ object Interface extends SimpleSwingApplication{
 			var interface_partie1 = new EcranPartie(8,8,window,partie1)
 			/**Interface de la partie2 crée*/
 			var interface_partie2 = new EcranPartie(8,8,window,partie2)
-			partie1.partie_nb_ia(nbIA,colorIA,interface_partie1)
-			partie2.partie_nb_ia(nbIA,colorIA,interface_partie2)
+			partie1.partie_nb_ia(nbIA,colorIA,'0',interface_partie1)
+			partie2.partie_nb_ia(nbIA,colorIA,'0',interface_partie2)
 			interface_partie1.spawn_game()
 			interface_partie2.spawn_game()
 		}
@@ -77,16 +77,18 @@ object Interface extends SimpleSwingApplication{
 		action = Action("Settings"){}
 	}
 	/**Menu principal*/
-	class MainMenu(window:MainWindow) extends GridPanel(7,1){
+	class MainMenu(window:MainWindow) extends GridPanel(8,1){
 
 		/**bouton qui lance une partie avec un seul joueur blanc*/
-		val game_one_player_white = new PartieButton("Player White vs. IA Black",1,'B',window)
+		val game_one_player_white = new PartieButton("Player White vs. IA Black",1,'B','N',window)
 		/**bouton qui lance une partie avec un seul joueur noir*/
-		val game_one_player_black = new PartieButton("Player Black vs. IA White",1,'W',window)
+		val game_one_player_black = new PartieButton("Player Black vs. IA White",1,'W','N',window)
 		/**bouton qui lance une partie avec deux joueurs*/
-		val game_two_players = new PartieButton("Player vs. Player",0,'0',window)
+		val game_two_players = new PartieButton("Player vs. Player",0,'0','0',window)
 		/**bouton qui lance une partie avec deux ia*/
-		val game_two_ia = new PartieButton("IA vs. IA",2,'0',window)
+		val game_two_ia = new PartieButton("IA vs. IA",2,'0','N',window)
+		/**bouton qui lance une partie avec deux ia*/
+		val game_two_ia_smart = new PartieButton("S_IA vs. S_IA",2,'0','S',window)
 		/**bouton qui lance une partie de Blitz à 4 */
 		val game_var = new VarPartieButton("4 players Blitz",0,'0',window)
 		/**bouton qui permet d'accéder aux paramètre NOT_IMPLEMENTED*/
@@ -100,6 +102,7 @@ object Interface extends SimpleSwingApplication{
 			contents+= game_one_player_black
 			contents+= game_one_player_white
 			contents+= game_two_ia
+			contents+= game_two_ia_smart
 			contents+= game_var
 			contents+= settings_butt
 			contents+= quit_program

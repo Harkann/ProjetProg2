@@ -38,7 +38,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	var last_important_change = 0
 
 	var numero = 0
-
+	var type_IA = '0'
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
 	var player = 'W';
 	/**nombre d'ia, 0, 1 ou 2*/
@@ -77,7 +77,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				if (Current_Config.timer) {get_timer(player).interrupt}
 				if (player == color_ia){
 					is_interface = false
-					new Thread(new IA(color_ia,this)).start
+					if (type_IA == 'S'){new Thread(new Smart_IA(color_ia,this)).start}
+					else {new Thread(new IA(color_ia,this)).start}
 					is_interface = true
 				} 
 			}
@@ -85,7 +86,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				if (Current_Config.timer) {get_timer(player).interrupt}		
 				player = other_player(player)
 				if (Current_Config.timer) {get_timer(player).interrupt}
-				new Thread(new IA(player,this)).start
+				if (type_IA == 'S'){new Thread(new Smart_IA(player,this)).start}
+				else {new Thread(new IA(player,this)).start}
 
 			}
 		}
@@ -225,7 +227,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		game_window.head_up_bar.notif.text_end(color,"MAT",motif,0)
 	}
 
-	def partie_nb_ia(nbIA:Int,colorIA:Char,ecran:Interface.EcranPartie) = {
+	def partie_nb_ia(nbIA:Int,colorIA:Char,typeIA:Char,ecran:Interface.EcranPartie) = {
+		type_IA = typeIA
 		nb_ia = nbIA
 		color_ia=colorIA
 		game_window=ecran
@@ -236,11 +239,13 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	/**démarre la partie*/
 	def start() = {
 		if (nb_ia == 1 && color_ia == 'W'){
-			new Thread(new IA('W',this)).start
+			if (type_IA == 'S'){new Thread(new Smart_IA('W',this)).start}
+			else {new Thread(new IA('W',this)).start}
 		}
 		else if (nb_ia == 2){
 			is_interface = false
-			new Thread(new IA('W',this)).start
+			if (type_IA == 'S'){new Thread(new Smart_IA('W',this)).start}
+			else {new Thread(new IA('W',this)).start}
 		}
 	}
 	/**initialise la partie*/

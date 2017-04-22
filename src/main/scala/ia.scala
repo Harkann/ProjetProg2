@@ -30,6 +30,7 @@ object IA_promote {
 		partie.waiting = false
 	}
 }
+<<<<<<< HEAD
 
 class Smart_IA(color:Char,partie:Partie) extends Runnable{
 	/**lance le thread du tour de l'ia*/
@@ -99,4 +100,3 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable{
 		}
 		return 0
 	}
-}
