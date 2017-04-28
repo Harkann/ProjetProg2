@@ -21,19 +21,12 @@ object Interface extends SimpleSwingApplication{
 	var piece_allowed_take:List[(Int,Int)] = List()
 	/**Partie 1 dans le cas d'un Ba4 */
 	var piece_allowed_arrive:List[(Int,Int)] = List()
-	var gnuchess = new Gnuchess()
 	var partie1:Partie = null
 	/**Partie 1 dans le cas d'un Ba4 */
 	var partie2:Partie = null
 	/** infos sur la variante*/
 	var ba4:Blitz_4 = null
 
-
-	class TestButton() extends Button{
-		action = Action("TEST"){
-			gnuchess.write("help")
-		}
-	}
 	/**Boutons permettant de lancer la partie classique*/
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,typeIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
@@ -105,7 +98,6 @@ object Interface extends SimpleSwingApplication{
 		val quit_program = new QuitButton(window,null)
 		val game_gnu_white = new PartieButton("Player Black vs. GNU White",1,'W','G',window)
 		val game_gnu_black = new PartieButton("Player White vs. GNU Black",1,'B','G',window)
-		val test_button = new TestButton()
 		/**affiche le menu principal*/
 		def set_menu():Unit = {
 			contents.clear()
@@ -117,7 +109,6 @@ object Interface extends SimpleSwingApplication{
 			contents+= game_gnu_black
 			contents+= game_gnu_white
 			contents+= game_var
-			contents+= test_button
 			contents+= settings_butt
 			contents+= quit_program
 			revalidate()
