@@ -125,11 +125,14 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		
 		/**coordonnée de la pièce*/
 		var (i,j) = position
+		println ("position : "+i+" "+j)
 		/** id de la pièce sur la case*/
 		var piece = matrix((i,j),partie)
+		/*if ((piece == null) || !(piece.is_alive)) {
+			return (List(),List())
+		}*/
 		/**pièce sur la case*/
 		var id=piece.id
-		if (!(piece.is_alive)) {return (List(),List())}
 		/**autre joueur*/
 		val other=partie.other_player(id(0))
 		if (id.substring(1,3)=="Ki") {

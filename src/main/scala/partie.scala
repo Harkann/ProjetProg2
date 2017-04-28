@@ -77,7 +77,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				if (Current_Config.timer) {get_timer(player).interrupt}
 				if (player == color_ia){
 					is_interface = false
-					if (type_IA == 'S'){new Thread(new Smart_IA(color_ia,this)).start}
+					if (type_IA == 'S'){new Thread(new Smart_IA(color_ia,this,3)).start}
 					else {new Thread(new IA(color_ia,this)).start}
 					is_interface = true
 				} 
@@ -86,7 +86,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				if (Current_Config.timer) {get_timer(player).interrupt}		
 				player = other_player(player)
 				if (Current_Config.timer) {get_timer(player).interrupt}
-				if (type_IA == 'S'){new Thread(new Smart_IA(player,this)).start}
+				if (type_IA == 'S'){new Thread(new Smart_IA(player,this,3)).start}
 				else {new Thread(new IA(player,this)).start}
 
 			}
@@ -239,12 +239,12 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	/**démarre la partie*/
 	def start() = {
 		if (nb_ia == 1 && color_ia == 'W'){
-			if (type_IA == 'S'){new Thread(new Smart_IA('W',this)).start}
+			if (type_IA == 'S'){new Thread(new Smart_IA('W',this,3)).start}
 			else {new Thread(new IA('W',this)).start}
 		}
 		else if (nb_ia == 2){
 			is_interface = false
-			if (type_IA == 'S'){new Thread(new Smart_IA('W',this)).start}
+			if (type_IA == 'S'){new Thread(new Smart_IA('W',this,3)).start}
 			else {new Thread(new IA('W',this)).start}
 		}
 	}
