@@ -52,7 +52,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		println("choice_dpct")
 		var partie_aux = new Partie()
 		val possible_moves = partie.allowed_moves(color)
-		var score_max = -10000000
+		var score_max = -100000000
 		var move_max = possible_moves(0)
 		for( move <- possible_moves) {
 			/* appliquer le move */
