@@ -9,7 +9,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	var game_window:Interface.EcranPartie = null
 	var white_timer:Thread = null
 	var black_timer:Thread = null
-	val gnuchess:Gnuchess = null
+	var gnuchess:Gnuchess = null
 	var type_end:(String,Char) = ("*",'*')
 	def get_timer(color:Char) = {
 		color match {
@@ -75,6 +75,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 			}
 			else if (nb_ia == 1){
 				if (Current_Config.timer) {get_timer(player).interrupt}
+				is_interface = true
 				player = other_player(player)
 				if (Current_Config.timer) {get_timer(player).interrupt}
 				if (player == color_ia){
@@ -82,7 +83,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 					if (type_IA == 'S'){new Thread(new Smart_IA(color_ia,this)).start}
 					else if (type_IA == 'N'){new Thread(new IA(color_ia,this)).start}
 					else if (type_IA == 'G'){}
-					is_interface = true
+					
 				} 
 			}
 			else {
@@ -245,6 +246,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	def start() = {
 		if (type_IA == 'G'){
 			/**TODO : Initialise les paramètres de GNUchess*/
+			gnuchess = new Gnuchess()
+			gnuchess.write("help")
 		}
 		else if (nb_ia == 1 && color_ia == 'W'){
 			if (type_IA == 'S'){new Thread(new Smart_IA('W',this)).start}
