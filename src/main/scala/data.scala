@@ -34,7 +34,7 @@ class Values{
 	val val_king = 20000
 }
 
-class Squares{
+trait Squares{
 
 val square_peon = Array (
  Array(0,  0,  0,  0,  0,  0,  0,  0),

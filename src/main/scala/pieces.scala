@@ -82,7 +82,10 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		partie.moves_50_check(partie)
 		partie.repetitions_3_check(partie)
 		//read_test()
-
+		if (partie.type_IA == 'G' && partie.player != partie.color_ia){
+			partie.gnuchess.write("help")
+			/**TODO : renvoie le mouvement à gnuchess*/
+		}
 		//println("pieces_B: "+partie.pieces_B.deep+" pieces_W: "+partie.pieces_W.deep)
 		//println("lost_pieces_B: "+partie.lost_pieces_B.deep+" lost_pieces_W: "+partie.lost_pieces_W.deep)
 		if (partie.waiting == false){

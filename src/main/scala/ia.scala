@@ -30,7 +30,6 @@ object IA_promote {
 		partie.waiting = false
 	}
 }
-<<<<<<< HEAD
 
 class Smart_IA(color:Char,partie:Partie) extends Runnable{
 	/**lance le thread du tour de l'ia*/
@@ -52,7 +51,7 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable{
 		
 		piece_selected.move(destination)
 	}
-
+	/**
 	def alphabetaMax(alpha : Int, beta : Int , depth : Int) : Int = {
 		if (depth == 0){
 			return evaluation()
@@ -61,7 +60,7 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable{
 		var ver_beta = beta
 		val possible_moves = partie.allowed_moves(color)
 		for( move <- possible_moves) {
-			 val score = alphabetaMin(var_alpha,var_beta,depth-1)
+			val score = alphabetaMin(var_alpha,var_beta,depth-1)
 			if (score >= var_beta) {
 				return var_beta
 			}
@@ -96,7 +95,9 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable{
 	def evaluation() : Int = {
 		var score = 0
 		for( i <- 1 to 8) {
-						
+
 		}
 		return 0
 	}
+	*/
+}

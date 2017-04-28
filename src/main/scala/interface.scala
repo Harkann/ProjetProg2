@@ -21,11 +21,19 @@ object Interface extends SimpleSwingApplication{
 	var piece_allowed_take:List[(Int,Int)] = List()
 	/**Partie 1 dans le cas d'un Ba4 */
 	var piece_allowed_arrive:List[(Int,Int)] = List()
+	var gnuchess = new Gnuchess()
 	var partie1:Partie = null
 	/**Partie 1 dans le cas d'un Ba4 */
 	var partie2:Partie = null
 	/** infos sur la variante*/
 	var ba4:Blitz_4 = null
+
+
+	class TestButton() extends Button{
+		action = Action("TEST"){
+			gnuchess.write("help")
+		}
+	}
 	/**Boutons permettant de lancer la partie classique*/
 	class PartieButton(text:String,nbIA:Int,colorIA:Char,typeIA:Char,window:MainWindow) extends Button{
 		action = Action(text){
@@ -77,7 +85,7 @@ object Interface extends SimpleSwingApplication{
 		action = Action("Settings"){}
 	}
 	/**Menu principal*/
-	class MainMenu(window:MainWindow) extends GridPanel(8,1){
+	class MainMenu(window:MainWindow) extends GridPanel(11,1){
 
 		/**bouton qui lance une partie avec un seul joueur blanc*/
 		val game_one_player_white = new PartieButton("Player White vs. IA Black",1,'B','N',window)
@@ -95,6 +103,9 @@ object Interface extends SimpleSwingApplication{
 		val settings_butt = new SettingsButton(window)
 		/**bouton qui ferme l'interface*/
 		val quit_program = new QuitButton(window,null)
+		val game_gnu_white = new PartieButton("Player Black vs. GNU White",1,'W','G',window)
+		val game_gnu_black = new PartieButton("Player White vs. GNU Black",1,'B','G',window)
+		val test_button = new TestButton()
 		/**affiche le menu principal*/
 		def set_menu():Unit = {
 			contents.clear()
@@ -103,7 +114,10 @@ object Interface extends SimpleSwingApplication{
 			contents+= game_one_player_white
 			contents+= game_two_ia
 			contents+= game_two_ia_smart
+			contents+= game_gnu_black
+			contents+= game_gnu_white
 			contents+= game_var
+			contents+= test_button
 			contents+= settings_butt
 			contents+= quit_program
 			revalidate()

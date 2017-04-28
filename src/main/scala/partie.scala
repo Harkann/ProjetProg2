@@ -9,6 +9,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	var game_window:Interface.EcranPartie = null
 	var white_timer:Thread = null
 	var black_timer:Thread = null
+	val gnuchess:Gnuchess = null
 	var type_end:(String,Char) = ("*",'*')
 	def get_timer(color:Char) = {
 		color match {
@@ -34,17 +35,18 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 
 	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
 	var waiting = false
-	var matrix_save = ofDim[Piece](9,9);
+	var matrix_save = ofDim[Piece](9,9)
 	var last_important_change = 0
 
 	var numero = 0
 	var type_IA = '0'
 	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
-	var player = 'W';
+	var player = 'W'
 	/**nombre d'ia, 0, 1 ou 2*/
 	var nb_ia = 0
 	/**couleur de l'ia, 'B','W' ou '0'*/
-	var color_ia = 'B';
+	var color_ia = 'B'
+	var color_gnu = '0'
 	/**la partie est en cours ou non */
 	var is_running = true
 	/**l'interface peut deplacer des pieces*/
@@ -78,7 +80,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				if (player == color_ia){
 					is_interface = false
 					if (type_IA == 'S'){new Thread(new Smart_IA(color_ia,this)).start}
-					else {new Thread(new IA(color_ia,this)).start}
+					else if (type_IA == 'N'){new Thread(new IA(color_ia,this)).start}
+					else if (type_IA == 'G'){}
 					is_interface = true
 				} 
 			}
@@ -233,12 +236,17 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		color_ia=colorIA
 		game_window=ecran
 	}
+
+
 	/**compte le nombre de tours*/
 	var nb_turn = 0
 
 	/**démarre la partie*/
 	def start() = {
-		if (nb_ia == 1 && color_ia == 'W'){
+		if (type_IA == 'G'){
+			/**TODO : Initialise les paramètres de GNUchess*/
+		}
+		else if (nb_ia == 1 && color_ia == 'W'){
 			if (type_IA == 'S'){new Thread(new Smart_IA('W',this)).start}
 			else {new Thread(new IA('W',this)).start}
 		}
