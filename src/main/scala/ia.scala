@@ -30,7 +30,6 @@ object IA_promote {
 		partie.waiting = false
 	}
 }
-<<<<<<< HEAD
 
 class Smart_IA(color:Char,partie:Partie) extends Runnable{
 	/**lance le thread du tour de l'ia*/
@@ -58,7 +57,7 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable{
 			return evaluation()
 		}
 		var var_alpha = alpha
-		var ver_beta = beta
+		var var_beta = beta
 		val possible_moves = partie.allowed_moves(color)
 		for( move <- possible_moves) {
 			 val score = alphabetaMin(var_alpha,var_beta,depth-1)
@@ -77,7 +76,7 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable{
 			return -evaluation()
 		}
 		var var_alpha = alpha
-		var ver_beta = beta
+		var var_beta = beta
 		val possible_moves = partie.allowed_moves(color)
 		for( move <- possible_moves) {
 			/*appliquer le move*/
@@ -96,7 +95,11 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable{
 	def evaluation() : Int = {
 		var score = 0
 		for( i <- 1 to 8) {
+			for (j <- 1 to 8 ){
+				()
+			}
 						
 		}
 		return 0
 	}
+}

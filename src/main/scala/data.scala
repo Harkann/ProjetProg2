@@ -1,7 +1,7 @@
-class evaluation extends Values with Squares {
-	def value(piece :Piece){
+trait evaluation extends Values with Squares {
+	def value(piece :Piece):Int ={
 		val (x,y) = piece.position
-		val i = x-1
+		val i = borw_matrix(piece.color,x-1)
 		val j = y-1
 		if (piece.name == "Pe"){
 			return (val_peon+square_peon(i)(j))
@@ -18,14 +18,23 @@ class evaluation extends Values with Squares {
 		if (piece.name == "Qu") {
 			return ( val_queen + square_queen(i)(j))
 		}
-		if (piece.name == "Kn") {
+		else {
 			return ( val_king + square_king_middle(i)(j))
 		}
 
 	}
+
+	def borw_matrix(col:Char, i : Int) : Int = {
+		if (col == 'W'){
+			return i
+		}
+		else{
+			return (7-i)
+		}
+	}
 }
 
-class Values{
+trait Values{
 	val val_peon = 100
 	val val_knigth = 320
 	val val_bishop = 330
@@ -34,7 +43,7 @@ class Values{
 	val val_king = 20000
 }
 
-class Squares{
+trait Squares{
 
 val square_peon = Array (
  Array(0,  0,  0,  0,  0,  0,  0,  0),
