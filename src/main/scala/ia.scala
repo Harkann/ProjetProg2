@@ -31,17 +31,13 @@ object IA_promote {
 	}
 }
 
-class Smart_IA(color:Char,partie:Partie) extends Runnable{
+
+class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluation {
 	/**lance le thread du tour de l'ia*/
 	override def run = {
-		var moves_ia = partie.allowed_moves(color)
 		Thread.sleep(Current_Config.delai_ia)
-		
-		/* TO DO */
-
-
 		/**origine et destination de la pièce*/
-		var (origin,destination) = moves_ia(0) /* TO DO */
+		var (origin,destination) = choice_dpct(depth)
 		/**coordonnées de l'origine*/
 		var (oi,oj) = origin
 		/**coordonnées de la destination*/
@@ -52,54 +48,27 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable{
 		piece_selected.move(destination)
 	}
 
-	def alphabetaMax(alpha : Int, beta : Int , depth : Int) : Int = {
-		if (depth == 0){
-			return evaluation()
-		}
-		var var_alpha = alpha
-		var var_beta = beta
-		val possible_moves = partie.allowed_moves(color)
-		for( move <- possible_moves) {
-			 val score = alphabetaMin(var_alpha,var_beta,depth-1)
-			if (score >= var_beta) {
-				return var_beta
-			}
-			if (score > var_alpha) {
-				var_alpha = score
-			}
-		}
-		return var_alpha
-	}
 
-	def alphabetaMin(alpha : Int, beta : Int , depth : Int) : Int = {
-		if (depth == 0){
-			return -evaluation()
-		}
-		var var_alpha = alpha
-		var var_beta = beta
-		val possible_moves = partie.allowed_moves(color)
-		for( move <- possible_moves) {
-			/*appliquer le move*/
-			val score = alphabetaMax(var_alpha,var_beta,depth-1)
-			if (score <= var_alpha) {
-				return var_alpha
-			}
-			if (score < var_beta) {
-				var_beta = score
-			}
-			/* restaurer la sauvegarde */
-		}
-		return var_beta
-	}
 
-	def evaluation() : Int = {
-		var score = 0
-		for( i <- 1 to 8) {
-			for (j <- 1 to 8 ){
-				()
+	def choice_dpct(depth:Int) : ((Int,Int),(Int,Int)) = {
+		println("choice_dpct")
+		var partie_aux = new Partie()
+		val possible_moves = partie.allowed_moves(color)
+		var score_max = -100000000
+		var move_max = possible_moves(0)
+		for( move <- possible_moves) {
+			/* appliquer le move */
+			println("dpclt")
+			partie_aux.matrix = copy_of(partie.matrix)
+			var (beg,end) = move
+			var dcpt = new Dpct(beg,end,partie_aux)
+			dcpt.do_dpct(partie_aux.matrix)
+			val score = alphabetaMax(color,partie_aux,0,0,depth-1)
+			if (score >= score_max) {
+				score_max = score
+				move_max = move
 			}
-						
 		}
-		return 0
+		return move_max
 	}
 }

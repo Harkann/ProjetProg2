@@ -1,8 +1,83 @@
-trait evaluation extends Values with Squares {
-	def value(piece :Piece):Int ={
+
+trait Evaluation extends Values with Squares with Standard {
+
+	def alphabetaMax(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int) : Int = {
+		println("alphabetaMax")
+		if (depth == 0){
+			return evaluation(color,partie)
+		}
+		var var_alpha = alpha
+		var var_beta = beta
+		var partie_aux = new Partie()
+		val possible_moves = partie.allowed_moves(color)
+		for( move <- possible_moves) {
+			/* appliquer le move */
+			partie_aux.matrix = copy_of(partie.matrix)
+			partie_aux.dplct_save = partie.dplct_save.clone()
+			var (beg,end) = move
+			var dcpt = new Dpct(beg,end,partie_aux)
+			dcpt.do_dpct(partie_aux.matrix)
+			 val score = alphabetaMin(color,partie_aux,var_alpha,var_beta,depth-1)
+			if (score >= var_beta) {
+				return var_beta
+			}
+			if (score > var_alpha) {
+				var_alpha = score
+			}
+		}
+		return var_alpha
+	}
+
+	def alphabetaMin(color : Char,partie : Partie,alpha : Int, beta : Int , depth : Int) : Int = {
+		println("alphabetaMin")
+		if (depth == 0){
+			return -evaluation(color,partie)
+		}
+		var var_alpha = alpha
+		var var_beta = beta
+		var partie_aux = new Partie()
+		val possible_moves = partie.allowed_moves(color)
+		for( move <- possible_moves) {
+			/* appliquer le move */
+			partie_aux.matrix = copy_of(partie.matrix)
+			partie_aux.dplct_save = partie.dplct_save.clone()
+			var (beg,end) = move
+			var dcpt = new Dpct(beg,end,partie_aux)
+			dcpt.do_dpct(partie_aux.matrix)
+			val score = alphabetaMax(color,partie_aux,var_alpha,var_beta,depth-1)
+			if (score <= var_alpha) {
+				return var_alpha
+			}
+			if (score < var_beta) {
+				var_beta = score
+			}
+		}
+		return var_beta
+	}
+
+	def evaluation(color:Char,partie : Partie) : Int = {
+		var score_player = 0
+		var score_other = 0
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8){
+				var piece= partie.matrix(i)(j)
+				if (piece != null){
+					if (piece.color == color){
+						score_player += value(piece)
+					}
+					else{
+						score_other += value(piece)
+					}
+				}
+			}
+		}
+		return score_player-score_other
+	}
+
+	def value(piece :Piece):Int = {
 		val (x,y) = piece.position
-		val i = borw_matrix(piece.color,x-1)
-		val j = y-1
+		val i = i_color(x,piece.color)
+		val j = j_color(y,piece.color)
 		if (piece.name == "Pe"){
 			return (val_peon+square_peon(i)(j))
 		}
@@ -32,6 +107,21 @@ trait evaluation extends Values with Squares {
 			return (7-i)
 		}
 	}
+
+
+	def i_color(x : Int,color : Char) : Int = {
+		if (color == 'W'){
+			return x-1
+		}
+		else {
+			return 8-x
+		}
+	}
+
+	def j_color(y : Int,color : Char) : Int = {
+		return y-1
+	}
+
 }
 
 trait Values{
@@ -121,7 +211,6 @@ Array(-30,-10, 20, 30, 30, 20,-10,-30),
 Array(-30,-30,  0,  0,  0,  0,-30,-30),
 Array(-50,-30,-30,-30,-30,-30,-30,-50)
 )
-
 
 
 }
