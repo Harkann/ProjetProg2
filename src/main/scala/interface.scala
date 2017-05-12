@@ -503,7 +503,7 @@ object Interface extends SimpleSwingApplication{
 				/**demarre le timer*/
 				var start_time = new Button(){
 					action = Action("Start Timer"){
-						partie.is_interface = true
+						//partie.is_interface = true
 						partie.start()
 						partie.white_timer.interrupt()
 						timer = false
