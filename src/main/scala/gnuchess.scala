@@ -2,7 +2,7 @@ import java.io.PrintWriter
 import scala.io.Source
 import scala.util.matching.Regex
 class Gnuchess(partie:Partie) {
-	val proc = Runtime.getRuntime.exec(Array("gnuchess","-x"))
+	val proc = Runtime.getRuntime.exec(Array("gnuchess","-xe"))
 	val out = new PrintWriter(proc.getOutputStream)
 	def write(command:String) = {
 		val writer = new Thread(){
@@ -25,26 +25,44 @@ class Gnuchess(partie:Partie) {
 			case 'h' => 8
 		}
 	}
+	def int_to_letter(value:Int) = {
+		value match {
+			case 1 => 'a'
+			case 2 => 'b'
+			case 3 => 'c'
+			case 4 => 'd'
+			case 5 => 'e'
+			case 6 => 'f'
+			case 7 => 'g'
+			case 8 => 'h'
+		}
+	}
+	def move_and_write(oi:Int,oj:Int,di:Int,dj:Int) = {
+		write(int_to_letter(oj)+""+((oi+48).toChar)+" "+int_to_letter(dj)+""+((di+48).toChar))
+	}
+
 	def parse_and_move(line:String) = {
 		val pattern = new Regex("[a-z][1-8]")
 		var coo = (pattern findAllIn line).mkString("")	
 		println(coo)
 		println(coo.charAt(0))
-		println(letter_to_int(coo.charAt(0))+""+(coo.charAt(1).toInt-48))
-		println(letter_to_int(coo.charAt(2))+(coo.charAt(3).toInt-48))
 		partie.get_piece(coo.charAt(1).toInt-48,letter_to_int(coo.charAt(0))).move(coo.charAt(3).toInt-48,letter_to_int(coo.charAt(2)))
 	}
-
+	def stop() = {
+		write("quit")
+		out.close()
+	}
 	val output = new Thread(){
 		override def run() = {
 			for (line <- Source.fromInputStream(proc.getInputStream).getLines){
 				println(line)
 				if (line.containsSlice("My move is")){
-					parse_and_move(line) 
+					parse_and_move(line)
+					partie.is_interface = true 
 				}
-				/*TODO : Parse le retour et applique le move correspondant*/
 			}
 		}
 	}
 	output.start()
+
 }	
