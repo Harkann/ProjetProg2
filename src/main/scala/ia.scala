@@ -49,6 +49,8 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		piece_selected.move(destination)
 	}
 
+
+
 	def choice_dpct(depth:Int) : ((Int,Int),(Int,Int)) = {
 		println("choice_dpct")
 		var partie_aux = new Partie()

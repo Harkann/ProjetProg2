@@ -1,3 +1,4 @@
+
 trait Evaluation extends Values with Squares with Standard {
 
 	def alphabetaMax(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int) : Int = {
@@ -92,13 +93,19 @@ trait Evaluation extends Values with Squares with Standard {
 		if (piece.name == "Qu") {
 			return ( val_queen + square_queen(i)(j))
 		}
-		if (piece.name == "Kn") {
+		else {
 			return ( val_king + square_king_middle(i)(j))
 		}
-		else{
-			return 0
-		}
 
+	}
+
+	def borw_matrix(col:Char, i : Int) : Int = {
+		if (col == 'W'){
+			return i
+		}
+		else{
+			return (7-i)
+		}
 	}
 
 
@@ -114,6 +121,7 @@ trait Evaluation extends Values with Squares with Standard {
 	def j_color(y : Int,color : Char) : Int = {
 		return y-1
 	}
+
 }
 
 trait Values{
@@ -124,7 +132,6 @@ trait Values{
 	val val_queen = 900
 	val val_king = 20000
 }
-
 
 trait Squares{
 
