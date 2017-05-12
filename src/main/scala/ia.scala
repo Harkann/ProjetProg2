@@ -16,8 +16,9 @@ class IA(color:Char,partie:Partie) extends Runnable{
 		var (di,dj) = destination
 		/**id de la pièce de départ*/
 		var piece_selected = partie.get_piece(oi,oj)
-		
+		partie.is_interface = true
 		piece_selected.move(destination)
+		
 	}
 }
 
