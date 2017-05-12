@@ -38,7 +38,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 	override def run = {
 		Thread.sleep(Current_Config.delai_ia)
 		/**origine et destination de la pièce*/
-		var (origin,destination) = choice_dpct(10)
+		var (origin,destination) = choice_dpct(5)
 		/**coordonnées de l'origine*/
 		var (oi,oj) = origin
 		/**coordonnées de la destination*/
@@ -58,7 +58,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 	def choice_dpct(depth:Int) : ((Int,Int),(Int,Int)) = {
 		var partie_aux = new Partie()
 		val possible_moves = partie.allowed_moves(color)
-		var score_max = -100000000
+		var score_max = 100000000
 		var move_max = possible_moves(0)
 		var maximals_moves : List[((Int,Int),(Int,Int))]= List(move_max)
 
@@ -71,7 +71,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 			//println("le resulat de deb de (2,8).position : "+ partie.matrix(2)(8).position)
 			dcpt.do_dpct(partie_aux.matrix)
 			//println("le resulat de deb_mil de (2,8).position : "+ partie.matrix(2)(8).position)
-			val score = alphabetaMax(color,partie_aux,0,0,depth-1)
+			val score = alphabetaMax(color,partie_aux,-score_max,score_max,depth-1)
 			//println("le resulat de middle de (2,8).position : "+ partie.matrix(2)(8).position)
 			dcpt.undo_dpct(partie_aux.matrix)
 			//println("le resulat de fin de (2,8).position : "+ partie.matrix(2)(8).position)

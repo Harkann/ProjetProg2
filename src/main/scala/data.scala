@@ -23,10 +23,12 @@ trait Evaluation extends Values with Squares with Standard {
 			dcpt.undo_dpct(partie_aux.matrix)//changement ici
 			//println("alpha max fin : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			if (score >= var_beta) {
+				println("MAX score>= var_beta, beta = "+var_beta+" score = "+score)
 				return var_beta
 			}
 			if (score > var_alpha) {
 				var_alpha = score
+				println("MAX score>= var_beta, beta = "+var_beta+" score = "+score)
 			}
 		}
 		return var_alpha
@@ -53,10 +55,12 @@ trait Evaluation extends Values with Squares with Standard {
 			dcpt.undo_dpct(partie_aux.matrix)//changement ici
 			//println("alpha min fin : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			if (score <= var_alpha) {
+				println("MIN score<= var_alpha, alpha= "+var_alpha+" score = "+score)
 				return var_alpha
 			}
 			if (score < var_beta) {
 				var_beta = score
+				println("MIN score < var_beta, beta = "+var_beta+" score = "+score)
 			}
 		}
 		return var_beta
