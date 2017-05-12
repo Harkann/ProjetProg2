@@ -54,6 +54,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	/**renvoie si la partie est finie*/
 	def stop() ={
 		is_running = false
+		if (type_IA == 'G'){
+			gnuchess.stop()
+		}
 	}
 	/**renvoie la couleur du joueur opposé a "player"*/
 	def other_player(player: Char):Char = {
