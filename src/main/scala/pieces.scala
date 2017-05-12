@@ -43,9 +43,14 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 	def move(posi:(Int,Int)) = {
 		/**coordonnées actuelles de la pièce*/
 		var (i,j)=position
+		println("position : "+position)
+		println("posi : "+posi)
 		/**coordonnées de la destination*/
 		var (x,y)=posi
 		val piece = matrix(position,partie)
+		println("piece (2,8) : "+partie.matrix(2)(8))
+		println("piece (4,8) : "+partie.matrix(4)(8))
+		println(piece)
 		val piece_met = partie.matrix(x)(y)
 
 		incremente_cpt_nb_piece(partie,piece_met)
@@ -128,12 +133,12 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		
 		/**coordonnée de la pièce*/
 		var (i,j) = position
-		println ("position : "+i+" "+j)
+		//println ("position : "+i+" "+j)
 		/** id de la pièce sur la case*/
 		var piece = matrix((i,j),partie)
-		/*if ((piece == null) || !(piece.is_alive)) {
+		if ((piece == null) || !(piece.is_alive)) {
 			return (List(),List())
-		}*/
+		}
 		/**pièce sur la case*/
 		var id=piece.id
 		/**autre joueur*/

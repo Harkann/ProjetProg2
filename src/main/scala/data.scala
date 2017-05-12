@@ -2,7 +2,7 @@
 trait Evaluation extends Values with Squares with Standard {
 
 	def alphabetaMax(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int) : Int = {
-		println("alphabetaMax")
+		println("alphabetaMax profondeur : "+depth)
 		if (depth == 0){
 			return evaluation(color,partie)
 		}
@@ -12,12 +12,16 @@ trait Evaluation extends Values with Squares with Standard {
 		val possible_moves = partie.allowed_moves(color)
 		for( move <- possible_moves) {
 			/* appliquer le move */
+			//println("alpha max debut : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			partie_aux.matrix = copy_of(partie.matrix)
 			partie_aux.dplct_save = partie.dplct_save.clone()
+			//println("alpha max : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			var (beg,end) = move
 			var dcpt = new Dpct(beg,end,partie_aux)
 			dcpt.do_dpct(partie_aux.matrix)
-			 val score = alphabetaMin(color,partie_aux,var_alpha,var_beta,depth-1)
+			val score = alphabetaMin(color,partie_aux,var_alpha,var_beta,depth-1)
+			dcpt.undo_dpct(partie_aux.matrix)//changement ici
+			//println("alpha max fin : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			if (score >= var_beta) {
 				return var_beta
 			}
@@ -29,9 +33,9 @@ trait Evaluation extends Values with Squares with Standard {
 	}
 
 	def alphabetaMin(color : Char,partie : Partie,alpha : Int, beta : Int , depth : Int) : Int = {
-		println("alphabetaMin")
+		println("alphabetaMin pronfondeur : "+depth)
 		if (depth == 0){
-			return -evaluation(color,partie)
+			return -evaluation(color,partie) //ici un moins !!!
 		}
 		var var_alpha = alpha
 		var var_beta = beta
@@ -41,10 +45,13 @@ trait Evaluation extends Values with Squares with Standard {
 			/* appliquer le move */
 			partie_aux.matrix = copy_of(partie.matrix)
 			partie_aux.dplct_save = partie.dplct_save.clone()
+			//println(" alpha min : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			var (beg,end) = move
 			var dcpt = new Dpct(beg,end,partie_aux)
 			dcpt.do_dpct(partie_aux.matrix)
 			val score = alphabetaMax(color,partie_aux,var_alpha,var_beta,depth-1)
+			dcpt.undo_dpct(partie_aux.matrix)//changement ici
+			//println("alpha min fin : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			if (score <= var_alpha) {
 				return var_alpha
 			}
@@ -53,6 +60,15 @@ trait Evaluation extends Values with Squares with Standard {
 			}
 		}
 		return var_beta
+	}
+
+	def other_player(color:Char):Char = {
+		if (color == 'W'){
+			return 'B'
+		}
+		else {
+			return 'W'
+		}
 	}
 
 	def evaluation(color:Char,partie : Partie) : Int = {

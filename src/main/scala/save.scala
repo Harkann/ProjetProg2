@@ -30,6 +30,8 @@ class Dpct(p_begin:(Int,Int),p_end:(Int,Int),partie:Partie){
 	def undo_dpct(matrix:Array[Array[Piece]]){
 		matrix(i)(j) = piece
 		matrix(x)(y) = piece_met
+		if (piece != null){piece.position =(i,j)}
+		if (piece_met != null){piece_met.position =(x,y)}
 		if (optional_other_dpct != null) {
 			optional_other_dpct.undo_dpct(matrix)
 		}
