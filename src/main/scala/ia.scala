@@ -50,6 +50,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		//println("run_piece :"+piece_selected.position)
 		
 		piece_selected.move(destination)
+		partie.is_interface = true
 	}
 
 

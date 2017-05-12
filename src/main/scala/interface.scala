@@ -88,6 +88,7 @@ object Interface extends SimpleSwingApplication{
 		val game_two_players = new PartieButton("Player vs. Player",0,'0','0',window)
 		/**bouton qui lance une partie avec deux ia*/
 		val game_two_ia = new PartieButton("IA vs. IA",2,'0','N',window)
+		val game_one_player_black_smart = new PartieButton("Player Black vs. IA Smart White",1,'W','S',window)
 		/**bouton qui lance une partie avec deux ia*/
 		val game_two_ia_smart = new PartieButton("S_IA vs. S_IA",2,'0','S',window)
 		/**bouton qui lance une partie de Blitz à 4 */
@@ -104,6 +105,7 @@ object Interface extends SimpleSwingApplication{
 			contents+= game_two_players
 			contents+= game_one_player_black
 			contents+= game_one_player_white
+			contents+= game_one_player_black_smart
 			contents+= game_two_ia
 			contents+= game_two_ia_smart
 			contents+= game_gnu_black
