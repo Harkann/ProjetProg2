@@ -28,15 +28,16 @@ object Interface extends SimpleSwingApplication{
 	var ba4:Blitz_4 = null
 
 	/**Boutons permettant de lancer la partie classique*/
-	class PartieButton(text:String,joueurBlanc:Char,joueurNoir:Char,window:MainWindow) extends Button{
+	class PartieButton(text:String,window:MainWindow) extends Button{
 		action = Action(text){
+			println(Current_Config.player_blanc+" "+Current_Config.player_noir)
 			Current_Config.type_partie = ""
 			window.middle_box.contents.clear()
 			/**Partie crée*/
 			var partie = new Partie()
 			/**Interface de la partie crée*/
 			var interface_partie = new EcranPartie(8,8,window,partie)
-			partie.partie_type_joueurs(joueurBlanc,joueurNoir,interface_partie)
+			partie.partie_type_joueurs(Current_Config.player_blanc,Current_Config.player_noir,interface_partie)
 			interface_partie.spawn_game()
 		}
 	}
@@ -55,7 +56,7 @@ object Interface extends SimpleSwingApplication{
 			/**Interface de la partie2 crée*/
 			var interface_partie2 = new EcranPartie(8,8,window,partie2)
 			partie1.partie_type_joueurs(joueurBlanc,joueurNoir,interface_partie1)
-			partie1.partie_type_joueurs(joueurBlanc,joueurNoir,interface_partie2)
+			partie2.partie_type_joueurs(joueurBlanc,joueurNoir,interface_partie2)
 			interface_partie1.spawn_game()
 			interface_partie2.spawn_game()
 		}
@@ -79,40 +80,101 @@ object Interface extends SimpleSwingApplication{
 	}
 	/**Menu principal*/
 	class MainMenu(window:MainWindow) extends GridPanel(11,1){
-
-		/**bouton qui lance une partie avec un seul joueur blanc*/
-		val game_one_player_white = new PartieButton("Player White vs. IA Black",'0','N',window)
-		/**bouton qui lance une partie avec un seul joueur noir*/
-		val game_one_player_black = new PartieButton("Player Black vs. IA White",'N','0',window)
-		/**bouton qui lance une partie avec deux joueurs*/
-		val game_two_players = new PartieButton("Player vs. Player",'0','0',window)
-		/**bouton qui lance une partie avec deux ia*/
-		val game_two_ia = new PartieButton("IA vs. IA",'N','N',window)
-		val game_one_player_black_smart = new PartieButton("Player Black vs. IA Smart White",'S','0',window)
-		/**bouton qui lance une partie avec deux ia*/
-		val game_two_ia_smart = new PartieButton("S_IA vs. S_IA",'S','S',window)
 		/**bouton qui lance une partie de Blitz à 4 */
 		val game_var = new VarPartieButton("4 players Blitz",'0','0',window)
-		/**bouton qui permet d'accéder aux paramètre NOT_IMPLEMENTED*/
-		val settings_butt = new SettingsButton(window)
 		/**bouton qui ferme l'interface*/
 		val quit_program = new QuitButton(window,null)
-		val game_gnu_white = new PartieButton("Player Black vs. GNU White",'G','0',window)
-		val game_gnu_black = new PartieButton("Player White vs. GNU Black",'0','G',window)
+		val chose_timer = new BoxPanel(Orientation.Horizontal){
+			contents+= new Label("Horloge : ")
+			val cont = new ButtonGroup {
+				buttons += new RadioButton(){
+					action = Action("Oui"){
+						Current_Config.timer = true
+					}
+					selected = (Current_Config.timer == true)
+				}
+				buttons += new RadioButton(){
+					action = Action("Non"){
+						Current_Config.timer = false
+					}
+					selected = (Current_Config.timer == false)
+				}
+			}
+			contents++=cont.buttons
+		}
+		val chose_type_black = new BoxPanel(Orientation.Horizontal){
+			contents+= new Label("Noirs : ")
+			val cont = new ButtonGroup {
+				buttons += new RadioButton(){
+					action = Action("IA normale"){
+						Current_Config.player_noir = 'N'
+					}
+					selected = (Current_Config.player_noir == 'N')
+				}
+				buttons += new RadioButton(){
+					action = Action("IA intelligente"){
+						Current_Config.player_noir = 'S'
+					}
+					selected = (Current_Config.player_noir == 'S')
+				}
+				buttons += new RadioButton(){
+					action = Action("Joueur"){
+						Current_Config.player_noir = '0'
+					}
+					selected = (Current_Config.player_noir == '0')
+				}
+				buttons += new RadioButton(){
+					action = Action("Gnuchess"){
+						Current_Config.player_noir = 'G'
+					}
+					selected = (Current_Config.player_noir == 'G')
+				}
+			}
+			contents++=cont.buttons
+		}
+
+		val chose_type_white = new BoxPanel(Orientation.Horizontal){
+			contents+= new Label("Blancs : ")
+			val cont = new ButtonGroup {
+				buttons += new RadioButton(){
+					action = Action("IA normale"){
+						Current_Config.player_blanc = 'N'
+					}
+					selected = (Current_Config.player_blanc == 'N')
+				}
+				buttons += new RadioButton(){
+					action = Action("IA intelligente"){
+						Current_Config.player_blanc = 'S'
+					}
+					selected = (Current_Config.player_blanc == 'S')
+				}
+				buttons += new RadioButton(){
+					action = Action("Joueur"){
+						Current_Config.player_blanc = '0'
+					}
+					selected = (Current_Config.player_blanc == '0')
+				}
+				buttons += new RadioButton(){
+					action = Action("Gnuchess"){
+						Current_Config.player_blanc = 'G'
+					}
+					selected = (Current_Config.player_blanc == 'G')
+				}
+			}
+			contents++=cont.buttons
+		}
+		val game_normal_start = new PartieButton("Démarer une partie normale",window)
+
 		/**affiche le menu principal*/
 		def set_menu():Unit = {
 			contents.clear()
-			contents+= game_two_players
-			contents+= game_one_player_black
-			contents+= game_one_player_white
-			contents+= game_one_player_black_smart
-			contents+= game_two_ia
-			contents+= game_two_ia_smart
-			contents+= game_gnu_black
-			contents+= game_gnu_white
+			contents+= chose_type_black
+			contents+= chose_type_white
+			contents+= chose_timer
+			contents+= game_normal_start
 			contents+= game_var
-			contents+= settings_butt
 			contents+= quit_program
+
 			revalidate()
 			repaint()
 		}
@@ -232,7 +294,7 @@ object Interface extends SimpleSwingApplication{
 				if (is_clicked){plateau.reset_all()}
 				else if (is_ba4_button){
 					if (piece_allowed_arrive.contains(i,j)){
-						
+
 						partie.numero match {
 							case 1 => {
 								type_ba4_button match {
@@ -321,7 +383,7 @@ object Interface extends SimpleSwingApplication{
 			if (Current_Config.type_partie == "var"){
 				partie.game_window.head_up_bar.contents_reset
 			}
-			
+
 			notif.initial()
 		}
 	}

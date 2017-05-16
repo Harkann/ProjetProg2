@@ -13,11 +13,9 @@ object Config {
 	val temps_cadences = List((0*3600+15*60+0)*1000) //milisecondes
 	val increment_cadences = List(0)
 
-	/** NOT IMPLEMENTED*/
-	var nb_ia = 2
-	/** NOT IMPLEMENTED*/	
-	var color_ia = '0'
-	var type_partie = " "
+	val type_partie = ""
+	val player_blanc = '0'
+	val player_noir = '0'
 
 
 }
@@ -47,6 +45,8 @@ object Current_Config {
 	var	temps_cadences = Config.temps_cadences
 	var	increment_cadences = Config.increment_cadences
 	var	type_partie = Config.type_partie
+	var player_noir = Config.player_noir
+	var player_blanc = Config.player_blanc
 	def init_config() = {
 		delai_ia = Config.delai_ia
 		res_x = Config.res_x
@@ -59,5 +59,7 @@ object Current_Config {
 		temps_cadences = Config.temps_cadences
 		increment_cadences = Config.increment_cadences
 		type_partie = Config.type_partie
+		player_noir = Config.player_noir
+		player_blanc = Config.player_blanc
 	}
 }

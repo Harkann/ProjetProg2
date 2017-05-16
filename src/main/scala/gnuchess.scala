@@ -37,9 +37,6 @@ class Gnuchess(partie:Partie) {
 	def move_and_write(oi:Int,oj:Int,di:Int,dj:Int) = {
 		write(int_to_letter(oj)+""+((oi+48).toChar)+" "+int_to_letter(dj)+""+((di+48).toChar))
 	}
-	def start() = {
-		
-	}
 	def parse_and_move(line:String) = {
 		val pattern = new Regex("[a-z][1-8]")
 		var coo = (pattern findAllIn line).mkString("")	

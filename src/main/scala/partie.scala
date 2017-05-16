@@ -300,8 +300,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				}
 			}
 		}
-		/***/
-		var (moves,attacks) =king.move_piece_check(position)
+		println(king)
+		var (moves,attacks) = king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
 			//dplct_save(nb_turn-1).echec_other_player = "#"
 			perdu(player,"")
