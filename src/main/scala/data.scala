@@ -1,15 +1,81 @@
 
 trait Evaluation extends Values with Squares with Standard {
 
-	def alphabetaMax(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int) : Int = {
-		println("alphabetaMax profondeur : "+depth)
-		if (depth == 0){
-			return evaluation(color,partie)
+	 def alphabeta(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int, is_max : Boolean) : Int = {
+	 	var var_alpha = alpha
+		var var_beta = beta
+		var partie_aux = new Partie()
+		partie_aux.matrix = copy_of(partie.matrix)
+		partie_aux.dplct_save = partie.dplct_save.clone()
+		
+
+		if (is_max) {
+			var possible_moves = partie.allowed_moves(color)
+			if ((depth == 0)||(possible_moves == List())){
+				var score_final = evaluation(color,partie)
+				return score_final
+			}
+			var score = -100000000
+			for( move <- possible_moves) {
+				var (beg,end) = move
+				var dcpt = new Dpct(beg,end,partie_aux)
+
+				dcpt.do_dpct(partie_aux.matrix)
+				score = score max alphabeta(color,partie_aux,var_alpha,var_beta,depth-1,false)
+				dcpt.undo_dpct(partie_aux.matrix)
+
+				var_alpha = var_alpha max score
+				if (var_alpha >= var_beta) {
+					return score
+				}
+			}
+			return score
 		}
+		else{
+			var possible_moves = partie.allowed_moves(other-player(color))
+			if ((depth == 0)||(possible_moves == List())){
+				var score_final = evaluation(color,partie)
+				return score_final
+			}
+			var score = 100000000
+			for( move <- possible_moves) {
+				var (beg,end) = move
+				var dcpt = new Dpct(beg,end,partie_aux)
+
+				dcpt.do_dpct(partie_aux.matrix)
+				score =  score min  alphabeta(color,partie_aux,var_alpha,var_beta,depth-1,true)
+				dcpt.undo_dpct(partie_aux.matrix)
+
+				var_beta = var_beta min score
+				if (var_alpha >= var_beta) {
+					return score
+				}
+			}
+			return score
+		}
+
+	 }
+
+
+	/*def alphabetaMax(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int) : (Int,List[((Int,Int),(Int,Int))]) = {
+		//println("alphabetaMax profondeur : "+depth)
+		if (depth == 0){
+			var score_final = evaluation(color,partie)
+			println("Min Evaluation finale : "+score_final)
+			return (score_final,List())
+		}
+		println ("___________________________ BEGIN ALPHA BETA MAX " +depth +" ____________________________")
 		var var_alpha = alpha
 		var var_beta = beta
 		var partie_aux = new Partie()
 		val possible_moves = partie.allowed_moves(color)
+		var move_res : List[((Int,Int),(Int,Int))] = List()
+		if (possible_moves == List()){
+			println("NO FUCKING MOVE")
+			var score_final = evaluation(color,partie)
+			println("Min Evaluation finale : "+score_final)
+			return (score_final,List())
+		}
 		for( move <- possible_moves) {
 			/* appliquer le move */
 			//println("alpha max debut : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
@@ -19,30 +85,42 @@ trait Evaluation extends Values with Squares with Standard {
 			var (beg,end) = move
 			var dcpt = new Dpct(beg,end,partie_aux)
 			dcpt.do_dpct(partie_aux.matrix)
-			val score = alphabetaMin(color,partie_aux,var_alpha,var_beta,depth-1)
+			val score = alphabetaMin(other_player(color),partie_aux,var_alpha,var_beta,depth-1)._1
 			dcpt.undo_dpct(partie_aux.matrix)//changement ici
 			//println("alpha max fin : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			if (score >= var_beta) {
 				println("MAX score>= var_beta, beta = "+var_beta+" score = "+score)
-				return var_beta
+				return (var_beta,move_res)
 			}
 			if (score > var_alpha) {
 				var_alpha = score
+				move_res = move_res :+ move
 				println("MAX score>= var_beta, beta = "+var_beta+" score = "+score)
 			}
 		}
-		return var_alpha
+		return (var_alpha,move_res)
 	}
 
-	def alphabetaMin(color : Char,partie : Partie,alpha : Int, beta : Int , depth : Int) : Int = {
-		println("alphabetaMin pronfondeur : "+depth)
+	def alphabetaMin(color : Char,partie : Partie,alpha : Int, beta : Int , depth : Int) : (Int,List[((Int,Int),(Int,Int))]) = {
+		//println("alphabetaMin pronfondeur : "+depth)
+		println("pouet?")
 		if (depth == 0){
-			return -evaluation(color,partie) //ici un moins !!!
+			var score_final = -evaluation(color,partie)
+			println("Min Evaluation finale : "+score_final)
+			return (score_final,List())
 		}
+		println ("___________________________ BEGIN ALPHA BETA MIN " +depth +" ____________________________")
 		var var_alpha = alpha
 		var var_beta = beta
 		var partie_aux = new Partie()
 		val possible_moves = partie.allowed_moves(color)
+		var move_res : List[((Int,Int),(Int,Int))] = List()
+		if (possible_moves == List()){
+			println("NO FUCKING MOVE")
+			var score_final = - evaluation(color,partie)
+			println("Min Evaluation finale : "+score_final)
+			return (score_final,List())
+		}
 		for( move <- possible_moves) {
 			/* appliquer le move */
 			partie_aux.matrix = copy_of(partie.matrix)
@@ -51,20 +129,22 @@ trait Evaluation extends Values with Squares with Standard {
 			var (beg,end) = move
 			var dcpt = new Dpct(beg,end,partie_aux)
 			dcpt.do_dpct(partie_aux.matrix)
-			val score = alphabetaMax(color,partie_aux,var_alpha,var_beta,depth-1)
+			val score = alphabetaMax(other_player(color),partie_aux,var_alpha,var_beta,depth-1)._1
+			println("score = "+score)
 			dcpt.undo_dpct(partie_aux.matrix)//changement ici
 			//println("alpha min fin : le resulat de (2,8).position : "+ partie.matrix(2)(8).position)
 			if (score <= var_alpha) {
 				println("MIN score<= var_alpha, alpha= "+var_alpha+" score = "+score)
-				return var_alpha
+				return (var_alpha,move_res)
 			}
 			if (score < var_beta) {
 				var_beta = score
+				move_res = move_res :+ move
 				println("MIN score < var_beta, beta = "+var_beta+" score = "+score)
 			}
 		}
-		return var_beta
-	}
+		return (var_beta,move_res)
+	}*/
 
 	def other_player(color:Char):Char = {
 		if (color == 'W'){
