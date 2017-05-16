@@ -38,7 +38,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 	override def run = {
 		Thread.sleep(Current_Config.delai_ia)
 		/**origine et destination de la pièce*/
-		var (origin,destination) = choice_dpct(3)
+		var (origin,destination) = choice_dpct(1)
 		/**coordonnées de l'origine*/
 		var (oi,oj) = origin
 		/**coordonnées de la destination*/
@@ -61,6 +61,8 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		var maximals_moves : List[((Int,Int),(Int,Int))]= List(move_max)
 
 		for( move <- possible_moves) {
+			var partie_aux = new Partie()
+			partie_aux.matrix = copy_of(partie.matrix)
 			var (beg,end) = move
 			var dpct = new Dpct(beg,end,partie_aux)
 

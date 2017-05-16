@@ -232,7 +232,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				if (this.get_color(i,j) == color){
 					var (list_move,list_attack)= get_piece(i,j).move_piece_check((i,j))
 					for( move <- list_move) {
-						all_moves=all_moves:+((i,j),move)
+						all_moves = all_moves :+ ((i,j),move)
 					}
 				}
 			}
@@ -244,7 +244,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		/**liste des pièces attaquées*/
 		var res : List[ (Int,Int) ] = List()
 		/**autre joueur*/
-		val other=other_player(player)
+		val other = other_player(player)
 		for( i <- 1 to 8) {
 			for( j <- 1 to 8) {
 				var piece_ij=matrix(i)(j)
@@ -273,6 +273,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 			else{
 				var id_piece=piece.id
 				if (id_piece.substring(0,3)==player+"Ki"){
+					piece.asInstanceOf[King].has_been_check = true
 					return true
 				}
 			}

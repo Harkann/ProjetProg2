@@ -16,6 +16,9 @@ trait Evaluation extends Values with Squares with Standard {
 		if (is_max) {
 			var score = -100000000
 			for( move <- possible_moves) {
+
+			 	var partie_aux = new Partie()
+				partie_aux.matrix = copy_of(partie.matrix)
 				var (beg,end) = move
 				var dcpt = new Dpct(beg,end,partie_aux)
 
@@ -34,6 +37,9 @@ trait Evaluation extends Values with Squares with Standard {
 			
 			var score = 100000000
 			for( move <- possible_moves) {
+
+				var partie_aux = new Partie()
+				partie_aux.matrix = copy_of(partie.matrix)
 				var (beg,end) = move
 				var dcpt = new Dpct(beg,end,partie_aux)
 
