@@ -11,6 +11,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	var black_timer:Thread = null
 	var gnuchess:Gnuchess = null
 	var type_end:(String,Char) = ("*",'*')
+	var is_started = false
 	def get_timer(color:Char) = {
 		color match {
 			case 'W' => white_timer
@@ -53,10 +54,11 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 	var is_interface= false
 	/**renvoie si la partie est finie*/
 	def stop() ={
-		is_running = false
-		if (type_IA == 'G'){
+		if (type_IA == 'G' && is_started){
 			gnuchess.stop()
 		}
+		is_running = false
+		is_started = false
 	}
 	/**renvoie la couleur du joueur opposé a "player"*/
 	def other_player(player: Char):Char = {
@@ -265,6 +267,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 			else {new Thread(new IA('W',this)).start}
 		}
 		else {is_interface = true}
+		is_started = true
 	}
 	/**initialise la partie*/
 	def partie_init() = {

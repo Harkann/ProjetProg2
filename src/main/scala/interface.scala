@@ -63,7 +63,6 @@ object Interface extends SimpleSwingApplication{
 	/**Bouton quittant la fenetre @window et stoppant @partie */
 	class QuitButton(window:MainWindow,partie:Partie) extends Button{
 		action = Action("Quit Game"){
-			window.closeOperation()
 			if (partie != null){
 				partie.stop()
 			}
@@ -71,6 +70,7 @@ object Interface extends SimpleSwingApplication{
 				partie1.stop
 				partie2.stop
 			}
+			window.closeOperation()
 		}
 	}
 	/**NOT_IMPLEMENTED*/
