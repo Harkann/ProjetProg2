@@ -43,14 +43,16 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 	def move(posi:(Int,Int)) = {
 		/**coordonnées actuelles de la pièce*/
 		var (i,j)=position
-		println("position : "+position)
-		println("posi : "+posi)
+
+		//println("position : "+position)
+		//println("posi : "+posi)
+
 		/**coordonnées de la destination*/
 		var (x,y)=posi
 		val piece = matrix(position,partie)
-		println("piece (2,8) : "+partie.matrix(2)(8))
-		println("piece (4,8) : "+partie.matrix(4)(8))
-		println(piece)
+		//println("piece (2,8) : "+partie.matrix(2)(8))
+		//println("piece (4,8) : "+partie.matrix(4)(8))
+		//println(piece)
 		val piece_met = partie.matrix(x)(y)
 
 		incremente_cpt_nb_piece(partie,piece_met)
@@ -125,6 +127,9 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 					if (attacks.contains(mv)) {res_attacks=res_attacks:+mv}
 				}
 			}
+		if (piece.name == "Ki"){
+			res_moves=res_moves ++ piece.asInstanceOf[King].roque(position,partie)
+		}
 		return (res_moves,res_attacks)
 	}
 
@@ -262,12 +267,13 @@ with Id_creation with Diagonal with Horizontal_Vertical{
 
 
 class King(color:Char,pos:(Int,Int),partie:Partie) extends Piece(color,pos,partie) 
-with Id_creation with King_move{
+with Id_creation with King_move with Roque{
 	val name="Ki"
 	val PGN_name="K"
 	val num_type = 5
 	val image = Tools.icon_resized(color+name+".PNG",Tools.min_size/20,Tools.min_size/20)
 	var is_alive=true
+	var has_been_check = false
 	val id=color+name+id_create(color,name,partie)
 	partie.modif_piece(color,num_type,1)
 	def move_piece(position:(Int,Int)) : (List[(Int,Int)],List[(Int,Int)]) = {

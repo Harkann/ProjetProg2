@@ -196,11 +196,17 @@ trait Roque extends Standard {
 		var (i_T,j_T) = pos_T
 		val T = matrix(pos_T,partie)
 		if (T == null) return false
-		if ((K.nb_turn != 0) || (T.nb_turn != 0)) {
+		if ((K.nb_turn != 0) || (T.nb_turn != 0) || (K.asInstanceOf[King].has_been_check)) {
 			return false
 		}
 		for ( j <- ((j_K min j_T)+1) to ((j_K max j_T))-1){
 			if (partie.matrix(i_K)(j) != null) {
+				return false
+			}
+		}
+		val li_danger = partie.in_danger_of(K.color)
+		for ( pos <- li_danger){
+			if (((j_K min j_T) <= pos._2) && ((j_K max j_T) >= pos._2)) {
 				return false
 			}
 		}
@@ -321,6 +327,6 @@ trait King_move extends Dplct_positions with Roque {
 	def dpct_king(position:(Int,Int),partie:Partie) : (List[(Int,Int)],List[(Int,Int)]) = { //déplacemnt du roi
 		val movement_list : List[(Int,Int)] = List((1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1))
 		var (mv,att) = dpct_positions(position,movement_list,partie)
-		return (mv ++ roque(position,partie),att)
+		return (mv ,att)
 	}
 }
