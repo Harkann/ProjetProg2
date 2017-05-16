@@ -87,7 +87,7 @@ abstract class Piece(col:Char,var position : (Int,Int),var partie:Partie) extend
 		partie.moves_50_check(partie)
 		partie.repetitions_3_check(partie)
 		//read_test()
-		if (partie.type_IA == 'G' && partie.player != partie.color_ia){
+		if (partie.player_type(partie.other_player(partie.currently_playing)) == 'G'){
 			partie.gnuchess.move_and_write(i,j,x,y)
 			/**TODO : renvoie le mouvement à gnuchess*/
 		}

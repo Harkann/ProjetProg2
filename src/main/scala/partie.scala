@@ -2,16 +2,13 @@ import Array._
 import scala.collection.mutable.ArrayBuffer
 
 class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PGN {
-	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
-	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
-	var matrix = ofDim[Piece](9,9); 
+	
 	/**la partie de l'interface contenant l'echiquier*/
 	var game_window:Interface.EcranPartie = null
+	
+	/* ****************** GESTION DES TIMER ************************* */
 	var white_timer:Thread = null
 	var black_timer:Thread = null
-	var gnuchess:Gnuchess = null
-	var type_end:(String,Char) = ("*",'*')
-	var is_started = false
 	def get_timer(color:Char) = {
 		color match {
 			case 'W' => white_timer
@@ -19,87 +16,184 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		}
 	}
 
-	/* *************************************** Sauvegarde / var globale pour la partir 2 ********************************* */
-	var pieces_B = ofDim[Int](6)
-	var pieces_W = ofDim[Int](6)
-	var lost_pieces_B = ofDim[Int](6)
-	var lost_pieces_W = ofDim[Int](6)
-
-	def modif_piece(color:Char,num:Int,modif:Int){
-		if (color == 'B') {pieces_B(num) += modif}
-		else if (color == 'W'){pieces_W(num) += modif}
-	}
-	def modif_lost_piece(color:Char,num:Int,modif:Int){
-		if (color == 'B') {lost_pieces_B(num) -= modif}
-		else if (color == 'W'){lost_pieces_W(num) -= modif}
-	}
-
-	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
-	var waiting = false
-	var matrix_save = ofDim[Piece](9,9)
-	var last_important_change = 0
-
+	/* ****************** ETAT DE LA PARTIE ************************* */	
+	/** numéro de la partie (variante)*/
 	var numero = 0
-	var type_IA = '0'
-	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
-	var player = 'W'
-	/**nombre d'ia, 0, 1 ou 2*/
-	var nb_ia = 0
-	/**couleur de l'ia, 'B','W' ou '0'*/
-	var color_ia = 'B'
-	var color_gnu = '0'
+	/** partie.start a été executé ?*/
+	var is_started = false
 	/**la partie est en cours ou non */
 	var is_running = true
 	/**l'interface peut deplacer des pieces*/
 	var is_interface= false
-	/**renvoie si la partie est finie*/
+	/**démarre la partie*/
+	def start() = {
+		players match {
+			case (joueurBlanc,joueurNoir) =>
+			joueurBlanc match {
+				case 'G' => {
+					gnuchess = new Gnuchess(this)
+					is_interface = false
+					gnuchess.write("go")
+				}
+				case 'S' => new Thread(new Smart_IA('W',this,3)).start
+				case 'N' => new Thread(new IA('W',this)).start
+				case '0' => is_interface = true  
+			}
+			joueurNoir match {
+				case 'G' => {
+					gnuchess = new Gnuchess(this)
+				}
+				case _ => {}
+			}
+		}
+		is_started = true
+	}
+	/**initialise la partie*/
+	def partie_init() = {
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				matrix(i)(j) = null
+			}
+		}
+		currently_playing = 'W'
+		nb_turn = 0
+		is_running = true
+		lost_pieces_W = Array(0,0,0,0,0,0)
+		lost_pieces_B = Array(0,0,0,0,0,0)
+
+		matrix(2)(1) = new Peon('W',(2,1),this)
+		matrix(2)(2) = new Peon('W',(2,2),this)
+		matrix(2)(3) = new Peon('W',(2,3),this)
+		matrix(2)(4) = new Peon('W',(2,4),this)
+		matrix(2)(5) = new Peon('W',(2,5),this)
+		matrix(2)(6) = new Peon('W',(2,6),this)
+		matrix(2)(7) = new Peon('W',(2,7),this)
+		matrix(2)(8) = new Peon('W',(2,8),this)
+		matrix(1)(1) = new Tower('W',(1,1),this)
+		matrix(1)(8) = new Tower('W',(1,8),this)
+		matrix(1)(2) = new Knight('W',(1,2),this)
+		matrix(1)(7) = new Knight('W',(1,7),this)
+		matrix(1)(3) = new Bishop('W',(1,3),this)
+		matrix(1)(6) = new Bishop('W',(1,6),this)
+		matrix(1)(4) = new Queen('W',(1,4),this)
+		matrix(1)(5) = new King('W',(1,5),this)
+		//definition des pieces noires
+		matrix(7)(1) = new Peon('B',(7,1),this)
+		matrix(7)(2) = new Peon('B',(7,2),this)
+		matrix(7)(3) = new Peon('B',(7,3),this)
+		matrix(7)(4) = new Peon('B',(7,4),this)
+		matrix(7)(5) = new Peon('B',(7,5),this)
+		matrix(7)(6) = new Peon('B',(7,6),this)
+		matrix(7)(7) = new Peon('B',(7,7),this)
+		matrix(7)(8) = new Peon('B',(7,8),this)
+		matrix(8)(1) = new Tower('B',(8,1),this)
+		matrix(8)(8) = new Tower('B',(8,8),this)
+		matrix(8)(2) = new Knight('B',(8,2),this)
+		matrix(8)(7) = new Knight('B',(8,7),this)
+		matrix(8)(3) = new Bishop('B',(8,3),this)
+		matrix(8)(6) = new Bishop('B',(8,6),this)
+		matrix(8)(4) = new Queen('B',(8,4),this)
+		matrix(8)(5) = new King('B',(8,5),this)
+		matrix_save = copy_of(matrix)
+		if (Current_Config.timer) {
+			white_timer = new Thread(new TimerClock('W',this))
+			white_timer.start()
+			black_timer = new Thread(new TimerClock('B',this))
+			black_timer.start()
+		}
+	}
+	/**appelée quand la partie est finie*/
 	def stop() ={
-		if (type_IA == 'G' && is_started){
+		if (gnuchess != null && is_started){
 			gnuchess.stop()
 		}
 		is_running = false
 		is_started = false
 	}
+	/** fin de partie en cas de pat*/
+	def pat(motif:String){
+		this.stop()
+		game_window.head_up_bar.notif.text_end(currently_playing,"PAT",motif,0)
+	}
+	/** fin de partie en cas de mat*/
+	def perdu(color:Char,motif:String) = {
+		this.stop()
+		game_window.head_up_bar.notif.text_end(color,"MAT",motif,0)
+	}
+
+
+	/* ****************** JOUEURS/ IA ************************* */
+	/**classe faisant tourner gnuchess */
+	var gnuchess:Gnuchess = null
+	/**ia smart : S, ia random : N, joueur : 0, gnuchess : G */
+	//var type_IA = '0'
+	/**nombre d'ia, 0, 1 ou 2*/
+	//var nb_ia = 0
+	/**couleur de l'ia, 'B','W' ou '0'*/
+	//var color_ia = 'B'
+	/**couleur joueur gnuchess */
+	//var color_gnu = '0'
+	/**type des joueurs (Blanc,Noir) */
+	var players:(Char,Char) = null
+	def partie_type_joueurs(joueurBlanc:Char,joueurNoir:Char,ecran:Interface.EcranPartie) = {
+		players=(joueurBlanc,joueurNoir)
+		game_window=ecran
+	}
+	/**couleur du joueur en train de jouer, 'W' ou 'B'*/
+	var currently_playing = 'W'
 	/**renvoie la couleur du joueur opposé a "player"*/
 	def other_player(player: Char):Char = {
 		if (player=='B') {return 'W'}
 		else {return 'B'} 
-		//petit risque de problème si char différent de 'B' ou 'W'
+	}
+	def player_type(player:Char) = {
+		var (joueurBlanc,joueurNoir) = players
+		player match {
+			case 'W' => joueurBlanc
+			case 'B' => joueurNoir
+		}
 	}
 	/**lance le tour suivant*/
 	def next_turn():Unit = {
 		nb_turn +=1
-		if (is_running){is_mat(player)}
-		if (is_running){is_mat(other_player(player))}
-		if (is_running){is_pat(other_player(player))}
+		if (is_running){is_mat(currently_playing)}
+		if (is_running){is_mat(other_player(currently_playing))}
+		if (is_running){is_pat(other_player(currently_playing))}
 		if (is_running){
-			if (nb_ia == 0){
-				if (Current_Config.timer) {get_timer(player).interrupt}
-				player = other_player(player)
-				if (Current_Config.timer) {get_timer(player).interrupt}	
+			var type_next_player = '0' 
+			var (joueurBlanc,joueurNoir) = players
+			other_player(currently_playing) match {
+				case 'W' => type_next_player = joueurBlanc
+				case 'B' => type_next_player = joueurNoir
 			}
-			else if (nb_ia == 1){
-				if (Current_Config.timer) {get_timer(player).interrupt}
-				player = other_player(player)
-				if (Current_Config.timer) {get_timer(player).interrupt}
-				if (player == color_ia){
-					is_interface = false
-					if (type_IA == 'S'){new Thread(new Smart_IA(color_ia,this,3)).start}
-					else if (type_IA == 'N'){new Thread(new IA(color_ia,this)).start}
-					else if (type_IA == 'G'){gnuchess.write("go")}
-					
-				} 
-			}
-			else {
-				if (Current_Config.timer) {get_timer(player).interrupt}		
-				player = other_player(player)
-				if (Current_Config.timer) {get_timer(player).interrupt}
-				if (type_IA == 'S'){new Thread(new Smart_IA(player,this,3)).start}
-				else {new Thread(new IA(player,this)).start}
+			currently_playing = other_player(currently_playing)
+			if (Current_Config.timer) {get_timer(currently_playing).interrupt}
+			if (Current_Config.timer) {get_timer(other_player(currently_playing)).interrupt}
+			type_next_player match {
+				case '0' => {}
 
+				case 'N' => {
+					is_interface = false 
+					new Thread(new IA(currently_playing,this)).start
+				}
+				case 'G' => {
+					is_interface = false 
+					gnuchess.write("go")
+				}
+				case 'S' => {
+					is_interface = false 
+					new Thread(new Smart_IA(currently_playing,this,3)).start
+				}
 			}
 		}
 	}
+
+
+
+	/* ****************** GESTION DES PIECES ************************* */
+	/**contient l'id des pieces à leur position. vaut "0" si pas de pièce a la position.
+	(plus grande que normalement, pour pas avoir a s'embêter avec les indices pour les déplacements)*/
+	var matrix = ofDim[Piece](9,9)
 	/**renvoie l'id de la pièce a la position (i,j)*/
 	def id_piece_on_case (i:Int,j:Int):String = {
 		var piece_ij=matrix(i)(j)
@@ -119,7 +213,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		return id.substring(1,3)
 	}
 	/**renvoie le joueur courant*/
-	def get_player() = player
+	def get_player() = currently_playing
 	/**renvoie la pièce ayant l'id "id"*/
 
 	def get_piece(i:Int,j:Int):Piece = {
@@ -127,8 +221,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		return matrix(i)(j)
 	}
 
-
-
+	/* ****************** VERIFICATION MAT/PAT/MOVES ************************* */	
 	/**renvoie la liste des mouvements possibles pour le joueur "color"
 	(utilisée par l'ia)*/
 	def allowed_moves(color:Char): List[((Int,Int),(Int,Int))] = {
@@ -145,17 +238,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 			}
 		}
 		return all_moves
-	}
-	/**teste si le joueur "player" est pat et affiche pat*/
-	def is_pat(player:Char) = { 
-		if (allowed_moves(player) == List()){
-			pat("Pat")
-		}
-	}
-
-	def pat(motif:String){
-		this.stop()
-		game_window.head_up_bar.notif.text_end(player,"PAT",motif,0)
 	}
 	/**renvoie la liste des pièces du joueur "player" qui sont attaquées par les pièces de l'autre joueur.*/
 	def in_danger_of(player: Char): List[(Int,Int)] = {
@@ -198,7 +280,6 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		return false
 
 	}
-
 	/**renvoie si le joueur "player" est mat*/
 	def is_mat(player: Char) : Boolean = {
 		/**id du roi*/
@@ -229,100 +310,37 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		return false
 
 	}
-
-	def perdu(color:Char,motif:String) = {
-		this.stop()
-		game_window.head_up_bar.notif.text_end(color,"MAT",motif,0)
-	}
-
-	def partie_nb_ia(nbIA:Int,colorIA:Char,typeIA:Char,ecran:Interface.EcranPartie) = {
-		type_IA = typeIA
-		nb_ia = nbIA
-		color_ia=colorIA
-		game_window=ecran
+	/**teste si le joueur "player" est pat et affiche pat*/
+	def is_pat(player:Char) = { 
+		if (allowed_moves(player) == List()){
+			pat("Pat")
+		}
 	}
 
 
+	/* *************************************** Sauvegarde / var globale pour la partie 2 ********************************* */
+	var pieces_B = ofDim[Int](6)
+	var pieces_W = ofDim[Int](6)
+	var lost_pieces_B = ofDim[Int](6)
+	var lost_pieces_W = ofDim[Int](6)
+
+	def modif_piece(color:Char,num:Int,modif:Int){
+		if (color == 'B') {pieces_B(num) += modif}
+		else if (color == 'W'){pieces_W(num) += modif}
+	}
+	def modif_lost_piece(color:Char,num:Int,modif:Int){
+		if (color == 'B') {lost_pieces_B(num) -= modif}
+		else if (color == 'W'){lost_pieces_W(num) -= modif}
+	}
+
+	var dplct_save : ArrayBuffer[Dpct]= ArrayBuffer()
+	var waiting = false
+	var matrix_save = ofDim[Piece](9,9)
+	var last_important_change = 0
+	var type_end:(String,Char) = ("*",'*')
+
+
+	
 	/**compte le nombre de tours*/
 	var nb_turn = 0
-
-	/**démarre la partie*/
-	def start() = {
-		if (type_IA == 'G'){
-			/**TODO : Initialise les paramètres de GNUchess*/
-			gnuchess = new Gnuchess(this)
-			if (color_ia == 'W'){
-				is_interface = false
-				gnuchess.write("go")}
-			//gnuchess.write("help")
-		}
-		else if (nb_ia == 1 && color_ia == 'W'){
-			is_interface = false
-			if (type_IA == 'S'){new Thread(new Smart_IA('W',this,3)).start}
-			else {new Thread(new IA('W',this)).start}
-		}
-		else if (nb_ia == 2){
-			is_interface = false
-			if (type_IA == 'S'){new Thread(new Smart_IA('W',this,3)).start}
-			else {new Thread(new IA('W',this)).start}
-		}
-		else {is_interface = true}
-		is_started = true
-	}
-	/**initialise la partie*/
-	def partie_init() = {
-		for( i <- 1 to 8) {
-			for( j <- 1 to 8) {
-				matrix(i)(j) = null
-			}
-		}
-		player = 'W'
-		nb_turn = 0
-		is_running = true
-		lost_pieces_W = Array(0,0,0,0,0,0)
-		lost_pieces_B = Array(0,0,0,0,0,0)
-		matrix(2)(1) = new Peon('W',(2,1),this)
-		matrix(2)(2) = new Peon('W',(2,2),this)
-		matrix(2)(3) = new Peon('W',(2,3),this)
-		matrix(2)(4) = new Peon('W',(2,4),this)
-		matrix(2)(5) = new Peon('W',(2,5),this)
-		matrix(2)(6) = new Peon('W',(2,6),this)
-		matrix(2)(7) = new Peon('W',(2,7),this)
-		matrix(2)(8) = new Peon('W',(2,8),this)
-		matrix(1)(1) = new Tower('W',(1,1),this)
-		matrix(1)(8) = new Tower('W',(1,8),this)
-		matrix(1)(2) = new Knight('W',(1,2),this)
-		matrix(1)(7) = new Knight('W',(1,7),this)
-		matrix(1)(3) = new Bishop('W',(1,3),this)
-		matrix(1)(6) = new Bishop('W',(1,6),this)
-		matrix(1)(4) = new Queen('W',(1,4),this)
-		matrix(1)(5) = new King('W',(1,5),this)
-
-		//definition des pieces noires
-		matrix(7)(1) = new Peon('B',(7,1),this)
-		matrix(7)(2) = new Peon('B',(7,2),this)
-		matrix(7)(3) = new Peon('B',(7,3),this)
-		matrix(7)(4) = new Peon('B',(7,4),this)
-		matrix(7)(5) = new Peon('B',(7,5),this)
-		matrix(7)(6) = new Peon('B',(7,6),this)
-		matrix(7)(7) = new Peon('B',(7,7),this)
-		matrix(7)(8) = new Peon('B',(7,8),this)
-		matrix(8)(1) = new Tower('B',(8,1),this)
-		matrix(8)(8) = new Tower('B',(8,8),this)
-		matrix(8)(2) = new Knight('B',(8,2),this)
-		matrix(8)(7) = new Knight('B',(8,7),this)
-		matrix(8)(3) = new Bishop('B',(8,3),this)
-		matrix(8)(6) = new Bishop('B',(8,6),this)
-		matrix(8)(4) = new Queen('B',(8,4),this)
-		matrix(8)(5) = new King('B',(8,5),this)
-
-		matrix_save = copy_of(matrix)
-		if (Current_Config.timer) {
-			white_timer = new Thread(new TimerClock('W',this))
-			white_timer.start()
-			black_timer = new Thread(new TimerClock('B',this))
-			black_timer.start()
-		}
-	}
 }
-

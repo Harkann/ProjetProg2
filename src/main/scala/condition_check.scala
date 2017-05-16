@@ -44,7 +44,7 @@ trait condition_check {
 		var (x,y) = dpct.posi_end
 		val piece = partie.matrix(x)(y)
 		if ((piece != null) && (piece.name == "Pe") && ((x == 8) || (x == 1))){
-			if (partie.nb_ia == 0 || (partie.nb_ia == 1 && partie.player != partie.color_ia)){
+			if (partie.player_type(partie.currently_playing) == '0') {
 				partie.game_window.head_up_bar.notif.promote(dpct.posi_end,piece.color,piece)
 				//partie.modif_piece(piece.color,0,-1)
 			}
