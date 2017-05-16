@@ -28,7 +28,7 @@ object Interface extends SimpleSwingApplication{
 	var ba4:Blitz_4 = null
 
 	/**Boutons permettant de lancer la partie classique*/
-	class PartieButton(text:String,nbIA:Int,colorIA:Char,typeIA:Char,window:MainWindow) extends Button{
+	class PartieButton(text:String,joueurBlanc:Char,joueurNoir:Char,window:MainWindow) extends Button{
 		action = Action(text){
 			Current_Config.type_partie = ""
 			window.middle_box.contents.clear()
@@ -36,12 +36,12 @@ object Interface extends SimpleSwingApplication{
 			var partie = new Partie()
 			/**Interface de la partie crée*/
 			var interface_partie = new EcranPartie(8,8,window,partie)
-			partie.partie_nb_ia(nbIA,colorIA,typeIA,interface_partie)
+			partie.partie_type_joueurs(joueurBlanc,joueurNoir,interface_partie)
 			interface_partie.spawn_game()
 		}
 	}
 	/**Boutons permettant de lancer la partie de Ba4*/
-	class VarPartieButton(text:String,nbIA:Int,colorIA:Char,window:MainWindow) extends Button{
+	class VarPartieButton(text:String,joueurBlanc:Char,joueurNoir:Char,window:MainWindow) extends Button{
 		action = Action(text){
 			Current_Config.type_partie = "var"
 			window.middle_box.contents.clear()
@@ -54,8 +54,8 @@ object Interface extends SimpleSwingApplication{
 			var interface_partie1 = new EcranPartie(8,8,window,partie1)
 			/**Interface de la partie2 crée*/
 			var interface_partie2 = new EcranPartie(8,8,window,partie2)
-			partie1.partie_nb_ia(nbIA,colorIA,'0',interface_partie1)
-			partie2.partie_nb_ia(nbIA,colorIA,'0',interface_partie2)
+			partie1.partie_type_joueurs(joueurBlanc,joueurNoir,interface_partie1)
+			partie1.partie_type_joueurs(joueurBlanc,joueurNoir,interface_partie2)
 			interface_partie1.spawn_game()
 			interface_partie2.spawn_game()
 		}
@@ -63,7 +63,6 @@ object Interface extends SimpleSwingApplication{
 	/**Bouton quittant la fenetre @window et stoppant @partie */
 	class QuitButton(window:MainWindow,partie:Partie) extends Button{
 		action = Action("Quit Game"){
-			window.closeOperation()
 			if (partie != null){
 				partie.stop()
 			}
@@ -71,6 +70,7 @@ object Interface extends SimpleSwingApplication{
 				partie1.stop
 				partie2.stop
 			}
+			window.closeOperation()
 		}
 	}
 	/**NOT_IMPLEMENTED*/
@@ -81,24 +81,24 @@ object Interface extends SimpleSwingApplication{
 	class MainMenu(window:MainWindow) extends GridPanel(11,1){
 
 		/**bouton qui lance une partie avec un seul joueur blanc*/
-		val game_one_player_white = new PartieButton("Player White vs. IA Black",1,'B','N',window)
+		val game_one_player_white = new PartieButton("Player White vs. IA Black",'0','N',window)
 		/**bouton qui lance une partie avec un seul joueur noir*/
-		val game_one_player_black = new PartieButton("Player Black vs. IA White",1,'W','N',window)
+		val game_one_player_black = new PartieButton("Player Black vs. IA White",'N','0',window)
 		/**bouton qui lance une partie avec deux joueurs*/
-		val game_two_players = new PartieButton("Player vs. Player",0,'0','0',window)
+		val game_two_players = new PartieButton("Player vs. Player",'0','0',window)
 		/**bouton qui lance une partie avec deux ia*/
-		val game_two_ia = new PartieButton("IA vs. IA",2,'0','N',window)
-		val game_one_player_black_smart = new PartieButton("Player Black vs. IA Smart White",1,'W','S',window)
+		val game_two_ia = new PartieButton("IA vs. IA",'N','N',window)
+		val game_one_player_black_smart = new PartieButton("Player Black vs. IA Smart White",'S','0',window)
 		/**bouton qui lance une partie avec deux ia*/
-		val game_two_ia_smart = new PartieButton("S_IA vs. S_IA",2,'0','S',window)
+		val game_two_ia_smart = new PartieButton("S_IA vs. S_IA",'S','S',window)
 		/**bouton qui lance une partie de Blitz à 4 */
-		val game_var = new VarPartieButton("4 players Blitz",0,'0',window)
+		val game_var = new VarPartieButton("4 players Blitz",'0','0',window)
 		/**bouton qui permet d'accéder aux paramètre NOT_IMPLEMENTED*/
 		val settings_butt = new SettingsButton(window)
 		/**bouton qui ferme l'interface*/
 		val quit_program = new QuitButton(window,null)
-		val game_gnu_white = new PartieButton("Player Black vs. GNU White",1,'W','G',window)
-		val game_gnu_black = new PartieButton("Player White vs. GNU Black",1,'B','G',window)
+		val game_gnu_white = new PartieButton("Player Black vs. GNU White",'G','0',window)
+		val game_gnu_black = new PartieButton("Player White vs. GNU Black",'0','G',window)
 		/**affiche le menu principal*/
 		def set_menu():Unit = {
 			contents.clear()
@@ -236,24 +236,24 @@ object Interface extends SimpleSwingApplication{
 						partie.numero match {
 							case 1 => {
 								type_ba4_button match {
-									case "To" => {partie2.modif_lost_piece(partie.player,1,1)} 
-									case "Bi" => {partie2.modif_lost_piece(partie.player,3,1)}
-									case "Qu" => {partie2.modif_lost_piece(partie.player,4,1)}
-									case "Pe" => {partie2.modif_lost_piece(partie.player,0,1)}
-									case "Kn" => {partie2.modif_lost_piece(partie.player,2,1)}
+									case "To" => {partie2.modif_lost_piece(partie.currently_playing,1,1)} 
+									case "Bi" => {partie2.modif_lost_piece(partie.currently_playing,3,1)}
+									case "Qu" => {partie2.modif_lost_piece(partie.currently_playing,4,1)}
+									case "Pe" => {partie2.modif_lost_piece(partie.currently_playing,0,1)}
+									case "Kn" => {partie2.modif_lost_piece(partie.currently_playing,2,1)}
 								}
 							}
 							case 2 => {
 								type_ba4_button match {
-									case "To" => {partie1.modif_lost_piece(partie.player,1,1)} 
-									case "Bi" => {partie1.modif_lost_piece(partie.player,3,1)}
-									case "Qu" => {partie1.modif_lost_piece(partie.player,4,1)}
-									case "Pe" => {partie1.modif_lost_piece(partie.player,0,1)}
-									case "Kn" => {partie1.modif_lost_piece(partie.player,2,1)}
+									case "To" => {partie1.modif_lost_piece(partie.currently_playing,1,1)} 
+									case "Bi" => {partie1.modif_lost_piece(partie.currently_playing,3,1)}
+									case "Qu" => {partie1.modif_lost_piece(partie.currently_playing,4,1)}
+									case "Pe" => {partie1.modif_lost_piece(partie.currently_playing,0,1)}
+									case "Kn" => {partie1.modif_lost_piece(partie.currently_playing,2,1)}
 								}
 							}
 						}
-						ba4.arrive(type_ba4_button,partie.player,(i,j),partie)
+						ba4.arrive(type_ba4_button,partie.currently_playing,(i,j),partie)
 						plateau.reset_all()
 						partie.game_window.pieces_W.reset_buttons
 						partie.game_window.pieces_B.reset_buttons
@@ -265,7 +265,7 @@ object Interface extends SimpleSwingApplication{
 						plateau.reset_all()
 					}
 				}
-				else if (partie.get_color(i,j) == partie.player){
+				else if (partie.get_color(i,j) == partie.currently_playing){
 					select_piece()
 					clic()
 				}
@@ -397,7 +397,7 @@ object Interface extends SimpleSwingApplication{
 		this.background = java.awt.Color.WHITE
 		action = Action("") {
 			if (partie.is_running){
-				if (partie.is_interface && partie.player == color && is_button_clicked == false){
+				if (partie.is_interface && partie.currently_playing == color && is_button_clicked == false){
 					if (is_clicked == false){
 						is_clicked = true
 						is_ba4_button = true
@@ -499,7 +499,7 @@ object Interface extends SimpleSwingApplication{
 				this.contents+= new FlowPanel(retour)
 				/**sauvegarde la partie au format PGN*/
 				var save_game = new Button(){
-					action = Action("Save Game"){partie.save_to_PGN(partie,"*",partie.player,"save.txt")}
+					action = Action("Save Game"){partie.save_to_PGN(partie,"*",partie.currently_playing,"save.txt")}
 				}
 				this.contents+= new FlowPanel(save_game)
 				/**demarre le timer*/

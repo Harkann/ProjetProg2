@@ -1,3 +1,4 @@
+import Array._
 object Config {
 	val delai_ia = 1 //milisecondes
 	val res_x = 1300 //pixels
@@ -12,12 +13,13 @@ object Config {
 	val temps_cadences = List((0*3600+15*60+0)*1000) //milisecondes
 	val increment_cadences = List(0)
 
-
 	/** NOT IMPLEMENTED*/
 	var nb_ia = 2
 	/** NOT IMPLEMENTED*/	
 	var color_ia = '0'
 	var type_partie = " "
+
+
 }
 
 
@@ -45,7 +47,6 @@ object Current_Config {
 	var	temps_cadences = Config.temps_cadences
 	var	increment_cadences = Config.increment_cadences
 	var	type_partie = Config.type_partie
-
 	def init_config() = {
 		delai_ia = Config.delai_ia
 		res_x = Config.res_x

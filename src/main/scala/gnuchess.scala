@@ -2,17 +2,14 @@ import java.io.PrintWriter
 import scala.io.Source
 import scala.util.matching.Regex
 class Gnuchess(partie:Partie) {
-	val proc = Runtime.getRuntime.exec(Array("gnuchess","-xe"))
+	val proc = Runtime.getRuntime.exec(Array("gnuchess","-xe","LC_ALL=en_EN"))
 	val out = new PrintWriter(proc.getOutputStream)
 	def write(command:String) = {
-		val writer = new Thread(){
-			override def run() = {
-				out.println(command)
-				out.flush()
-			}
-		}
-		writer.start()
+		out.println(command)
+
+		out.flush()
 	}
+	
 	def letter_to_int(letter:Char) = {
 		letter match {
 			case 'a' => 1
@@ -40,7 +37,9 @@ class Gnuchess(partie:Partie) {
 	def move_and_write(oi:Int,oj:Int,di:Int,dj:Int) = {
 		write(int_to_letter(oj)+""+((oi+48).toChar)+" "+int_to_letter(dj)+""+((di+48).toChar))
 	}
-
+	def start() = {
+		
+	}
 	def parse_and_move(line:String) = {
 		val pattern = new Regex("[a-z][1-8]")
 		var coo = (pattern findAllIn line).mkString("")	
@@ -49,8 +48,8 @@ class Gnuchess(partie:Partie) {
 		partie.get_piece(coo.charAt(1).toInt-48,letter_to_int(coo.charAt(0))).move(coo.charAt(3).toInt-48,letter_to_int(coo.charAt(2)))
 	}
 	def stop() = {
-		write("quit")
-		out.close()
+		println("Exiting gnuchess")
+		proc.destroy()
 	}
 	val output = new Thread(){
 		override def run() = {
