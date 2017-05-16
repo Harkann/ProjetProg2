@@ -55,6 +55,8 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		partie_aux.matrix = copy_of(partie.matrix)
 		val possible_moves = partie.allowed_moves(color)
 		var score_max = -100000000
+		val alpha = -100000000
+		val beta = 100000000
 		var move_max = possible_moves(0)
 		var maximals_moves : List[((Int,Int),(Int,Int))]= List(move_max)
 
@@ -63,12 +65,11 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 			var dpct = new Dpct(beg,end,partie_aux)
 
 			dpct.do_dpct(partie_aux.matrix)
-			val score = alphabeta(color,partie_aux,-score_max,score_max,depth-1,false)
+			val score = alphabeta(other_player(color),partie_aux,alpha,beta,depth,false)
 			dpct.undo_dpct(partie_aux.matrix)
 
 			if (score == score_max) {
 				maximals_moves = maximals_moves :+ move
-				move_max = move
 			}
 			if (score > score_max) {
 				maximals_moves = List(move)
@@ -80,8 +81,8 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		
 		var random_move = scala.util.Random
 		var random_moveInt = random_move.nextInt(maximals_moves.length)
-		return maximals_moves(random_moveInt)
-		//return move_max
+		//return maximals_moves(random_moveInt)
+		return move_max
 	}
 
 

@@ -7,21 +7,20 @@ trait Evaluation extends Values with Squares with Standard {
 		var partie_aux = new Partie()
 		partie_aux.matrix = copy_of(partie.matrix)
 		partie_aux.dplct_save = partie.dplct_save.clone()
-		
+		var possible_moves = partie.allowed_moves(color)
+		if ((depth == 0)||(possible_moves == List())){
+			var score_final = evaluation(color,partie)
+			return score_final
+		}
 
 		if (is_max) {
-			var possible_moves = partie.allowed_moves(color)
-			if ((depth == 0)||(possible_moves == List())){
-				var score_final = evaluation(color,partie)
-				return score_final
-			}
 			var score = -100000000
 			for( move <- possible_moves) {
 				var (beg,end) = move
 				var dcpt = new Dpct(beg,end,partie_aux)
 
 				dcpt.do_dpct(partie_aux.matrix)
-				score = score max alphabeta(color,partie_aux,var_alpha,var_beta,depth-1,false)
+				score = score max alphabeta(other_player(color),partie_aux,var_alpha,var_beta,depth-1,false)
 				dcpt.undo_dpct(partie_aux.matrix)
 
 				var_alpha = var_alpha max score
@@ -32,18 +31,14 @@ trait Evaluation extends Values with Squares with Standard {
 			return score
 		}
 		else{
-			var possible_moves = partie.allowed_moves(other-player(color))
-			if ((depth == 0)||(possible_moves == List())){
-				var score_final = evaluation(color,partie)
-				return score_final
-			}
+			
 			var score = 100000000
 			for( move <- possible_moves) {
 				var (beg,end) = move
 				var dcpt = new Dpct(beg,end,partie_aux)
 
 				dcpt.do_dpct(partie_aux.matrix)
-				score =  score min  alphabeta(color,partie_aux,var_alpha,var_beta,depth-1,true)
+				score =  score min  alphabeta(other_player(color),partie_aux,var_alpha,var_beta,depth-1,true)
 				dcpt.undo_dpct(partie_aux.matrix)
 
 				var_beta = var_beta min score
