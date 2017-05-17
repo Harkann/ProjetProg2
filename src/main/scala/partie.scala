@@ -33,7 +33,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				case 'G' => {
 					gnuchess = new Gnuchess(this)
 					is_interface = false
-					gnuchess.set_time_left()
+					if (Current_Config.timer){gnuchess.set_time_left()}
 					gnuchess.go()
 				}
 				case 'S' => new Thread(new Smart_IA('W',this,3)).start

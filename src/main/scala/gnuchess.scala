@@ -5,8 +5,8 @@ class Gnuchess(partie:Partie) {
 	val proc = Runtime.getRuntime.exec(Array("gnuchess","-xe","LC_ALL=en_EN"))
 	val out = new PrintWriter(proc.getOutputStream)
 	def write(command:String) = {
+		println(command+" sent to gnuchess")
 		out.println(command)
-
 		out.flush()
 	}
 	def go() = {
@@ -64,8 +64,6 @@ class Gnuchess(partie:Partie) {
 	def parse_and_move(line:String) = {
 		val pattern = new Regex("[a-z][1-8]")
 		var coo = (pattern findAllIn line).mkString("")	
-		println(coo)
-		println(coo.charAt(0))
 		partie.get_piece(coo.charAt(1).toInt-48,letter_to_int(coo.charAt(0))).move(coo.charAt(3).toInt-48,letter_to_int(coo.charAt(2)))
 	}
 	def stop() = {
@@ -75,7 +73,6 @@ class Gnuchess(partie:Partie) {
 	val output = new Thread(){
 		override def run() = {
 			for (line <- Source.fromInputStream(proc.getInputStream).getLines){
-				println(line)
 				if (line.containsSlice("My move is")){
 					parse_and_move(line)
 					partie.is_interface = true 
