@@ -9,7 +9,31 @@ class Gnuchess(partie:Partie) {
 
 		out.flush()
 	}
-	
+	def go() = {
+		write("go")
+	}
+
+
+	def set_time_left() = {
+		var time_left_h = 0
+		var time_left_m = 0
+		var time_left_s = 0
+		partie.currently_playing match {
+			case 'W' => {
+				time_left_h = partie.game_window.head_up_bar.white_timer.hour
+				time_left_m = partie.game_window.head_up_bar.white_timer.min
+				time_left_s = partie.game_window.head_up_bar.white_timer.sec
+			}
+
+			case 'B' => {
+				time_left_h = partie.game_window.head_up_bar.black_timer.hour
+				time_left_m = partie.game_window.head_up_bar.black_timer.min
+				time_left_s = partie.game_window.head_up_bar.black_timer.sec
+			}
+		}
+		var time_left = (time_left_s+time_left_m*60+time_left_h*3600)*100
+		write("time "+time_left)
+	}
 	def letter_to_int(letter:Char) = {
 		letter match {
 			case 'a' => 1
