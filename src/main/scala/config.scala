@@ -10,7 +10,7 @@ object Config {
 	val timer = true
 	val nb_periods = 1
 	val nb_coups = List(0) //0 -> KO
-	val temps_cadences = List((0*3600+15*60+0)*1000) //milisecondes
+	val temps_cadences = List((0*3600+2*60+0)*1000) //milisecondes
 	val increment_cadences = List(0)
 
 	val type_partie = ""
