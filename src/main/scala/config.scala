@@ -16,7 +16,10 @@ object Config {
 	val type_partie = ""
 	val player_blanc = '0'
 	val player_noir = '0'
-
+	val ia_depth = 3
+	val ia_repetitions_avoid = true
+	val ia_amelioration = true
+	val ia_random = true
 
 }
 
@@ -47,6 +50,11 @@ object Current_Config {
 	var	type_partie = Config.type_partie
 	var player_noir = Config.player_noir
 	var player_blanc = Config.player_blanc
+	var ia_depth = Config.ia_depth
+	var ia_repetitions_avoid = Config.ia_repetitions_avoid
+	var ia_amelioration = Config.ia_amelioration
+	var ia_random = Config.ia_random
+
 	def init_config() = {
 		delai_ia = Config.delai_ia
 		res_x = Config.res_x
@@ -61,5 +69,9 @@ object Current_Config {
 		type_partie = Config.type_partie
 		player_noir = Config.player_noir
 		player_blanc = Config.player_blanc
+		ia_depth = Config.ia_depth
+		ia_repetitions_avoid = Config.ia_repetitions_avoid
+		ia_amelioration = Config.ia_amelioration
+		ia_random = Config.ia_random
 	}
 }

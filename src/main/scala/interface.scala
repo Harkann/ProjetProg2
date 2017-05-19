@@ -74,10 +74,82 @@ object Interface extends SimpleSwingApplication{
 			window.closeOperation()
 		}
 	}
-	/**NOT_IMPLEMENTED*/
-	class SettingsButton(window:MainWindow) extends Button{
-		action = Action("Settings"){}
+
+	class IAButtons(window:MainWindow) extends BoxPanel(Orientation.Vertical){
+		contents+= new BoxPanel(Orientation.Horizontal){
+			contents+= new Label("Depth IA : ")
+			val depth = new ButtonGroup {
+				buttons += new RadioButton(){
+					action = Action("1"){
+						Current_Config.ia_depth = 1
+					}
+					selected = (Current_Config.ia_depth == 1)
+				}
+				buttons += new RadioButton(){
+					action = Action("3"){
+						Current_Config.ia_depth == 3
+					}
+					selected = (Current_Config.ia_depth == 3)
+				}
+			}
+			contents++=depth.buttons
+		}
+		contents+= new BoxPanel(Orientation.Horizontal){
+			contents+= new Label("Avoid repetitions IA : ")
+			val rep = new ButtonGroup {
+				buttons += new RadioButton(){
+					action = Action("Oui"){
+						Current_Config.ia_repetitions_avoid = true
+					}
+					selected = (Current_Config.ia_repetitions_avoid == true)
+				}
+				buttons += new RadioButton(){
+					action = Action("Non"){
+						Current_Config.ia_repetitions_avoid == false
+					}
+					selected = (Current_Config.ia_repetitions_avoid == false)
+				}
+			}
+			contents++=rep.buttons
+		}
+		contents+= new BoxPanel(Orientation.Horizontal){
+			contents+= new Label("ia_amelioration IA : ")
+			val amelio = new ButtonGroup {
+				buttons += new RadioButton(){
+					action = Action("Oui"){
+						Current_Config.ia_amelioration = true
+					}
+					selected = (Current_Config.ia_amelioration == true)
+				}
+				buttons += new RadioButton(){
+					action = Action("Non"){
+						Current_Config.ia_amelioration == false
+					}
+					selected = (Current_Config.ia_amelioration == false)
+				}
+			}
+			contents++=amelio.buttons
+		}
+		contents+= new BoxPanel(Orientation.Horizontal){
+			contents+= new Label("Random IA : ")
+			val random = new ButtonGroup {
+				buttons += new RadioButton(){
+					action = Action("Oui"){
+						Current_Config.ia_random = true
+					}
+					selected = (Current_Config.ia_random == true)
+				}
+				buttons += new RadioButton(){
+					action = Action("Non"){
+						Current_Config.ia_random == false
+					}
+					selected = (Current_Config.ia_random == false)
+				}
+			}
+			contents++=random.buttons
+		}
 	}
+
 	/**Menu principal*/
 	class MainMenu(window:MainWindow) extends GridPanel(11,1){
 		/**bouton qui lance une partie de Blitz à 4 */
@@ -164,7 +236,7 @@ object Interface extends SimpleSwingApplication{
 			contents++=cont.buttons
 		}
 		val game_normal_start = new PartieButton("Démarer une partie normale",window)
-
+		val ia_config = new IAButtons(window)
 		/**affiche le menu principal*/
 		def set_menu():Unit = {
 			contents.clear()
@@ -174,7 +246,7 @@ object Interface extends SimpleSwingApplication{
 			contents+= game_normal_start
 			contents+= game_var
 			contents+= quit_program
-
+			contents+= ia_config
 			revalidate()
 			repaint()
 		}

@@ -33,12 +33,12 @@ object IA_promote {
 }
 
 
-class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluation {
+class Smart_IA(color:Char,partie:Partie) extends Runnable with Evaluation {
 	/**lance le thread du tour de l'ia*/
 	override def run = {
 		Thread.sleep(Current_Config.delai_ia)
 		/**origine et destination de la pièce*/
-		var (origin,destination) = choice_dpct(1,true,false,true)
+		var (origin,destination) = choice_dpct(Current_Config.ia_depth,Current_Config.ia_repetitions_avoid,Current_Config.ia_amelioration,Current_Config.ia_random)
 		/**coordonnées de l'origine*/
 		var (oi,oj) = origin
 		/**coordonnées de la destination*/
