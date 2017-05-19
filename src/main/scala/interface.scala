@@ -76,77 +76,87 @@ object Interface extends SimpleSwingApplication{
 	}
 
 	class IAButtons(window:MainWindow) extends BoxPanel(Orientation.Vertical){
-		contents+= new BoxPanel(Orientation.Horizontal){
-			contents+= new Label("Depth IA : ")
-			val depth = new ButtonGroup {
-				buttons += new RadioButton(){
-					action = Action("1"){
-						Current_Config.ia_depth = 1
+		
+		contents+= new FlowPanel(new Label("Configuration de l'IA intelligente"))
+		contents+= new BoxPanel(Orientation.Vertical){
+			contents+= new BoxPanel(Orientation.Horizontal){
+				contents+= new Label("Profondeur : ")
+				val depth = new ButtonGroup {
+					buttons += new RadioButton(){
+						action = Action("1"){
+							Current_Config.ia_depth = 1
+						}
+						selected = (Current_Config.ia_depth == 1)
 					}
-					selected = (Current_Config.ia_depth == 1)
-				}
-				buttons += new RadioButton(){
-					action = Action("3"){
-						Current_Config.ia_depth = 3
+					buttons += new RadioButton(){
+						action = Action("2"){
+							Current_Config.ia_depth = 2
+						}
+						selected = (Current_Config.ia_depth == 3)
 					}
-					selected = (Current_Config.ia_depth == 3)
+					buttons += new RadioButton(){
+						action = Action("3"){
+							Current_Config.ia_depth = 3
+						}
+						selected = (Current_Config.ia_depth == 3)
+					}
 				}
+				contents++=depth.buttons
 			}
-			contents++=depth.buttons
-		}
-		contents+= new BoxPanel(Orientation.Horizontal){
-			contents+= new Label("Avoid repetitions IA : ")
-			val rep = new ButtonGroup {
-				buttons += new RadioButton(){
-					action = Action("Oui"){
-						Current_Config.ia_repetitions_avoid = true
+			contents+= new BoxPanel(Orientation.Horizontal){
+				contents+= new Label("Limiter Répétitions : ")
+				val rep = new ButtonGroup {
+					buttons += new RadioButton(){
+						action = Action("Oui"){
+							Current_Config.ia_repetitions_avoid = true
+						}
+						selected = (Current_Config.ia_repetitions_avoid == true)
 					}
-					selected = (Current_Config.ia_repetitions_avoid == true)
-				}
-				buttons += new RadioButton(){
-					action = Action("Non"){
-						Current_Config.ia_repetitions_avoid = false
+					buttons += new RadioButton(){
+						action = Action("Non"){
+							Current_Config.ia_repetitions_avoid = false
+						}
+						selected = (Current_Config.ia_repetitions_avoid == false)
 					}
-					selected = (Current_Config.ia_repetitions_avoid == false)
 				}
+				contents++=rep.buttons
 			}
-			contents++=rep.buttons
-		}
-		contents+= new BoxPanel(Orientation.Horizontal){
-			contents+= new Label("ia_amelioration IA : ")
-			val amelio = new ButtonGroup {
-				buttons += new RadioButton(){
-					action = Action("Oui"){
-						Current_Config.ia_amelioration = true
+			contents+= new BoxPanel(Orientation.Horizontal){
+				contents+= new Label("Amélioration : ")
+				val amelio = new ButtonGroup {
+					buttons += new RadioButton(){
+						action = Action("Oui"){
+							Current_Config.ia_amelioration = true
+						}
+						selected = (Current_Config.ia_amelioration == true)
 					}
-					selected = (Current_Config.ia_amelioration == true)
-				}
-				buttons += new RadioButton(){
-					action = Action("Non"){
-						Current_Config.ia_amelioration = false
+					buttons += new RadioButton(){
+						action = Action("Non"){
+							Current_Config.ia_amelioration = false
+						}
+						selected = (Current_Config.ia_amelioration == false)
 					}
-					selected = (Current_Config.ia_amelioration == false)
 				}
+				contents++=amelio.buttons
 			}
-			contents++=amelio.buttons
-		}
-		contents+= new BoxPanel(Orientation.Horizontal){
-			contents+= new Label("Random IA : ")
-			val random = new ButtonGroup {
-				buttons += new RadioButton(){
-					action = Action("Oui"){
-						Current_Config.ia_random = true
+			contents+= new BoxPanel(Orientation.Horizontal){
+				contents+= new Label("Aléatoire : ")
+				val random = new ButtonGroup {
+					buttons += new RadioButton(){
+						action = Action("Oui"){
+							Current_Config.ia_random = true
+						}
+						selected = (Current_Config.ia_random == true)
 					}
-					selected = (Current_Config.ia_random == true)
-				}
-				buttons += new RadioButton(){
-					action = Action("Non"){
-						Current_Config.ia_random = false
+					buttons += new RadioButton(){
+						action = Action("Non"){
+							Current_Config.ia_random = false
+						}
+						selected = (Current_Config.ia_random == false)
 					}
-					selected = (Current_Config.ia_random == false)
 				}
+				contents++=random.buttons
 			}
-			contents++=random.buttons
 		}
 	}
 
@@ -240,13 +250,23 @@ object Interface extends SimpleSwingApplication{
 		/**affiche le menu principal*/
 		def set_menu():Unit = {
 			contents.clear()
-			contents+= chose_type_black
-			contents+= chose_type_white
-			contents+= chose_timer
-			contents+= game_normal_start
-			contents+= game_var
-			contents+= quit_program
-			contents+= ia_config
+			contents+= new FlowPanel(){
+				contents+=new BoxPanel(Orientation.Vertical){
+					contents+= chose_type_black
+					contents+= chose_type_white
+					contents+= chose_timer
+				}
+			}
+			
+			contents+= new FlowPanel(){
+				contents+=new GridPanel(3,1){
+					contents+= game_normal_start
+					contents+= game_var
+					contents+= quit_program
+				}
+			}
+			
+			contents+= new FlowPanel(ia_config)
 			revalidate()
 			repaint()
 		}
