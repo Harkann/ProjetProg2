@@ -75,7 +75,7 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable with Evaluation {
 
 			dpct.do_dpct(partie.matrix)
 			if (repetion_avoid){
-				score = alphabeta(other_player(color),partie,alpha,beta,depth,false,amelioration)	
+				score = alphabeta(other_player(color),partie,alpha,beta,depth,false,amelioration)+avoid_repetition(partie, move)
 			}
 			else {
 				score = alphabeta(other_player(color),partie,alpha,beta,depth,false,amelioration) 
@@ -90,7 +90,7 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable with Evaluation {
 				score_max = score
 				move_max = move
 			}
-			println("piece : " + dpct.piece.color +" "+ dpct.piece.name + " " + beg + " -> " + end + " score = " + score)
+			//println("piece : " + dpct.piece.color +" "+ dpct.piece.name + " " + beg + " -> " + end + " score = " + score)
 		}
 		
 		var random_move = scala.util.Random
