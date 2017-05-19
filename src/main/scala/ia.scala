@@ -38,7 +38,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 	override def run = {
 		Thread.sleep(Current_Config.delai_ia)
 		/**origine et destination de la pièce*/
-		var (origin,destination) = choice_dpct(1)
+		var (origin,destination) = choice_dpct(1,true,false,true)
 		/**coordonnées de l'origine*/
 		var (oi,oj) = origin
 		/**coordonnées de la destination*/
@@ -50,7 +50,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		partie.is_interface = true
 	}
 
-	def choice_dpct(depth:Int) : ((Int,Int),(Int,Int)) = {
+	def choice_dpct(depth:Int,repetion_avoid : Boolean, amelioration : Boolean, random :Boolean) : ((Int,Int),(Int,Int)) = {
 		var partie_aux = new Partie()
 		partie_aux.matrix = copy_of(partie.matrix)
 		val possible_moves = partie.allowed_moves(color)
@@ -69,11 +69,17 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 			//partie_aux.last_important_change = partie.last_important_change
 
 			var (beg,end) = move
+			var score = 0
 
 			var dpct = new Dpct(beg,end,partie)
 
 			dpct.do_dpct(partie.matrix)
-			val score = alphabeta(other_player(color),partie,alpha,beta,depth,false) +avoid_repetition(partie,move)
+			if (repetion_avoid){
+				score = alphabeta(other_player(color),partie,alpha,beta,depth,false,amelioration)	
+			}
+			else {
+				score = alphabeta(other_player(color),partie,alpha,beta,depth,false,amelioration) 
+			}
 			dpct.undo_dpct(partie.matrix)
 
 			if (score == score_max) {
@@ -89,8 +95,12 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		
 		var random_move = scala.util.Random
 		var random_moveInt = random_move.nextInt(maximals_moves.length)
-		return maximals_moves(random_moveInt)
-		//return move_max
+		if (random){
+			return maximals_moves(random_moveInt)
+		}
+		else{
+			return move_max 
+		}
 	}
 
 	def has_already_been_move(mv : ((Int,Int),(Int,Int))) : Int = {

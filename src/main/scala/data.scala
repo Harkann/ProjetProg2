@@ -30,7 +30,7 @@ trait Evaluation extends Values with Squares with Standard {
 	}
 
 
-	 def alphabeta(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int, is_max : Boolean) : Int = {
+	 def alphabeta(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int, is_max : Boolean,amelio : Boolean) : Int = {
 	 	var var_alpha = alpha
 		var var_beta = beta
 		//var partie_aux = new Partie()
@@ -39,9 +39,13 @@ trait Evaluation extends Values with Squares with Standard {
 		var possible_moves = partie.allowed_moves(color)
 		if ((depth == 0)||(possible_moves == List())){
 			var score_final = evaluation(color,partie)
-			//return score_final
-			//println("on y arrive")
-			return amelioration(color,partie,alpha,beta)
+			
+			if (amelio){
+				return amelioration(color,partie,alpha,beta)
+			}
+			else{
+				return score_final
+			}
 		}
 
 		if (is_max) {
@@ -52,7 +56,7 @@ trait Evaluation extends Values with Squares with Standard {
 				var dcpt = new Dpct(beg,end,partie)
 
 				dcpt.do_dpct(partie.matrix)
-				score = score max alphabeta(other_player(color),partie,var_alpha,var_beta,depth-1,false)
+				score = score max alphabeta(other_player(color),partie,var_alpha,var_beta,depth-1,false,amelio)
 				dcpt.undo_dpct(partie.matrix)
 
 				var_alpha = var_alpha max score
@@ -71,7 +75,7 @@ trait Evaluation extends Values with Squares with Standard {
 				var dcpt = new Dpct(beg,end,partie)
 
 				dcpt.do_dpct(partie.matrix)
-				score =  score min  alphabeta(other_player(color),partie,var_alpha,var_beta,depth-1,true)
+				score =  score min  alphabeta(other_player(color),partie,var_alpha,var_beta,depth-1,true,amelio)
 				dcpt.undo_dpct(partie.matrix)
 
 				var_beta = var_beta min score
