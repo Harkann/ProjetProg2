@@ -18,8 +18,8 @@ object Config {
 	val player_noir = '0'
 	val ia_depth = 3
 	val ia_repetitions_avoid = true
-	val ia_amelioration = true
-	val ia_random = true
+	val ia_amelioration = false
+	val ia_random = false
 
 }
 

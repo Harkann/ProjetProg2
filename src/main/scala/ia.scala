@@ -90,7 +90,7 @@ class Smart_IA(color:Char,partie:Partie) extends Runnable with Evaluation {
 				score_max = score
 				move_max = move
 			}
-			//println("piece : " + dpct.piece.color +" "+ dpct.piece.name + " " + beg + " -> " + end + " score = " + score)
+			println("piece : " + dpct.piece.color +" "+ dpct.piece.name + " " + beg + " -> " + end + " score = " + score)
 		}
 		
 		var random_move = scala.util.Random
