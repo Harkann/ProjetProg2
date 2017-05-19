@@ -279,9 +279,9 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 					var id_piece_ij = piece_ij.id
 					if (id_piece_ij(0)==player)
 					{
-						println("piece normalement non nulle : "+piece_ij + " position : "+(i,j))
+						//println("piece normalement non nulle : "+piece_ij + " position : "+(i,j))
 						var (list_move,list_attack)= piece_ij.move_piece((i,j))
-						println("piece : "+piece_ij+" "+list_attack)
+						//println("piece : "+piece_ij+" "+list_attack)
 						for (attack <-list_attack){ 
 							res = res :+((i,j),attack)
 						}
@@ -289,7 +289,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				}
 			}
 		}
-		println("on finit pas indanger nan ?")
+		//println("on finit pas indanger nan ?")
 		return res
 	}
 
@@ -334,7 +334,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				}
 			}
 		}
-		println(king)
+		//println(king)
 		var (moves,attacks) = king.move_piece_check(position)
 		if ((is_check(player))&& (allowed_moves(player)==List())) {
 			//dplct_save(nb_turn-1).echec_other_player = "#"

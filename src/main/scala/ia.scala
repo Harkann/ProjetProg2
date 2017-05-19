@@ -61,19 +61,20 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		var maximals_moves : List[((Int,Int),(Int,Int))]= List(move_max)
 
 		for( move <- possible_moves) {
-			var partie_aux = new Partie()
-			partie_aux.matrix = copy_of(partie.matrix)
-			partie_aux.matrix_save = copy_of(partie.matrix_save)
-			partie_aux.dplct_save = partie.dplct_save.clone
-			partie_aux.last_important_change = partie.last_important_change
+			
+			//var partie_aux = new Partie()
+			//partie_aux.matrix = copy_of(partie.matrix)
+			//partie_aux.matrix_save = copy_of(partie.matrix_save)
+			//partie_aux.dplct_save = partie.dplct_save.clone
+			//partie_aux.last_important_change = partie.last_important_change
 
 			var (beg,end) = move
 
-			var dpct = new Dpct(beg,end,partie_aux)
+			var dpct = new Dpct(beg,end,partie)
 
-			dpct.do_dpct(partie_aux.matrix)
-			val score = alphabeta(other_player(color),partie_aux,alpha,beta,depth,false) +avoid_repetition(partie_aux,move)
-			dpct.undo_dpct(partie_aux.matrix)
+			dpct.do_dpct(partie.matrix)
+			val score = alphabeta(other_player(color),partie,alpha,beta,depth,false) +avoid_repetition(partie,move)
+			dpct.undo_dpct(partie.matrix)
 
 			if (score == score_max) {
 				maximals_moves = maximals_moves :+ move
@@ -83,13 +84,13 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 				score_max = score
 				move_max = move
 			}
-			println("piece : " + dpct.piece.color +" "+ dpct.piece.name + " " + beg + " -> " + end + " score = " + score)
+			//println("piece : " + dpct.piece.color +" "+ dpct.piece.name + " " + beg + " -> " + end + " score = " + score)
 		}
 		
 		var random_move = scala.util.Random
 		var random_moveInt = random_move.nextInt(maximals_moves.length)
-		//return maximals_moves(random_moveInt)
-		return move_max
+		return maximals_moves(random_moveInt)
+		//return move_max
 	}
 
 	def has_already_been_move(mv : ((Int,Int),(Int,Int))) : Int = {
@@ -119,7 +120,7 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 			return 0
 		}
 		else if (nb_repetition == 1){
-			return -200
+			return -1000
 		}
 		else {
 			return -1000000

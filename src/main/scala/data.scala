@@ -5,20 +5,20 @@ trait Evaluation extends Values with Squares with Standard {
 		var var_alpha = alpha
 		var var_beta = beta
 		val score = evaluation(color,partie)
-		var partie_aux = new Partie()
-		partie_aux.matrix = copy_of(partie.matrix)
-		partie_aux.dplct_save = partie.dplct_save.clone()
+		//var partie_aux = new Partie()
+		//partie_aux.matrix = copy_of(partie.matrix)
+		//partie_aux.dplct_save = partie.dplct_save.clone()
 
-		println("ici is ok")
+		//println("ici is ok")
 		val li_danger = partie.list_in_danger_of(other_player(color))
-		println("ici normalement ça coince ")
+		//println("ici normalement ça coince ")
 		for (move <- li_danger){
 			var (beg,end) = move
-			var dcpt = new Dpct(beg,end,partie_aux)
+			var dcpt = new Dpct(beg,end,partie)
 
-			dcpt.do_dpct(partie_aux.matrix)
-			val value = amelioration(other_player(color),partie_aux,-var_beta,-var_alpha)
-			dcpt.undo_dpct(partie_aux.matrix)
+			dcpt.do_dpct(partie.matrix)
+			val value = amelioration(other_player(color),partie,-var_beta,-var_alpha)
+			dcpt.undo_dpct(partie.matrix)
 			if (value >= var_beta){
 				return var_beta
 			}
@@ -33,15 +33,15 @@ trait Evaluation extends Values with Squares with Standard {
 	 def alphabeta(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int, is_max : Boolean) : Int = {
 	 	var var_alpha = alpha
 		var var_beta = beta
-		var partie_aux = new Partie()
-		partie_aux.matrix = copy_of(partie.matrix)
-		partie_aux.dplct_save = partie.dplct_save.clone()
+		//var partie_aux = new Partie()
+		//partie_aux.matrix = copy_of(partie.matrix)
+		//partie_aux.dplct_save = partie.dplct_save.clone()
 		var possible_moves = partie.allowed_moves(color)
 		if ((depth == 0)||(possible_moves == List())){
 			var score_final = evaluation(color,partie)
-			return score_final
+			//return score_final
 			//println("on y arrive")
-			//return amelioration(color,partie,alpha,beta)
+			return amelioration(color,partie,alpha,beta)
 		}
 
 		if (is_max) {
@@ -49,11 +49,11 @@ trait Evaluation extends Values with Squares with Standard {
 			for( move <- possible_moves) {
 
 				var (beg,end) = move
-				var dcpt = new Dpct(beg,end,partie_aux)
+				var dcpt = new Dpct(beg,end,partie)
 
-				dcpt.do_dpct(partie_aux.matrix)
-				score = score max alphabeta(other_player(color),partie_aux,var_alpha,var_beta,depth-1,false)
-				dcpt.undo_dpct(partie_aux.matrix)
+				dcpt.do_dpct(partie.matrix)
+				score = score max alphabeta(other_player(color),partie,var_alpha,var_beta,depth-1,false)
+				dcpt.undo_dpct(partie.matrix)
 
 				var_alpha = var_alpha max score
 				if (var_alpha >= var_beta) {
@@ -68,11 +68,11 @@ trait Evaluation extends Values with Squares with Standard {
 			for( move <- possible_moves) {
 
 				var (beg,end) = move
-				var dcpt = new Dpct(beg,end,partie_aux)
+				var dcpt = new Dpct(beg,end,partie)
 
-				dcpt.do_dpct(partie_aux.matrix)
-				score =  score min  alphabeta(other_player(color),partie_aux,var_alpha,var_beta,depth-1,true)
-				dcpt.undo_dpct(partie_aux.matrix)
+				dcpt.do_dpct(partie.matrix)
+				score =  score min  alphabeta(other_player(color),partie,var_alpha,var_beta,depth-1,true)
+				dcpt.undo_dpct(partie.matrix)
 
 				var_beta = var_beta min score
 				if (var_alpha >= var_beta) {
