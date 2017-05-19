@@ -87,7 +87,7 @@ object Interface extends SimpleSwingApplication{
 				}
 				buttons += new RadioButton(){
 					action = Action("3"){
-						Current_Config.ia_depth == 3
+						Current_Config.ia_depth = 3
 					}
 					selected = (Current_Config.ia_depth == 3)
 				}
@@ -105,7 +105,7 @@ object Interface extends SimpleSwingApplication{
 				}
 				buttons += new RadioButton(){
 					action = Action("Non"){
-						Current_Config.ia_repetitions_avoid == false
+						Current_Config.ia_repetitions_avoid = false
 					}
 					selected = (Current_Config.ia_repetitions_avoid == false)
 				}
@@ -123,7 +123,7 @@ object Interface extends SimpleSwingApplication{
 				}
 				buttons += new RadioButton(){
 					action = Action("Non"){
-						Current_Config.ia_amelioration == false
+						Current_Config.ia_amelioration = false
 					}
 					selected = (Current_Config.ia_amelioration == false)
 				}
@@ -141,7 +141,7 @@ object Interface extends SimpleSwingApplication{
 				}
 				buttons += new RadioButton(){
 					action = Action("Non"){
-						Current_Config.ia_random == false
+						Current_Config.ia_random = false
 					}
 					selected = (Current_Config.ia_random == false)
 				}
@@ -773,6 +773,7 @@ object Interface extends SimpleSwingApplication{
 		val quit_program = new QuitButton(window,partie)
 		/**initialise l'interface, la partie et lance la partie*/
 		def spawn_game():Unit = {
+			println(Current_Config.ia_amelioration)
 			is_button_clicked = false
 			button_clicked_i = 0
 			button_clicked_j = 0

@@ -16,7 +16,7 @@ object Config {
 	val type_partie = ""
 	val player_blanc = '0'
 	val player_noir = '0'
-	val ia_depth = 3
+	val ia_depth = 1
 	val ia_repetitions_avoid = true
 	val ia_amelioration = false
 	val ia_random = false
