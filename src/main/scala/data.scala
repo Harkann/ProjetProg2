@@ -1,6 +1,35 @@
 
 trait Evaluation extends Values with Squares with Standard {
 
+	def amelioration(color : Char, partie : Partie, alpha :Int, beta :Int) : Int = {
+		var var_alpha = alpha
+		var var_beta = beta
+		val score = evaluation(color,partie)
+		var partie_aux = new Partie()
+		partie_aux.matrix = copy_of(partie.matrix)
+		partie_aux.dplct_save = partie.dplct_save.clone()
+
+		println("ici is ok")
+		val li_danger = partie.list_in_danger_of(other_player(color))
+		println("ici normalement ça coince ")
+		for (move <- li_danger){
+			var (beg,end) = move
+			var dcpt = new Dpct(beg,end,partie_aux)
+
+			dcpt.do_dpct(partie_aux.matrix)
+			val value = amelioration(other_player(color),partie_aux,-var_beta,-var_alpha)
+			dcpt.undo_dpct(partie_aux.matrix)
+			if (value >= var_beta){
+				return var_beta
+			}
+			if (value > var_alpha){
+				var_alpha = value
+			}
+		}
+		return var_alpha
+	}
+
+
 	 def alphabeta(color : Char, partie : Partie, alpha : Int, beta : Int , depth : Int, is_max : Boolean) : Int = {
 	 	var var_alpha = alpha
 		var var_beta = beta
@@ -11,14 +40,14 @@ trait Evaluation extends Values with Squares with Standard {
 		if ((depth == 0)||(possible_moves == List())){
 			var score_final = evaluation(color,partie)
 			return score_final
+			//println("on y arrive")
+			//return amelioration(color,partie,alpha,beta)
 		}
 
 		if (is_max) {
 			var score = -100000000
 			for( move <- possible_moves) {
 
-			 	var partie_aux = new Partie()
-				partie_aux.matrix = copy_of(partie.matrix)
 				var (beg,end) = move
 				var dcpt = new Dpct(beg,end,partie_aux)
 
@@ -38,8 +67,6 @@ trait Evaluation extends Values with Squares with Standard {
 			var score = 100000000
 			for( move <- possible_moves) {
 
-				var partie_aux = new Partie()
-				partie_aux.matrix = copy_of(partie.matrix)
 				var (beg,end) = move
 				var dcpt = new Dpct(beg,end,partie_aux)
 

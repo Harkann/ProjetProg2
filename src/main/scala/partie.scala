@@ -260,6 +260,33 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 		}
 		return res
 	}
+
+	def list_in_danger_of(player: Char): List[((Int,Int),(Int,Int))] = {
+		/**liste des pièces attaquées*/
+		var res : List[ ((Int,Int),(Int,Int)) ] = List()
+		/**autre joueur*/
+		val other = other_player(player)
+		for( i <- 1 to 8) {
+			for( j <- 1 to 8) {
+				var piece_ij=matrix(i)(j)
+				if (piece_ij != null ){
+					var id_piece_ij = piece_ij.id
+					if (id_piece_ij(0)==player)
+					{
+						println("piece normalement non nulle : "+piece_ij + " position : "+(i,j))
+						var (list_move,list_attack)= piece_ij.move_piece((i,j))
+						println("piece : "+piece_ij+" "+list_attack)
+						for (attack <-list_attack){ 
+							res = res :+((i,j),attack)
+						}
+					}
+				}
+			}
+		}
+		println("on finit pas indanger nan ?")
+		return res
+	}
+
 	/**renvoie si le joueur "player" est en échec*/
 	def is_check(player : Char) : Boolean = {
 		/**autre joueur*/

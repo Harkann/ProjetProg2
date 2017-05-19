@@ -63,11 +63,16 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		for( move <- possible_moves) {
 			var partie_aux = new Partie()
 			partie_aux.matrix = copy_of(partie.matrix)
+			partie_aux.matrix_save = copy_of(partie.matrix_save)
+			partie_aux.dplct_save = partie.dplct_save.clone
+			partie_aux.last_important_change = partie.last_important_change
+
 			var (beg,end) = move
+
 			var dpct = new Dpct(beg,end,partie_aux)
 
 			dpct.do_dpct(partie_aux.matrix)
-			val score = alphabeta(other_player(color),partie_aux,alpha,beta,depth,false)
+			val score = alphabeta(other_player(color),partie_aux,alpha,beta,depth,false) +avoid_repetition(partie_aux,move)
 			dpct.undo_dpct(partie_aux.matrix)
 
 			if (score == score_max) {
@@ -87,7 +92,39 @@ class Smart_IA(color:Char,partie:Partie,depth:Int) extends Runnable with Evaluat
 		return move_max
 	}
 
+	def has_already_been_move(mv : ((Int,Int),(Int,Int))) : Int = {
+		if (partie.dplct_save.length <= 1) return 0
+		var last_dpct = partie.dplct_save(partie.dplct_save.length-2)
+		if (last_dpct.posi_begin == mv._2 ){
+			return -30
+		}
+		else return 0
+	}
 
+
+	def avoid_repetition(partie: Partie, mv : ((Int,Int),(Int,Int))) : Int = {
+		var matrix_intermediate = copy_of(partie.matrix_save)
+		var nb_repetition = 0
+		if ((partie.last_important_change == 0) && (equal(partie.matrix,matrix_intermediate))){
+				nb_repetition +=1
+			}
+		for( i <- partie.last_important_change+1 to partie.dplct_save.length) {
+			var dpct = partie.dplct_save(i-1)
+			dpct.do_dpct(matrix_intermediate)
+			if (equal(partie.matrix,matrix_intermediate)){
+				nb_repetition +=1
+			}
+		}
+		if (nb_repetition == 0){
+			return 0
+		}
+		else if (nb_repetition == 1){
+			return -200
+		}
+		else {
+			return -1000000
+		}
+	}
 	/*def choice_dpct(depth:Int) : ((Int,Int),(Int,Int)) = {
 		var partie_aux = new Partie()
 		var beta = 100000000

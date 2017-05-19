@@ -113,6 +113,7 @@ trait Dplct_positions extends Standard {
 		var (i,j) = position 
 		var attack_list: List[ (Int,Int) ] = List()
 		val piece= matrix(position,partie)
+		//println("piece : "+piece+"position"+position)
 		var res : List[ (Int,Int) ] = List()
 		for( dplct <- movement_list) {
 			var (x,y) = dplct
