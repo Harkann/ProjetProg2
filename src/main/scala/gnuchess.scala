@@ -5,11 +5,35 @@ class Gnuchess(partie:Partie) {
 	val proc = Runtime.getRuntime.exec(Array("gnuchess","-xe","LC_ALL=en_EN"))
 	val out = new PrintWriter(proc.getOutputStream)
 	def write(command:String) = {
+		println(command+" sent to gnuchess")
 		out.println(command)
-
 		out.flush()
 	}
-	
+	def go() = {
+		write("go")
+	}
+
+
+	def set_time_left() = {
+		var time_left_h = 0
+		var time_left_m = 0
+		var time_left_s = 0
+		partie.currently_playing match {
+			case 'W' => {
+				time_left_h = partie.game_window.head_up_bar.white_timer.hour
+				time_left_m = partie.game_window.head_up_bar.white_timer.min
+				time_left_s = partie.game_window.head_up_bar.white_timer.sec
+			}
+
+			case 'B' => {
+				time_left_h = partie.game_window.head_up_bar.black_timer.hour
+				time_left_m = partie.game_window.head_up_bar.black_timer.min
+				time_left_s = partie.game_window.head_up_bar.black_timer.sec
+			}
+		}
+		var time_left = (time_left_s+time_left_m*60+time_left_h*3600)*100
+		write("time "+time_left)
+	}
 	def letter_to_int(letter:Char) = {
 		letter match {
 			case 'a' => 1
@@ -40,8 +64,6 @@ class Gnuchess(partie:Partie) {
 	def parse_and_move(line:String) = {
 		val pattern = new Regex("[a-z][1-8]")
 		var coo = (pattern findAllIn line).mkString("")	
-		println(coo)
-		println(coo.charAt(0))
 		partie.get_piece(coo.charAt(1).toInt-48,letter_to_int(coo.charAt(0))).move(coo.charAt(3).toInt-48,letter_to_int(coo.charAt(2)))
 	}
 	def stop() = {
@@ -51,7 +73,6 @@ class Gnuchess(partie:Partie) {
 	val output = new Thread(){
 		override def run() = {
 			for (line <- Source.fromInputStream(proc.getInputStream).getLines){
-				println(line)
 				if (line.containsSlice("My move is")){
 					parse_and_move(line)
 					partie.is_interface = true 

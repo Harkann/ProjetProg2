@@ -635,9 +635,14 @@ object Interface extends SimpleSwingApplication{
 		}
 		var temps = new Label()
 		this.contents+=temps
+		var hour = 0
+		var min = 0
+		var sec = 0
 		def set(time:(Int,Int,Int)) = {
 			/**temps restant*/
-			var (hour,min,sec) = time
+			hour = time._1
+			min = time._2
+			sec = time._3
 			color match {
 				case 'W' => temps.text = hour+":"+min+":"+sec+" "
 				case 'B' => temps.text = hour+":"+min+":"+sec+" "

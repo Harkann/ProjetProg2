@@ -33,7 +33,8 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				case 'G' => {
 					gnuchess = new Gnuchess(this)
 					is_interface = false
-					gnuchess.write("go")
+					if (Current_Config.timer){gnuchess.set_time_left()}
+					gnuchess.go()
 				}
 				case 'S' => new Thread(new Smart_IA('W',this,3)).start
 				case 'N' => new Thread(new IA('W',this)).start
@@ -167,8 +168,13 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				case 'B' => type_next_player = joueurNoir
 			}
 			currently_playing = other_player(currently_playing)
-			if (Current_Config.timer) {get_timer(currently_playing).interrupt}
-			if (Current_Config.timer) {get_timer(other_player(currently_playing)).interrupt}
+			if (Current_Config.timer) {
+				get_timer(currently_playing).interrupt
+				get_timer(other_player(currently_playing)).interrupt
+				if (joueurNoir == 'G' || joueurBlanc == 'G'){
+					gnuchess.set_time_left()
+				}
+			}
 			type_next_player match {
 				case '0' => {}
 
@@ -178,7 +184,7 @@ class Partie() extends Save with Moves_50 with Repetions_3 with Conversion_to_PG
 				}
 				case 'G' => {
 					is_interface = false 
-					gnuchess.write("go")
+					gnuchess.go
 				}
 				case 'S' => {
 					is_interface = false 
